@@ -303,8 +303,7 @@ export default async function handler(req, res) {
   }
 
   // TEMP DEBUG — remove after diagnosis
-  const isDev = process.env.VERCEL_ENV !== "production";
-  if (isDev) {
+  if (req.query?._dbg === "1") {
     return res.status(200).json({ _debug: true, apiData, apiKey: apiKey ? apiKey.slice(0,4) + "…" : "MISSING" });
   }
 
