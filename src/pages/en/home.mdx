@@ -54,20 +54,36 @@ activeNav: ''
         {/* FOMO live badge */}
         <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-white border border-gray-200 rounded-full text-sm font-bold text-gray-700 mb-6 shadow-soft-sm">
           <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
-          Right now: a decision-maker just hung up on a switchboard call
+          Right now: someone just reached your prospect on their mobile
         </div>
 
         <h1 class="font-display font-extrabold text-4xl sm:text-5xl lg:text-6xl leading-[1.05] tracking-tight mb-5 text-gray-900">
-          Your SDRs are calling<br/>
+          You know who to call.<br/>
           <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-sky-500">
-            the wrong number.
+            You just can't reach them.
           </span>
         </h1>
 
-        <p class="text-lg sm:text-xl text-gray-600 leading-relaxed mb-6 max-w-xl">
-          Every blocked call, every voicemail, every "not available" costs more than a year of Datagma.
-          We add the <strong class="text-gray-900 font-semibold">direct mobile phones your current stack is missing</strong> — so your team reaches decision-makers, not gatekeepers.
+        <p class="text-lg sm:text-xl text-gray-600 leading-relaxed mb-4 max-w-xl">
+          Whether you're chasing a prospect, a candidate, a property owner or a VP —
+          the conversation that changes everything starts with <strong class="text-gray-900 font-semibold">the right direct mobile</strong>.
+          Datagma finds it.
         </p>
+
+        {/* Key differentiator — visible to all personas early */}
+        <div class="flex flex-wrap gap-2 mb-5">
+          {[
+            { icon: "fas fa-user", text: "Search by name + country" },
+            { icon: "fab fa-linkedin", text: "LinkedIn URL optional" },
+            { icon: "fas fa-mobile-alt", text: "Real mobiles only, no switchboard" },
+            { icon: "fab fa-whatsapp", text: "WhatsApp detection included" },
+          ].map((tag) => (
+            <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-700 bg-white border border-gray-200 px-3 py-1.5 rounded-full shadow-soft-sm">
+              <i class={`${tag.icon} text-blue-500 text-[10px]`}></i>
+              {tag.text}
+            </span>
+          ))}
+        </div>
 
         {/* Scenario pain widget — all personas */}
         <div class="rounded-2xl border border-gray-200/80 bg-white/80 backdrop-blur-sm px-5 py-4 mb-6 shadow-sm">
@@ -122,32 +138,41 @@ activeNav: ''
             </div>
 
             {/* Activity items */}
-            <div class="p-4 space-y-2.5">
+            <div class="p-4 space-y-2">
 
-              <div class="flex items-start gap-3 p-3.5 rounded-xl bg-green-50/70 border border-green-100">
-                <div class="w-9 h-9 rounded-xl bg-green-100 flex items-center justify-center shrink-0 text-green-700 font-extrabold text-xs">JR</div>
+              <div class="flex items-start gap-3 p-3 rounded-xl bg-green-50/70 border border-green-100">
+                <div class="w-8 h-8 rounded-xl bg-green-100 flex items-center justify-center shrink-0 text-green-700 font-extrabold text-xs">JR</div>
                 <div class="min-w-0">
-                  <div class="text-sm font-bold text-gray-900">James R. <span class="text-gray-500 font-normal">booked a meeting</span></div>
-                  <div class="text-xs text-gray-500 mt-0.5">Called direct mobile found by Datagma — 3rd attempt via switchboard had failed</div>
-                  <div class="text-xs text-green-600 font-bold mt-1 flex items-center gap-1"><i class="fas fa-check-circle"></i> $45k deal opened</div>
+                  <div class="text-sm font-bold text-gray-900">James R. <span class="text-gray-400 font-normal text-xs">· Sales rep</span></div>
+                  <div class="text-xs text-gray-500 mt-0.5">Called direct mobile — 3rd attempt via switchboard had failed</div>
+                  <div class="text-xs text-green-600 font-bold mt-1"><i class="fas fa-check-circle mr-1"></i>$45k deal opened</div>
                 </div>
               </div>
 
-              <div class="flex items-start gap-3 p-3.5 rounded-xl bg-blue-50/70 border border-blue-100">
-                <div class="w-9 h-9 rounded-xl bg-blue-100 flex items-center justify-center shrink-0 text-blue-700 font-extrabold text-xs">MT</div>
+              <div class="flex items-start gap-3 p-3 rounded-xl bg-violet-50/70 border border-violet-100">
+                <div class="w-8 h-8 rounded-xl bg-violet-100 flex items-center justify-center shrink-0 text-violet-700 font-extrabold text-xs">SC</div>
                 <div class="min-w-0">
-                  <div class="text-sm font-bold text-gray-900">Maria T. <span class="text-gray-500 font-normal">enriched a Clay table</span></div>
-                  <div class="text-xs text-gray-500 mt-0.5">Datagma filled 312 phones after Kaspr waterfall returned empty</div>
-                  <div class="text-xs text-blue-600 font-bold mt-1 flex items-center gap-1"><i class="fas fa-check-circle"></i> 312 contacts unblocked</div>
+                  <div class="text-sm font-bold text-gray-900">Sophie C. <span class="text-gray-400 font-normal text-xs">· Recruiter</span></div>
+                  <div class="text-xs text-gray-500 mt-0.5">Called candidate on mobile 2h after CV received — another agency called the next day</div>
+                  <div class="text-xs text-violet-600 font-bold mt-1"><i class="fas fa-check-circle mr-1"></i>Placement confirmed · €8k fee</div>
                 </div>
               </div>
 
-              <div class="flex items-start gap-3 p-3.5 rounded-xl bg-violet-50/70 border border-violet-100">
-                <div class="w-9 h-9 rounded-xl bg-violet-100 flex items-center justify-center shrink-0 text-violet-700 font-extrabold text-xs">AK</div>
+              <div class="flex items-start gap-3 p-3 rounded-xl bg-amber-50/70 border border-amber-100">
+                <div class="w-8 h-8 rounded-xl bg-amber-100 flex items-center justify-center shrink-0 text-amber-700 font-extrabold text-xs">LM</div>
                 <div class="min-w-0">
-                  <div class="text-sm font-bold text-gray-900">Alex K. <span class="text-gray-500 font-normal">synced HubSpot</span></div>
-                  <div class="text-xs text-gray-500 mt-0.5">Auto-enriched 2,400 CRM contacts — 1,890 now have a direct mobile</div>
-                  <div class="text-xs text-violet-600 font-bold mt-1 flex items-center gap-1"><i class="fas fa-check-circle"></i> SDR call rate up 2.8×</div>
+                  <div class="text-sm font-bold text-gray-900">Laurent M. <span class="text-gray-400 font-normal text-xs">· Real estate</span></div>
+                  <div class="text-xs text-gray-500 mt-0.5">Found CFO's direct mobile — no LinkedIn profile available, searched by name + company</div>
+                  <div class="text-xs text-amber-600 font-bold mt-1"><i class="fas fa-check-circle mr-1"></i>Meeting booked · €2M lease</div>
+                </div>
+              </div>
+
+              <div class="flex items-start gap-3 p-3 rounded-xl bg-blue-50/70 border border-blue-100">
+                <div class="w-8 h-8 rounded-xl bg-blue-100 flex items-center justify-center shrink-0 text-blue-700 font-extrabold text-xs">MT</div>
+                <div class="min-w-0">
+                  <div class="text-sm font-bold text-gray-900">Maria T. <span class="text-gray-400 font-normal text-xs">· Growth / Clay</span></div>
+                  <div class="text-xs text-gray-500 mt-0.5">Datagma filled 312 phones after primary waterfall provider returned empty</div>
+                  <div class="text-xs text-blue-600 font-bold mt-1"><i class="fas fa-check-circle mr-1"></i>312 contacts unblocked</div>
                 </div>
               </div>
 
@@ -324,50 +349,61 @@ activeNav: ''
             Do the math
           </div>
           <h2 class="font-display font-extrabold text-4xl sm:text-5xl text-gray-900 mb-4 tracking-tight">
-            A blocked call costs<br/>
-            <span class="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500">more than a year of Datagma</span>
+            The conversation you couldn't have<br/>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500">already cost you.</span>
           </h2>
           <p class="text-gray-500 text-lg max-w-2xl mx-auto">
-            The question isn't whether you can afford a phone enrichment tool.
-            It's whether you can afford <em>not</em> to reach decision-makers on mobile.
+            Whatever your business — a missed connection is never just a missed call.
+            It's a deal, a placement, a lease, a partnership that went to someone else.
           </p>
         </div>
 
-        {/* Cost comparison grid */}
+        {/* Cost comparison grid — cross-persona */}
         <div class="grid md:grid-cols-3 gap-5 mb-10">
-          <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-red-100 text-center">
-            <div class="w-12 h-12 bg-red-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+          <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-red-100">
+            <div class="w-12 h-12 bg-red-50 rounded-2xl flex items-center justify-center mb-4">
               <i class="fas fa-phone-slash text-red-500 text-xl"></i>
             </div>
-            <div class="font-display font-extrabold text-3xl text-red-500 mb-1">1 day</div>
-            <div class="text-sm font-bold text-gray-700 mb-2">of an SDR hitting switchboards</div>
-            <div class="text-xs text-gray-400 leading-relaxed">At $80k/year, your SDR costs ~$320/day. A day spent calling wrong numbers is $320 wasted — before counting the lost pipeline.</div>
-          </div>
-
-          <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-orange-100 text-center">
-            <div class="w-12 h-12 bg-orange-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <i class="fas fa-handshake-slash text-orange-500 text-xl"></i>
+            <div class="font-display font-extrabold text-2xl text-red-500 mb-2">The call that never landed</div>
+            <div class="space-y-2 text-xs text-gray-500">
+              <div class="flex items-start gap-2"><span class="text-gray-400 font-bold shrink-0 w-20">Sales rep:</span> prospect went with competitor who reached them first</div>
+              <div class="flex items-start gap-2"><span class="text-gray-400 font-bold shrink-0 w-20">Recruiter:</span> candidate placed by another agency 24h earlier</div>
+              <div class="flex items-start gap-2"><span class="text-gray-400 font-bold shrink-0 w-20">Real estate:</span> decision-maker signed with the agent who called their mobile</div>
+              <div class="flex items-start gap-2"><span class="text-gray-400 font-bold shrink-0 w-20">BizDev:</span> partnership went to a competitor who got past the EA</div>
             </div>
-            <div class="font-display font-extrabold text-3xl text-orange-500 mb-1">1 deal</div>
-            <div class="text-sm font-bold text-gray-700 mb-2">lost to a competitor who called on mobile</div>
-            <div class="text-xs text-gray-400 leading-relaxed">Average B2B deal = $30–50k. Your competitor reached the VP directly. You left a voicemail on a switchboard. That's the gap.</div>
           </div>
 
-          <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-blue-200 text-center ring-2 ring-blue-400/30">
-            <div class="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+          <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-orange-100">
+            <div class="w-12 h-12 bg-orange-50 rounded-2xl flex items-center justify-center mb-4">
+              <i class="fas fa-coins text-orange-500 text-xl"></i>
+            </div>
+            <div class="font-display font-extrabold text-2xl text-orange-500 mb-2">What that costs — in real terms</div>
+            <div class="space-y-2 text-xs text-gray-500">
+              <div class="flex items-start gap-2"><span class="text-gray-400 font-bold shrink-0 w-20">Sales rep:</span> average B2B deal $30–50k</div>
+              <div class="flex items-start gap-2"><span class="text-gray-400 font-bold shrink-0 w-20">Recruiter:</span> placement commission $8–20k</div>
+              <div class="flex items-start gap-2"><span class="text-gray-400 font-bold shrink-0 w-20">Real estate:</span> lease or transaction $10k–100k+</div>
+              <div class="flex items-start gap-2"><span class="text-gray-400 font-bold shrink-0 w-20">BizDev:</span> partnership value $50k–$500k</div>
+            </div>
+          </div>
+
+          <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-blue-200 ring-2 ring-blue-400/30">
+            <div class="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center mb-4">
               <i class="fas fa-mobile-alt text-white text-xl"></i>
             </div>
-            <div class="font-display font-extrabold text-3xl text-blue-600 mb-1">$0.33</div>
-            <div class="text-sm font-bold text-gray-700 mb-2">per direct mobile with Datagma</div>
-            <div class="text-xs text-gray-400 leading-relaxed">One verified mobile phone. One direct conversation. One pipeline entry. For less than a coffee, you remove the #1 obstacle between your SDR and the decision-maker.</div>
+            <div class="font-display font-extrabold text-4xl text-blue-600 mb-1">$0.33</div>
+            <div class="text-sm font-bold text-gray-700 mb-2">per verified direct mobile</div>
+            <div class="text-xs text-gray-400 leading-relaxed">
+              The price of a direct conversation with the right person.
+              Less than a coffee. A fraction of what one missed opportunity costs you.
+            </div>
           </div>
         </div>
 
         {/* ROI callout */}
         <div class="bg-white/60 backdrop-blur-sm border border-blue-100 rounded-2xl px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
-            <div class="font-bold text-gray-900 mb-1">The math is simple:</div>
-            <div class="text-gray-500 text-sm">1 deal saved = 100× the annual cost of Datagma Popular plan ($79/month).</div>
+            <div class="font-bold text-gray-900 mb-1">The math works for everyone:</div>
+            <div class="text-gray-500 text-sm">One conversation that leads anywhere covers 100× the monthly cost of Datagma.</div>
           </div>
           <a href="https://app.datagma.com/register" class="shrink-0 btn btn-cta px-6 py-3 rounded-xl text-sm font-bold">
             Start for free →
@@ -383,91 +419,85 @@ activeNav: ''
   <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
     <div class="text-center mb-14">
-      <div class="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 text-blue-700 text-xs font-bold px-4 py-1.5 rounded-full mb-5">
-        <i class="fas fa-layer-group text-[10px]"></i>
-        The modern enrichment approach
-      </div>
       <h2 class="font-display font-extrabold text-4xl sm:text-5xl text-gray-900 mb-5 tracking-tight leading-tight">
-        One provider is never enough.<br/>
-        <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-sky-500">That's the whole point.</span>
+        Simple to use solo.<br/>
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-sky-500">Powerful inside any stack.</span>
       </h2>
       <p class="text-gray-500 text-lg max-w-2xl mx-auto">
-        The best sales teams don't pick one phone provider. They run a waterfall — each provider
-        filling the gaps of the last. Datagma is the layer that finds what others miss.
+        You don't need to know what Clay or a waterfall is to use Datagma.
+        Type a name, get a number. That's it. But if you do run automations — it plugs right in.
       </p>
     </div>
 
-    {/* Waterfall visual */}
-    <div class="relative max-w-2xl mx-auto mb-14">
+    {/* Two-path layout */}
+    <div class="grid md:grid-cols-2 gap-6 mb-12">
 
-      {/* Step 1 */}
-      <div class="bento-card p-5 mb-3 flex items-center gap-4 opacity-60">
-        <div class="w-8 h-8 bg-gray-200 rounded-lg flex items-center justify-center text-gray-500 font-bold text-sm shrink-0">1</div>
-        <div class="flex-1">
-          <div class="font-semibold text-gray-700 text-sm">Primary provider (Lusha / Kaspr / Apollo)</div>
-          <div class="text-xs text-gray-400 mt-0.5">Covers ~40–60% of contacts. Fast, broad, but misses many markets.</div>
-        </div>
-        <div class="text-xs font-bold text-gray-400 bg-gray-100 px-2.5 py-1 rounded-full shrink-0">~50% match</div>
-      </div>
-
-      {/* Arrow */}
-      <div class="flex justify-center text-gray-300 mb-3">
-        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
-      </div>
-
-      {/* Step 2 — Datagma highlighted */}
-      <div class="relative bento-card p-5 mb-3 flex items-center gap-4 ring-2 ring-blue-500/50 shadow-[0_0_30px_rgba(37,99,235,.15)]">
-        <div class="absolute -top-3 left-4">
-          <span class="bg-blue-600 text-white text-[10px] font-extrabold px-3 py-1 rounded-full shadow-md shadow-blue-200">Datagma fills the gap</span>
-        </div>
-        <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-sm shrink-0">2</div>
-        <div class="flex-1">
-          <div class="font-bold text-gray-900 text-sm">Datagma — phones your primary missed</div>
-          <div class="text-xs text-gray-500 mt-0.5">Unique mobile coverage in India, UK, APAC, Europe. No LinkedIn URL needed. Only pays per successful match.</div>
-        </div>
-        <div class="text-xs font-extrabold text-blue-600 bg-blue-50 border border-blue-200 px-2.5 py-1 rounded-full shrink-0">+30–40%</div>
-      </div>
-
-      {/* Arrow */}
-      <div class="flex justify-center text-gray-300 mb-3">
-        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
-      </div>
-
-      {/* Step 3 */}
-      <div class="bento-card p-5 flex items-center gap-4">
-        <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center text-green-700 font-bold text-sm shrink-0">✓</div>
-        <div class="flex-1">
-          <div class="font-bold text-gray-900 text-sm">Your team reaches 80–90% of target contacts on mobile</div>
-          <div class="text-xs text-gray-500 mt-0.5">3× more conversations. Shorter cycles. More pipeline from the same list.</div>
-        </div>
-        <div class="text-xs font-extrabold text-green-600 bg-green-50 border border-green-200 px-2.5 py-1 rounded-full shrink-0">Goal reached</div>
-      </div>
-    </div>
-
-    {/* Platform integrations for waterfall */}
-    <div class="text-center mb-8">
-      <p class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-6">Datagma slots natively into your waterfall</p>
-      <div class="flex flex-wrap justify-center gap-4">
-        {[
-          { name: "Clay", desc: "Native provider", badge: "bg-orange-50 text-orange-700 border-orange-200" },
-          { name: "Fullenrich", desc: "BYOK provider", badge: "bg-blue-50 text-blue-700 border-blue-200" },
-          { name: "BetterContact", desc: "BYOK provider", badge: "bg-blue-50 text-blue-700 border-blue-200" },
-          { name: "GetCargo", desc: "BYOK provider", badge: "bg-purple-50 text-purple-700 border-purple-200" },
-          { name: "REST API", desc: "Any waterfall tool", badge: "bg-gray-50 text-gray-700 border-gray-200" },
-        ].map((p) => (
-          <div class="bento-card px-5 py-4 flex items-center gap-3 hover:shadow-soft-md transition-shadow">
-            <div class="font-display font-extrabold text-gray-900 text-sm">{p.name}</div>
-            <span class={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${p.badge}`}>{p.desc}</span>
+      {/* Path A — No-tech user */}
+      <div class="relative overflow-hidden rounded-3xl border border-gray-200 bg-white p-7 shadow-soft-md">
+        <div class="absolute top-0 right-0 w-48 h-48 bg-green-50 rounded-full blur-3xl opacity-70 -translate-y-1/2 translate-x-1/2"></div>
+        <div class="relative z-10">
+          <div class="inline-flex items-center gap-2 bg-green-50 border border-green-200 text-green-700 text-xs font-bold px-3 py-1 rounded-full mb-5">
+            <i class="fas fa-user text-[10px]"></i>
+            Individual · No tech setup needed
           </div>
-        ))}
+          <h3 class="font-display font-bold text-xl text-gray-900 mb-3">Just need a number?</h3>
+          <p class="text-gray-500 text-sm leading-relaxed mb-5">
+            Log in, type the person's name and country. Get their direct mobile in seconds.
+            No integration. No API. No setup. Works the same whether you're a recruiter,
+            an agent or a sales rep who calls 20 people a day.
+          </p>
+          <div class="space-y-2 mb-6">
+            {[
+              "Search by name + country (no LinkedIn URL needed)",
+              "Chrome Extension — click on any LinkedIn profile",
+              "Upload a CSV list — get back phones + emails in bulk",
+            ].map((f) => (
+              <div class="flex items-center gap-2 text-sm text-gray-700">
+                <svg class="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                {f}
+              </div>
+            ))}
+          </div>
+          <a href="https://app.datagma.com/register" class="inline-flex items-center gap-2 bg-gray-900 text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-gray-800 transition-colors">
+            Start free — 3 phones included
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+          </a>
+        </div>
       </div>
-    </div>
 
-    <div class="text-center">
-      <a href="https://app.datagma.com/register" class="inline-flex items-center gap-2 bg-blue-600 text-white px-7 py-3.5 rounded-xl font-bold text-sm hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200">
-        Add Datagma to your stack
-        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-      </a>
+      {/* Path B — Tech stack user */}
+      <div class="relative overflow-hidden rounded-3xl border border-blue-100 bg-gradient-to-br from-blue-50/50 to-white p-7 shadow-soft-md">
+        <div class="absolute top-0 right-0 w-48 h-48 bg-blue-100 rounded-full blur-3xl opacity-60 -translate-y-1/2 translate-x-1/2"></div>
+        <div class="relative z-10">
+          <div class="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 text-blue-700 text-xs font-bold px-3 py-1 rounded-full mb-5">
+            <i class="fas fa-layer-group text-[10px]"></i>
+            Teams · API / Clay / CRM integrations
+          </div>
+          <h3 class="font-display font-bold text-xl text-gray-900 mb-3">Running a stack or a sequence tool?</h3>
+          <p class="text-gray-500 text-sm leading-relaxed mb-5">
+            Your primary provider covers ~50% of contacts. Datagma runs after it in the waterfall,
+            filling the phones it missed. Pay only per successful match — never for empty results.
+          </p>
+          <div class="flex flex-wrap gap-2 mb-6">
+            {[
+              { name: "Clay", badge: "bg-orange-50 text-orange-700 border-orange-200" },
+              { name: "Fullenrich", badge: "bg-blue-50 text-blue-700 border-blue-200" },
+              { name: "BetterContact", badge: "bg-blue-50 text-blue-700 border-blue-200" },
+              { name: "GetCargo", badge: "bg-purple-50 text-purple-700 border-purple-200" },
+              { name: "HubSpot", badge: "bg-orange-50 text-orange-800 border-orange-200" },
+              { name: "Pipedrive", badge: "bg-green-50 text-green-700 border-green-200" },
+              { name: "REST API", badge: "bg-gray-100 text-gray-700 border-gray-200" },
+            ].map((p) => (
+              <span class={`text-xs font-bold px-2.5 py-1 rounded-full border ${p.badge}`}>{p.name}</span>
+            ))}
+          </div>
+          <a href="/en/api" class="inline-flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-blue-700 transition-colors shadow-md shadow-blue-200">
+            See integrations
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
