@@ -180,17 +180,11 @@
         ═══════════════════════════════════════════════════════════ -->
         <div id="email-panel" class="panel-content hidden">
 
-          <!-- One search mode: name + company OR domain -->
-          <div class="mb-5 p-4 bg-violet-50 border border-violet-100 rounded-xl text-xs text-violet-700 font-medium flex items-start gap-2">
-            <i class="fas fa-info-circle mt-0.5 shrink-0"></i>
-            <span>Enter a <strong>company name</strong> (e.g. Stripe) or a <strong>domain</strong> (e.g. stripe.com) — both work.</span>
-          </div>
-
           <form id="email-form" class="space-y-3">
             <div class="grid sm:grid-cols-2 gap-3">
               <input type="text" name="emailFullName" placeholder="Full name (e.g. John Smith)"
                 class="demo-input w-full px-4 py-3 rounded-xl border border-gray-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent bg-white placeholder-gray-400" />
-              <input type="text" name="companyOrDomain" placeholder="Company or domain (e.g. stripe.com)"
+              <input type="text" name="companyOrDomain" placeholder="Domain (e.g. stripe.com)"
                 class="demo-input w-full px-4 py-3 rounded-xl border border-gray-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent bg-white placeholder-gray-400" />
             </div>
 
@@ -204,7 +198,7 @@
           <!-- Credits -->
           <div class="mt-3 text-[11px] text-gray-400 font-semibold text-center">
             <i class="fas fa-envelope mr-1 text-violet-400"></i>
-            <span id="emails-remaining">3</span> email searches left today
+            <span id="emails-remaining">10</span> email searches left today
             <span class="mx-2 text-gray-200">·</span>
             Only verified emails are billed
           </div>
@@ -484,7 +478,7 @@
         setEmailLoading(false); return;
       }
 
-      var params = new URLSearchParams({ t: token, mode: "findEmail", fullName: fn, companyName: co });
+      var params = new URLSearchParams({ t: token, mode: "findEmail", fullName: fn, domain: co });
 
       try {
         var resp = await fetch(ENRICH_URL + "?" + params.toString());

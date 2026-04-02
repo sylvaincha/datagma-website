@@ -206,8 +206,8 @@ export default async function handler(req, res) {
   const ip   = (req.headers["x-forwarded-for"] ?? "unknown").split(",")[0].trim();
   const mode = clean(req.query?.mode ?? "linkedin", 20);
 
-  const PHONE_LIMIT = process.env.DEMO_PHONE_LIMIT ? parseInt(process.env.DEMO_PHONE_LIMIT) : 100;
-  const EMAIL_LIMIT = process.env.DEMO_EMAIL_LIMIT ? parseInt(process.env.DEMO_EMAIL_LIMIT) : 100;
+  const PHONE_LIMIT = process.env.DEMO_PHONE_LIMIT ? parseInt(process.env.DEMO_PHONE_LIMIT) : 3;
+  const EMAIL_LIMIT = process.env.DEMO_EMAIL_LIMIT ? parseInt(process.env.DEMO_EMAIL_LIMIT) : 10;
 
   const phoneLimits = checkLimit(phoneRateMap, ip, PHONE_LIMIT);
   const emailLimits = checkLimit(emailRateMap, ip, EMAIL_LIMIT);
@@ -217,15 +217,12 @@ export default async function handler(req, res) {
   const fullName    = clean(        req.query?.fullName    ?? "");
   const domain      = cleanDomain(  req.query?.domain      ?? "");
   const companyName = clean(        req.query?.companyName ?? "");
-  // For email finder: "company" accepts both a company name or a domain
-  const companyOrDomain = companyName || domain;
-
   // Validate
   const valid =
     (mode === "linkedin"   && linkedin) ||
     (mode === "nameDomain" && fullName && domain) ||
     (mode === "nameCompany"&& fullName && companyName) ||
-    (mode === "findEmail"  && fullName && companyOrDomain);
+    (mode === "findEmail"  && fullName && domain);
 
   if (!valid) return res.status(400).json({ error: "missing_inputs", mode });
 
@@ -307,9 +304,9 @@ export default async function handler(req, res) {
     try {
       const r = await callAPI(DATAGMA_EMAIL, {
         fullName,
-        company:              companyOrDomain,
-        findEmailV2Step:      3,
-        findEmailV2Country:   "General",
+        company:            domain,
+        findEmailV2Step:    3,
+        findEmailV2Country: "General",
       }, apiKey);
       if (r.status === 0) return res.status(503).json({ error: "api_unreachable" });
       apiData = r.data;
