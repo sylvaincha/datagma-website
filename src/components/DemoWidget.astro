@@ -1,5 +1,9 @@
 ---
 // DemoWidget — live demo with two separate sections: Phone Finder & Email Finder
+// Cloudflare Turnstile (invisible mode) protects against bots & datacenter IPs.
+// PUBLIC_TURNSTILE_SITE_KEY must be set in Vercel env (public).
+// Falls back to CF test key (always-passes) if not set.
+const TURNSTILE_SITE_KEY = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "1x00000000000000000000AA";
 ---
 
 <section class="py-20 relative overflow-hidden">
@@ -274,19 +278,97 @@
         </div>
 
       </div>
+
+      <!-- Turnstile invisible container — shared by both forms -->
+      <div id="cf-turnstile-container" class="hidden"></div>
+
     </div>
   </div>
 </section>
+
+<!-- Cloudflare Turnstile — loaded explicitly so we control the lifecycle -->
+<script
+  src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
+  async defer
+  data-sitekey={TURNSTILE_SITE_KEY}
+  id="cf-turnstile-script"
+></script>
 
 <script>
 (function () {
   var TOKEN_URL  = "/api/demo-token";
   var ENRICH_URL = "/api/demo-enrich";
 
-  var cachedToken = null;
-  var tokenExpiry = 0;
+  var cachedToken    = null;
+  var tokenExpiry    = 0;
+  var cfToken        = null;   // current Turnstile token (single-use)
+  var cfWidgetId     = null;   // Turnstile widget handle for reset
+  var cfReady        = false;  // true once Turnstile has verified once
 
-  // ── Token ───────────────────────────────────────────────────────────────────
+  // ── Turnstile init — called when CF script loads ─────────────────────────
+  // We expose this on window so the CF script's onload can call it.
+  // The CF script has render=explicit, so we call turnstile.render() ourselves.
+  function initTurnstile() {
+    var container = document.getElementById("cf-turnstile-container");
+    var script    = document.getElementById("cf-turnstile-script");
+    if (!container || !script || typeof window.turnstile === "undefined") return;
+
+    var siteKey = script.dataset.sitekey || "1x00000000000000000000AA";
+
+    cfWidgetId = window.turnstile.render(container, {
+      sitekey:           siteKey,
+      size:              "invisible",   // zero UI friction
+      theme:             "light",
+      callback: function (token) {
+        cfToken  = token;
+        cfReady  = true;
+      },
+      "expired-callback": function () {
+        cfToken = null;
+        cfReady = false;
+        // Auto-refresh
+        if (cfWidgetId !== null) window.turnstile.reset(cfWidgetId);
+      },
+      "error-callback": function () {
+        cfToken = null;
+        cfReady = false;
+      },
+    });
+  }
+
+  // Turnstile calls window.onTurnstileLoad when the JS is ready (we set onload param)
+  // But since we use render=explicit + defer, we poll until window.turnstile exists.
+  (function waitForTurnstile() {
+    if (typeof window.turnstile !== "undefined") {
+      initTurnstile();
+    } else {
+      setTimeout(waitForTurnstile, 200);
+    }
+  })();
+
+  // ── Get Turnstile token — waits up to 8s if not ready yet ───────────────
+  function getCfToken() {
+    return new Promise(function (resolve) {
+      if (cfToken) { resolve(cfToken); return; }
+      var waited = 0;
+      var iv = setInterval(function () {
+        waited += 200;
+        if (cfToken) { clearInterval(iv); resolve(cfToken); }
+        else if (waited >= 8000) { clearInterval(iv); resolve(null); } // timeout → let server decide
+      }, 200);
+    });
+  }
+
+  // Reset Turnstile after each search (tokens are single-use)
+  function resetTurnstile() {
+    cfToken = null;
+    cfReady = false;
+    if (cfWidgetId !== null && typeof window.turnstile !== "undefined") {
+      window.turnstile.reset(cfWidgetId);
+    }
+  }
+
+  // ── HMAC Token ───────────────────────────────────────────────────────────────
   async function getToken() {
     if (cachedToken && Date.now() < tokenExpiry - 5000) return cachedToken;
     try {
@@ -391,6 +473,7 @@
         setPhoneLoading(false); return;
       }
 
+      var cf = await getCfToken();
       var params = new URLSearchParams({ t: token, mode: phoneMode });
 
       if (phoneMode === "linkedin") {
@@ -409,11 +492,15 @@
         params.set("fullName", fn2); params.set("domain", dom);
       }
 
+      if (cf) params.set("cf", cf);
+
       try {
         var resp = await fetch(ENRICH_URL + "?" + params.toString());
         var json = await resp.json();
 
-        if (resp.status === 429 || resp.status === 402) {
+        if (resp.status === 403 && json && json.error === "bot_detected") {
+          show("phone-error"); setText("phone-error-msg", "Bot protection triggered. Please try again in a moment.");
+        } else if (resp.status === 429 || resp.status === 402) {
           show("phone-error"); setText("phone-error-msg", "Daily search limit reached. Create a free account to continue.");
         } else if (resp.status === 401) {
           cachedToken = null; show("phone-error"); setText("phone-error-msg", "Session expired. Please try again.");
@@ -425,6 +512,7 @@
       } catch (_) {
         show("phone-error"); setText("phone-error-msg", "Network error. Please check your connection.");
       }
+      resetTurnstile();
       setPhoneLoading(false);
     });
   }
@@ -478,13 +566,17 @@
         setEmailLoading(false); return;
       }
 
+      var cf = await getCfToken();
       var params = new URLSearchParams({ t: token, mode: "findEmail", fullName: fn, domain: co });
+      if (cf) params.set("cf", cf);
 
       try {
         var resp = await fetch(ENRICH_URL + "?" + params.toString());
         var json = await resp.json();
 
-        if (resp.status === 429 || resp.status === 402) {
+        if (resp.status === 403 && json && json.error === "bot_detected") {
+          show("email-error"); setText("email-error-msg", "Bot protection triggered. Please try again in a moment.");
+        } else if (resp.status === 429 || resp.status === 402) {
           show("email-error"); setText("email-error-msg", "Daily search limit reached. Create a free account to continue.");
         } else if (resp.status === 401) {
           cachedToken = null; show("email-error"); setText("email-error-msg", "Session expired. Please try again.");
@@ -496,6 +588,7 @@
       } catch (_) {
         show("email-error"); setText("email-error-msg", "Network error. Please check your connection.");
       }
+      resetTurnstile();
       setEmailLoading(false);
     });
   }

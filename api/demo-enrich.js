@@ -11,9 +11,10 @@
 
 import { createHmac } from "node:crypto";
 
-const DATAGMA_SEARCH = "https://gateway.datagma.net/api/ingress/v1/search";
-const DATAGMA_FULL   = "https://gateway.datagma.net/api/ingress/v2/full";
-const DATAGMA_EMAIL  = "https://gateway.datagma.net/api/ingress/v6/findEmail";
+const DATAGMA_SEARCH    = "https://gateway.datagma.net/api/ingress/v1/search";
+const DATAGMA_FULL      = "https://gateway.datagma.net/api/ingress/v2/full";
+const DATAGMA_EMAIL     = "https://gateway.datagma.net/api/ingress/v6/findEmail";
+const TURNSTILE_VERIFY  = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
 
 const ALLOWED_ORIGINS = [
   "https://datagma.com",
@@ -95,6 +96,25 @@ async function callAPI(baseUrl, params, apiKey) {
   }
 }
 function safeJson(text) { try { return JSON.parse(text); } catch { return null; } }
+
+// ── Cloudflare Turnstile verification ─────────────────────────────────────────
+// Returns true if valid, or true if no secret configured (dev mode).
+async function verifyTurnstile(cfToken, ip, secret) {
+  if (!secret) return true; // secret not set → skip (dev/test)
+  if (!cfToken) return false;
+  try {
+    const r = await fetch(TURNSTILE_VERIFY, {
+      method:  "POST",
+      headers: { "content-type": "application/json" },
+      body:    JSON.stringify({ secret, response: cfToken, remoteip: ip }),
+      signal:  AbortSignal.timeout(5_000),
+    });
+    const d = await r.json();
+    return d.success === true;
+  } catch {
+    return false; // network error → fail closed
+  }
+}
 
 // ── Detect Datagma API errors ─────────────────────────────────────────────────
 function apiError(data) {
@@ -186,9 +206,10 @@ export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
   if (req.method === "OPTIONS") return res.status(200).end();
 
-  const isProd = process.env.VERCEL_ENV === "production";
-  const apiKey = (process.env.DATAGMA_API_KEY ?? "").trim();
-  const secret = (process.env.DEMO_SECRET ?? "").trim();
+  const isProd           = process.env.VERCEL_ENV === "production";
+  const apiKey           = (process.env.DATAGMA_API_KEY    ?? "").trim();
+  const secret           = (process.env.DEMO_SECRET        ?? "").trim();
+  const turnstileSecret  = (process.env.TURNSTILE_SECRET   ?? "").trim();
 
   if (!apiKey || !secret) return res.status(501).json({ error: "not_configured" });
 
@@ -203,7 +224,13 @@ export default async function handler(req, res) {
   const token = clean(req.query?.t ?? "", 32);
   if (!verifyToken(token, secret)) return res.status(401).json({ error: "invalid_token" });
 
-  const ip   = (req.headers["x-forwarded-for"] ?? "unknown").split(",")[0].trim();
+  const ip = (req.headers["x-forwarded-for"] ?? "unknown").split(",")[0].trim();
+
+  // ── Cloudflare Turnstile — bot & datacenter IP protection ─────────────────
+  // If TURNSTILE_SECRET is set, enforce. If not set (dev), pass through.
+  const cfToken = clean(req.query?.cf ?? "", 2048);
+  const cfOk    = await verifyTurnstile(cfToken, ip, turnstileSecret);
+  if (!cfOk) return res.status(403).json({ error: "bot_detected" });
   const mode = clean(req.query?.mode ?? "linkedin", 20);
 
   const PHONE_LIMIT = process.env.DEMO_PHONE_LIMIT ? parseInt(process.env.DEMO_PHONE_LIMIT) : 3;
