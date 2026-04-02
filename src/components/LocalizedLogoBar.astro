@@ -1,0 +1,140 @@
+---
+// Logo bar localisé selon navigator.language du visiteur.
+// Chaque set mixe images existantes + wordmarks texte pour les clients du CSV.
+---
+
+<section class="py-10 border-y border-gray-100 bg-white/70 backdrop-blur-sm">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <p id="logo-bar-label" class="text-center text-[11px] font-extrabold text-gray-400 uppercase tracking-widest mb-8">
+      2,400+ teams worldwide added Datagma to their stack
+    </p>
+
+    <!-- Chaque set est masqué par défaut, JS active le bon -->
+    <div id="logos-en" class="logo-set hidden">
+      <div class="flex flex-wrap items-center justify-center gap-8 sm:gap-12">
+        <img src="/assets/scraped/captail-data-1.png"  alt="Captain Data" class="logo-img h-7" />
+        <img src="/assets/scraped/charfelee-1.png"      alt="Chargebee"    class="logo-img h-7" />
+        <img src="/assets/scraped/lemlist-1.png"        alt="Lemlist"      class="logo-img h-6" />
+        <img src="/assets/scraped/ramp-1.png"           alt="Ramp"         class="logo-img h-8" />
+        <span class="logo-text">Akamai</span>
+        <img src="/assets/scraped/IHS_Markit_logo.svg" alt="IHS Markit"   class="logo-img h-7" />
+      </div>
+    </div>
+
+    <div id="logos-fr" class="logo-set hidden">
+      <div class="flex flex-wrap items-center justify-center gap-8 sm:gap-12">
+        <img src="/assets/scraped/lemlist-1.png"        alt="Lemlist"          class="logo-img h-6" />
+        <img src="/assets/scraped/LOGO-HYPERLEX.png"    alt="Hyperlex"         class="logo-img h-7" />
+        <span class="logo-text">Alexander Hughes</span>
+        <img src="/assets/scraped/captail-data-1.png"  alt="Captain Data"     class="logo-img h-7" />
+        <img src="/assets/scraped/charfelee-1.png"      alt="Chargebee"        class="logo-img h-7" />
+        <span class="logo-text">Flatpay</span>
+      </div>
+    </div>
+
+    <div id="logos-it" class="logo-set hidden">
+      <div class="flex flex-wrap items-center justify-center gap-8 sm:gap-12">
+        <span class="logo-text">Tecnocasa</span>
+        <span class="logo-text">Tempocasa</span>
+        <img src="/assets/scraped/captail-data-1.png"  alt="Captain Data" class="logo-img h-7" />
+        <img src="/assets/scraped/charfelee-1.png"      alt="Chargebee"    class="logo-img h-7" />
+        <img src="/assets/scraped/ramp-1.png"           alt="Ramp"         class="logo-img h-8" />
+        <img src="/assets/scraped/IHS_Markit_logo.svg" alt="IHS Markit"   class="logo-img h-7" />
+      </div>
+    </div>
+
+    <div id="logos-de" class="logo-set hidden">
+      <div class="flex flex-wrap items-center justify-center gap-8 sm:gap-12">
+        <span class="logo-text">Netlight</span>
+        <img src="/assets/scraped/charfelee-1.png"      alt="Chargebee"    class="logo-img h-7" />
+        <img src="/assets/scraped/ramp-1.png"           alt="Ramp"         class="logo-img h-8" />
+        <span class="logo-text">Akamai</span>
+        <img src="/assets/scraped/captail-data-1.png"  alt="Captain Data" class="logo-img h-7" />
+        <img src="/assets/scraped/IHS_Markit_logo.svg" alt="IHS Markit"   class="logo-img h-7" />
+      </div>
+    </div>
+
+    <div id="logos-in" class="logo-set hidden">
+      <div class="flex flex-wrap items-center justify-center gap-8 sm:gap-12">
+        <span class="logo-text">IDFC FIRST Bank</span>
+        <span class="logo-text">upGrad</span>
+        <span class="logo-text">PwC India</span>
+        <span class="logo-text">Akamai</span>
+        <img src="/assets/scraped/ramp-1.png"           alt="Ramp"         class="logo-img h-8" />
+        <img src="/assets/scraped/captail-data-1.png"  alt="Captain Data" class="logo-img h-7" />
+      </div>
+    </div>
+
+    <div id="logos-es" class="logo-set hidden">
+      <div class="flex flex-wrap items-center justify-center gap-8 sm:gap-12">
+        <img src="/assets/scraped/captail-data-1.png"  alt="Captain Data" class="logo-img h-7" />
+        <img src="/assets/scraped/charfelee-1.png"      alt="Chargebee"    class="logo-img h-7" />
+        <img src="/assets/scraped/lemlist-1.png"        alt="Lemlist"      class="logo-img h-6" />
+        <img src="/assets/scraped/ramp-1.png"           alt="Ramp"         class="logo-img h-8" />
+        <span class="logo-text">Akamai</span>
+        <img src="/assets/scraped/IHS_Markit_logo.svg" alt="IHS Markit"   class="logo-img h-7" />
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<style>
+  .logo-img {
+    object-fit: contain;
+    opacity: 0.45;
+    filter: grayscale(100%);
+    transition: opacity 0.3s;
+  }
+  .logo-img:hover { opacity: 0.7; }
+
+  .logo-text {
+    font-family: ui-sans-serif, system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: -0.02em;
+    color: #9ca3af;
+    white-space: nowrap;
+    transition: color 0.3s;
+  }
+  .logo-text:hover { color: #6b7280; }
+</style>
+
+<script is:inline>
+(function () {
+  var labels = {
+    fr: "2\u00a0400+ équipes dans le monde font confiance à Datagma",
+    it: "2\u00a0400+ team in tutto il mondo usano Datagma",
+    de: "Über 2.400 Teams weltweit vertrauen Datagma",
+    es: "Más de 2.400 equipos en todo el mundo confían en Datagma",
+    pt: "Mais de 2.400 equipes em todo o mundo confiam no Datagma",
+    nl: "Meer dan 2.400 teams wereldwijd vertrouwen op Datagma",
+    en: "2,400+ teams worldwide added Datagma to their stack",
+  };
+
+  var lang = (navigator.language || "en").toLowerCase().split("-")[0];
+  // India detection: navigator.language == "en-IN" or "hi"
+  var fullLang = (navigator.language || "en").toLowerCase();
+  var isIndia = fullLang === "hi" || fullLang.endsWith("-in");
+
+  // Fallbacks
+  var setId;
+  if (isIndia)           setId = "in";
+  else if (lang === "fr") setId = "fr";
+  else if (lang === "it") setId = "it";
+  else if (lang === "de") setId = "de";
+  else if (lang === "es" || lang === "pt") setId = "es";
+  else                    setId = "en";
+
+  var el = document.getElementById("logos-" + setId);
+  if (el) el.classList.remove("hidden");
+  else {
+    var fallback = document.getElementById("logos-en");
+    if (fallback) fallback.classList.remove("hidden");
+  }
+
+  var labelEl = document.getElementById("logo-bar-label");
+  var labelText = labels[lang] || labels["en"];
+  if (labelEl) labelEl.textContent = labelText;
+})();
+</script>

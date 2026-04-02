@@ -8,6 +8,7 @@ activeNav: ''
 
 import LiveCounter from '../../components/LiveCounter.astro';
 import DemoWidget from '../../components/DemoWidget.astro';
+import LocalizedLogoBar from '../../components/LocalizedLogoBar.astro';
 
 <script type="application/ld+json" set:html={JSON.stringify([
   {
@@ -211,21 +212,7 @@ import DemoWidget from '../../components/DemoWidget.astro';
 <DemoWidget />
 
 {/* ─── LOGO BAR ─────────────────────────────────────────── */}
-<section class="py-10 border-y border-gray-100 bg-white/70 backdrop-blur-sm">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-    <p class="text-center text-[11px] font-extrabold text-gray-400 uppercase tracking-widest mb-8">
-      2,400+ teams worldwide added Datagma to their stack
-    </p>
-    <div class="flex flex-wrap items-center justify-center gap-8 sm:gap-14 opacity-50 grayscale hover:opacity-70 transition-opacity duration-500">
-      <img src="/assets/scraped/captail-data-1.png" alt="Captain Data" class="h-7 object-contain" />
-      <img src="/assets/scraped/charfelee-1.png" alt="Chargebee" class="h-7 object-contain" />
-      <img src="/assets/scraped/lemlist-1.png" alt="Lemlist" class="h-7 object-contain" />
-      <img src="/assets/scraped/ramp-1.png" alt="Ramp" class="h-8 object-contain" />
-      <img src="/assets/scraped/LOGO-HYPERLEX.png" alt="Hyperlex" class="h-7 object-contain" />
-      <img src="/assets/scraped/IHS_Markit_logo.svg" alt="IHS Markit" class="h-7 object-contain" />
-    </div>
-  </div>
-</section>
+<LocalizedLogoBar />
 
 {/* ─── WHO USES DATAGMA ────────────────────────────────── */}
 <section class="py-24">
