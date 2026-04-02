@@ -94,8 +94,7 @@ async function callAPI(baseUrl, params, apiKey) {
       signal:  AbortSignal.timeout(25_000),
     });
     const text = await r.text();
-    const safeUrl = finalUrl.replace(apiKey, apiKey.slice(0,4) + "…");
-    return { ok: r.ok, status: r.status, data: safeJson(text), _url: safeUrl };
+    return { ok: r.ok, status: r.status, data: safeJson(text) };
   } catch (e) {
     return { ok: false, status: 0, data: null, error: e.message };
   }
@@ -211,8 +210,8 @@ export default async function handler(req, res) {
   if (req.method === "OPTIONS") return res.status(200).end();
 
   const isProd = process.env.VERCEL_ENV === "production";
-  const apiKey = process.env.DATAGMA_API_KEY;
-  const secret = process.env.DEMO_SECRET;
+  const apiKey = (process.env.DATAGMA_API_KEY ?? "").trim();
+  const secret = (process.env.DEMO_SECRET ?? "").trim();
 
   if (!apiKey || !secret) return res.status(501).json({ error: "not_configured" });
 
@@ -256,7 +255,6 @@ export default async function handler(req, res) {
 
   // ── Call Datagma ────────────────────────────────────────────────────────────
   let apiData = null;
-  let _debugUrl = null;
 
   try {
     if (mode === "linkedin") {
@@ -264,28 +262,28 @@ export default async function handler(req, res) {
         username: linkedin, minimumMatch: 1, whatsappCheck: true,
       }, apiKey);
       if (r.status === 0) return res.status(503).json({ error: "api_unreachable" });
-      apiData = r.data; _debugUrl = r._url;
+      apiData = r.data;
 
     } else if (mode === "nameEmail") {
       const r = await callAPI(DATAGMA_SEARCH, {
         email, fullName, minimumMatch: 1, whatsappCheck: true,
       }, apiKey);
       if (r.status === 0) return res.status(503).json({ error: "api_unreachable" });
-      apiData = r.data; _debugUrl = r._url;
+      apiData = r.data;
 
     } else if (mode === "nameDomain" || mode === "emailOnly") {
       const params = { fullName, domain, data: "EMAIL" };
       if (wantPhone) params.phoneFull = true;
       const r = await callAPI(DATAGMA_FULL, params, apiKey);
       if (r.status === 0) return res.status(503).json({ error: "api_unreachable" });
-      apiData = r.data; _debugUrl = r._url;
+      apiData = r.data;
 
     } else if (mode === "nameCompany") {
       const params = { fullName, companyName, data: "EMAIL" };
       if (wantPhone) params.phoneFull = true;
       const r = await callAPI(DATAGMA_FULL, params, apiKey);
       if (r.status === 0) return res.status(503).json({ error: "api_unreachable" });
-      apiData = r.data; _debugUrl = r._url;
+      apiData = r.data;
     }
   } catch {
     return res.status(502).json({ error: "upstream_error" });
@@ -295,7 +293,7 @@ export default async function handler(req, res) {
 
   // Handle Datagma API-level errors
   const datagmaErr = apiError(apiData);
-  if (datagmaErr === "no_credits") return res.status(402).json({ error: "no_credits", _apiKey: apiKey ? apiKey.slice(0,6) : "MISSING", _url: _debugUrl, _raw: apiData });
+  if (datagmaErr === "no_credits") return res.status(402).json({ error: "no_credits" });
   if (datagmaErr === "not_found")  return res.status(404).json({ error: "not_found" });
 
   // Extract
