@@ -115,44 +115,84 @@ function safeJson(text) {
   try { return JSON.parse(text); } catch { return null; }
 }
 
-// ── Extract phones from Datagma response (handles multiple shapes) ────────────
+// ── Extract phones — handles /v1/search response shape ───────────────────────
+// Response: { person: { phones: [{ displayInternational, countryCode, number, linkedWhatsapp, whatsapp }] } }
 function extractPhones(data) {
   if (!data) return [];
-  // /v1/search returns data.data as array of phone objects or plain strings
-  const raw = data.data ?? data.phones ?? data.phone ?? null;
-  if (!raw) return [];
-  if (Array.isArray(raw)) {
-    return raw.map((p) => {
-      if (typeof p === "string") return { number: p, whatsapp: false };
-      return {
-        number:   p.phoneNumber ?? p.number ?? p.phone ?? String(p),
-        whatsapp: !!(p.isWhatsapp ?? p.whatsapp ?? false),
-      };
-    }).filter((p) => p.number && p.number.length > 4);
+
+  // /v1/search shape
+  const person = data.person ?? null;
+  if (person && Array.isArray(person.phones) && person.phones.length > 0) {
+    return person.phones.map((p) => ({
+      number:   p.displayInternational ?? (p.countryCode ? `+${p.countryCode}${p.number}` : p.number) ?? "",
+      whatsapp: !!(p.linkedWhatsapp ?? p.whatsapp?.isIn ?? false),
+    })).filter((p) => p.number && p.number.length > 4);
   }
-  if (typeof raw === "string" && raw.length > 4) return [{ number: raw, whatsapp: false }];
+
+  // /v2/full shape — phoneFull is a string or array
+  if (data.phoneFull) {
+    const pf = data.phoneFull;
+    if (typeof pf === "string" && pf.length > 4) return [{ number: pf, whatsapp: false }];
+    if (Array.isArray(pf)) return pf.filter(Boolean).map((n) => ({ number: String(n), whatsapp: false }));
+  }
+
   return [];
 }
 
-// ── Extract email from Datagma response ───────────────────────────────────────
+// ── Extract email ─────────────────────────────────────────────────────────────
 function extractEmail(data) {
   if (!data) return null;
-  const e = data.email ?? data.data?.email ?? data.workEmail ?? data.data?.workEmail ?? null;
-  if (!e || typeof e !== "string") return null;
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.trim()) ? e.trim().toLowerCase() : null;
+
+  // /v1/search shape: person.emails[].address
+  const person = data.person ?? null;
+  if (person && Array.isArray(person.emails) && person.emails.length > 0) {
+    const addr = person.emails[0].address ?? null;
+    if (addr && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(addr)) return addr.toLowerCase();
+  }
+
+  // /v2/full shape
+  const e = data.email ?? data.emailV2 ?? null;
+  if (e && typeof e === "string" && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.trim())) {
+    return e.trim().toLowerCase();
+  }
+
+  return null;
 }
 
 // ── Extract contact info ──────────────────────────────────────────────────────
 function extractContact(data) {
   if (!data) return {};
+
+  // /v1/search shape
+  const person = data.person ?? null;
+  if (person) {
+    const nameObj  = (person.names ?? [])[0] ?? null;
+    const fullName = nameObj
+      ? `${nameObj.first ?? ""} ${nameObj.last ?? ""}`.trim()
+      : null;
+    const jobs     = person.jobs ?? [];
+    const job      = jobs[0] ?? null;
+    const location = (person.addresses ?? [])[0]?.display ?? null;
+    const linkedin = (person.urls ?? []).find((u) => u.domain === "linkedin.com")?.url ?? null;
+    return {
+      fullName,
+      jobTitle:    job?.title    ?? null,
+      company:     job?.company  ?? null,
+      linkedinUrl: linkedin,
+      location,
+      photo:       (person.images ?? [])[0]?.url ?? null,
+    };
+  }
+
+  // /v2/full shape
   const d = data.data ?? data;
   return {
     fullName:    d.fullName    ?? d.name       ?? null,
-    jobTitle:    d.jobTitle    ?? d.title       ?? null,
-    company:     d.companyName ?? d.company     ?? d.currentCompany ?? null,
-    linkedinUrl: d.linkedinUrl ?? d.linkedin    ?? d.profileUrl ?? null,
-    location:    d.location    ?? d.country     ?? null,
-    photo:       d.photo       ?? d.profilePicture ?? d.profilePhoto ?? null,
+    jobTitle:    d.jobTitle    ?? d.title      ?? null,
+    company:     d.companyName ?? d.company    ?? null,
+    linkedinUrl: d.linkedinUrl ?? null,
+    location:    d.location    ?? null,
+    photo:       d.photo       ?? null,
   };
 }
 
