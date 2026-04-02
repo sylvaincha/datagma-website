@@ -1,7 +1,5 @@
 ---
-// DemoWidget — live Datagma phone/email finder demo
-// 4 search modes: LinkedIn URL | Name + Company | Name + Domain | Name + Email
-// Rate limited: 3 phones/IP/24h (masked) + 3 emails/IP/24h (full)
+// DemoWidget — live demo with two separate sections: Phone Finder & Email Finder
 ---
 
 <section class="py-20 relative overflow-hidden">
@@ -19,191 +17,265 @@
         Live demo — no account needed
       </div>
       <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-gray-900 mb-3 tracking-tight">
-        Try it yourself — find a direct mobile
+        Try it yourself — real data, right now
       </h2>
       <p class="text-gray-500 text-lg max-w-xl mx-auto">
-        3 phone searches included, no credit card. Phones shown partially masked — register to see full numbers.
+        Find direct mobiles or work emails. No credit card. Results in seconds.
       </p>
     </div>
 
     <div class="relative overflow-hidden rounded-3xl bg-white border border-gray-200/80 shadow-[0_20px_60px_rgba(37,99,235,.1),0_4px_20px_rgba(0,0,0,.06)]">
 
-      <!-- Decorative gradient -->
+      <!-- Top gradient bar -->
       <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-blue-500 via-sky-400 to-blue-600"></div>
 
       <div class="p-6 sm:p-8">
 
-        <!-- Mode tabs -->
-        <div class="flex flex-wrap gap-1.5 mb-6 bg-gray-50 rounded-2xl p-1.5">
-          {[
-            { id: "linkedin",    label: "LinkedIn URL",   icon: "fab fa-linkedin" },
-            { id: "nameCompany", label: "Name + Company", icon: "fas fa-building" },
-            { id: "nameDomain",  label: "Name + Domain",  icon: "fas fa-globe" },
-            { id: "emailOnly",   label: "Find Email",     icon: "fas fa-envelope" },
-          ].map((tab) => (
-            <button
-              class="demo-tab flex-1 min-w-[120px] flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-xs font-bold transition-all"
-              data-mode={tab.id}
-            >
-              <i class={`${tab.icon} text-[11px]`}></i>
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <!-- Form inputs -->
-        <form id="demo-form" class="space-y-3">
-
-          <!-- LinkedIn mode -->
-          <div class="demo-inputs" data-for="linkedin">
-            <input type="url" name="linkedin" placeholder="https://linkedin.com/in/firstname-lastname"
-              class="demo-input w-full px-4 py-3 rounded-xl border border-gray-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent bg-white placeholder-gray-400 transition-all" />
-          </div>
-
-          <!-- Name + Company mode -->
-          <div class="demo-inputs hidden" data-for="nameCompany">
-            <div class="grid sm:grid-cols-2 gap-3">
-              <input type="text" name="fullName" placeholder="Full name (e.g. John Smith)"
-                class="demo-input w-full px-4 py-3 rounded-xl border border-gray-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent bg-white placeholder-gray-400" />
-              <input type="text" name="companyName" placeholder="Company name (e.g. Stripe)"
-                class="demo-input w-full px-4 py-3 rounded-xl border border-gray-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent bg-white placeholder-gray-400" />
-            </div>
-          </div>
-
-          <!-- Name + Domain mode -->
-          <div class="demo-inputs hidden" data-for="nameDomain">
-            <div class="grid sm:grid-cols-2 gap-3">
-              <input type="text" name="fullName2" placeholder="Full name (e.g. John Smith)"
-                class="demo-input w-full px-4 py-3 rounded-xl border border-gray-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent bg-white placeholder-gray-400" />
-              <input type="text" name="domain" placeholder="Domain (e.g. stripe.com)"
-                class="demo-input w-full px-4 py-3 rounded-xl border border-gray-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent bg-white placeholder-gray-400" />
-            </div>
-          </div>
-
-          <!-- Email Only mode — name + domain to find email -->
-          <div class="demo-inputs hidden" data-for="emailOnly">
-            <div class="grid sm:grid-cols-2 gap-3">
-              <input type="text" name="fullName4" placeholder="Full name (e.g. John Smith)"
-                class="demo-input w-full px-4 py-3 rounded-xl border border-gray-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent bg-white placeholder-gray-400" />
-              <input type="text" name="domain2" placeholder="Domain (e.g. stripe.com)"
-                class="demo-input w-full px-4 py-3 rounded-xl border border-gray-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent bg-white placeholder-gray-400" />
-            </div>
-          </div>
-
-          <button id="demo-submit" type="submit"
-            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-md shadow-blue-200 flex items-center justify-center gap-2 text-sm">
-            <i class="fas fa-search text-xs"></i>
-            <span id="demo-btn-text">Search</span>
+        <!-- ── Main tabs: Phone / Email ───────────────────────────── -->
+        <div class="flex gap-2 mb-7 p-1 bg-gray-100 rounded-2xl">
+          <button id="main-tab-phone"
+            class="main-tab flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-bold transition-all"
+            data-panel="phone-panel">
+            <i class="fas fa-mobile-alt"></i>
+            Phone Finder
           </button>
-
-        </form>
-
-        <!-- Credits bar -->
-        <div id="demo-credits" class="mt-4 flex items-center justify-between text-[11px] text-gray-400 font-semibold">
-          <span id="credits-phones"><i class="fas fa-mobile-alt mr-1 text-blue-400"></i><span id="phones-remaining">3</span> phone searches left today</span>
-          <span id="credits-emails"><i class="fas fa-envelope mr-1 text-violet-400"></i><span id="emails-remaining">3</span> email searches left today</span>
+          <button id="main-tab-email"
+            class="main-tab flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-bold transition-all"
+            data-panel="email-panel">
+            <i class="fas fa-envelope"></i>
+            Email Finder
+          </button>
         </div>
 
-        <!-- Error message -->
-        <div id="demo-error" class="hidden mt-4 p-4 bg-red-50 border border-red-200 rounded-2xl text-sm text-red-700 font-medium flex items-center gap-2">
-          <i class="fas fa-exclamation-circle text-red-400"></i>
-          <span id="demo-error-msg">An error occurred. Please try again.</span>
-        </div>
+        <!-- ══════════════════════════════════════════════════════════
+             PHONE PANEL
+        ═══════════════════════════════════════════════════════════ -->
+        <div id="phone-panel" class="panel-content">
 
-        <!-- Results -->
-        <div id="demo-result" class="hidden mt-6">
-
-          <!-- Loading skeleton (shown while fetching) -->
-          <div id="demo-loading" class="hidden space-y-3 animate-pulse">
-            <div class="h-4 bg-gray-100 rounded-full w-1/2"></div>
-            <div class="h-3 bg-gray-100 rounded-full w-1/3"></div>
-            <div class="h-8 bg-gray-100 rounded-2xl w-full"></div>
+          <!-- Sub-tabs -->
+          <div class="flex flex-wrap gap-1.5 mb-5 bg-gray-50 rounded-xl p-1.5">
+            {[
+              { id: "linkedin",    label: "LinkedIn URL",   icon: "fab fa-linkedin" },
+              { id: "nameCompany", label: "Name + Company", icon: "fas fa-building" },
+              { id: "nameDomain",  label: "Name + Domain",  icon: "fas fa-globe"    },
+            ].map((tab) => (
+              <button
+                class="phone-subtab flex-1 min-w-[110px] flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition-all"
+                data-mode={tab.id}
+              >
+                <i class={`${tab.icon} text-[10px]`}></i>
+                {tab.label}
+              </button>
+            ))}
           </div>
 
-          <!-- Result card -->
-          <div id="demo-card" class="rounded-2xl border border-gray-200 bg-gray-50/50 overflow-hidden">
+          <form id="phone-form" class="space-y-3">
 
-            <!-- Contact header -->
-            <div class="flex items-center gap-4 p-5 bg-white border-b border-gray-100">
-              <div id="result-avatar" class="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-sky-600 flex items-center justify-center text-white font-extrabold text-sm shrink-0 shadow-sm">?</div>
-              <div class="min-w-0">
-                <div id="result-name" class="font-display font-bold text-gray-900 text-base leading-tight"></div>
-                <div id="result-role" class="text-gray-500 text-xs mt-0.5 truncate"></div>
+            <!-- LinkedIn -->
+            <div class="phone-inputs" data-for="linkedin">
+              <input type="url" name="linkedin"
+                placeholder="https://linkedin.com/in/firstname-lastname"
+                class="demo-input w-full px-4 py-3 rounded-xl border border-gray-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent bg-white placeholder-gray-400" />
+            </div>
+
+            <!-- Name + Company -->
+            <div class="phone-inputs hidden" data-for="nameCompany">
+              <div class="grid sm:grid-cols-2 gap-3">
+                <input type="text" name="fullNameC" placeholder="Full name (e.g. John Smith)"
+                  class="demo-input w-full px-4 py-3 rounded-xl border border-gray-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent bg-white placeholder-gray-400" />
+                <input type="text" name="companyName" placeholder="Company (e.g. Stripe)"
+                  class="demo-input w-full px-4 py-3 rounded-xl border border-gray-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent bg-white placeholder-gray-400" />
               </div>
-              <div class="ml-auto shrink-0">
-                <span class="text-[10px] font-extrabold text-green-700 bg-green-50 border border-green-200 px-2.5 py-1 rounded-full">
+            </div>
+
+            <!-- Name + Domain -->
+            <div class="phone-inputs hidden" data-for="nameDomain">
+              <div class="grid sm:grid-cols-2 gap-3">
+                <input type="text" name="fullNameD" placeholder="Full name (e.g. John Smith)"
+                  class="demo-input w-full px-4 py-3 rounded-xl border border-gray-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent bg-white placeholder-gray-400" />
+                <input type="text" name="domain" placeholder="Domain (e.g. stripe.com)"
+                  class="demo-input w-full px-4 py-3 rounded-xl border border-gray-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent bg-white placeholder-gray-400" />
+              </div>
+            </div>
+
+            <button id="phone-submit" type="submit"
+              class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-md shadow-blue-200 flex items-center justify-center gap-2 text-sm">
+              <i class="fas fa-mobile-alt text-xs"></i>
+              <span id="phone-btn-text">Find direct mobile</span>
+            </button>
+          </form>
+
+          <!-- Credits -->
+          <div class="mt-3 text-[11px] text-gray-400 font-semibold text-center">
+            <i class="fas fa-mobile-alt mr-1 text-blue-400"></i>
+            <span id="phones-remaining">3</span> phone searches left today
+            <span class="mx-2 text-gray-200">·</span>
+            Phones shown masked — register to see full numbers
+          </div>
+
+          <!-- Phone error -->
+          <div id="phone-error" class="hidden mt-4 p-4 bg-red-50 border border-red-200 rounded-2xl text-sm text-red-700 font-medium flex items-center gap-2">
+            <i class="fas fa-exclamation-circle text-red-400 shrink-0"></i>
+            <span id="phone-error-msg">An error occurred.</span>
+          </div>
+
+          <!-- Phone result -->
+          <div id="phone-result" class="hidden mt-5">
+            <div class="rounded-2xl border border-gray-200 bg-gray-50/50 overflow-hidden">
+
+              <!-- Contact header -->
+              <div class="flex items-center gap-4 p-5 bg-white border-b border-gray-100">
+                <div id="p-avatar" class="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-500 to-sky-600 flex items-center justify-center text-white font-extrabold text-sm shrink-0">?</div>
+                <div class="min-w-0">
+                  <div id="p-name" class="font-display font-bold text-gray-900 text-base leading-tight"></div>
+                  <div id="p-role" class="text-gray-500 text-xs mt-0.5 truncate"></div>
+                </div>
+                <span id="p-found-badge" class="ml-auto shrink-0 text-[10px] font-extrabold text-green-700 bg-green-50 border border-green-200 px-2.5 py-1 rounded-full hidden">
                   <i class="fas fa-check-circle mr-1"></i>Found
                 </span>
               </div>
-            </div>
 
-            <!-- Contact details -->
-            <div class="p-5 space-y-3">
+              <!-- Phone data -->
+              <div class="p-5 space-y-3">
 
-              <!-- Phone -->
-              <div id="phone-row" class="flex items-center gap-3">
-                <div class="w-9 h-9 bg-blue-50 rounded-xl flex items-center justify-center shrink-0">
-                  <i class="fas fa-mobile-alt text-blue-600 text-sm"></i>
+                <!-- Phone found -->
+                <div id="p-phone-row" class="hidden flex items-center gap-3">
+                  <div class="w-9 h-9 bg-blue-50 rounded-xl flex items-center justify-center shrink-0">
+                    <i class="fas fa-mobile-alt text-blue-600 text-sm"></i>
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Direct mobile</div>
+                    <div id="p-phone-value" class="font-display font-extrabold text-xl text-gray-900 tracking-wide font-mono"></div>
+                  </div>
+                  <div id="p-whatsapp" class="hidden shrink-0">
+                    <span class="inline-flex items-center gap-1 text-[10px] font-bold text-green-700 bg-green-50 border border-green-200 px-2 py-1 rounded-full">
+                      <i class="fab fa-whatsapp text-[11px]"></i>WhatsApp
+                    </span>
+                  </div>
                 </div>
-                <div class="min-w-0 flex-1">
-                  <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Direct mobile</div>
-                  <div id="phone-value" class="font-display font-extrabold text-xl text-gray-900 tracking-wide font-mono"></div>
-                </div>
-                <div id="whatsapp-badge" class="hidden shrink-0">
-                  <span class="inline-flex items-center gap-1 text-[10px] font-bold text-green-700 bg-green-50 border border-green-200 px-2 py-1 rounded-full">
-                    <i class="fab fa-whatsapp text-[11px]"></i>WhatsApp
-                  </span>
+
+                <!-- No phone -->
+                <div id="p-phone-none" class="hidden flex items-center gap-3 p-3 bg-gray-50 border border-gray-200 rounded-xl">
+                  <i class="fas fa-phone-slash text-gray-400 shrink-0"></i>
+                  <div class="text-xs text-gray-500">No direct mobile found. <a href="https://app.datagma.com/register" class="text-blue-600 font-bold hover:underline">Try in your account →</a></div>
                 </div>
               </div>
 
-              <!-- Phone limit reached -->
-              <div id="phone-limit" class="hidden flex items-center gap-3 p-4 bg-amber-50 border border-amber-200 rounded-xl">
-                <i class="fas fa-lock text-amber-500 shrink-0"></i>
-                <div class="min-w-0">
-                  <div class="text-sm font-bold text-gray-800">Phone limit reached for today</div>
-                  <div class="text-xs text-gray-500 mt-0.5">Create a free account to get more searches. 3 phones included every month.</div>
+              <!-- CTA footer -->
+              <div class="px-5 py-4 bg-blue-50/50 border-t border-blue-100 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div class="text-xs text-gray-500 font-semibold">
+                  <i class="fas fa-lock mr-1 text-blue-400"></i>Register free — 3 phones/month included
                 </div>
-                <a href="https://app.datagma.com/register" class="shrink-0 bg-blue-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg hover:bg-blue-700 transition-colors whitespace-nowrap">
-                  Register free
+                <a href="https://app.datagma.com/register"
+                  class="shrink-0 bg-blue-600 text-white font-bold px-5 py-2 rounded-xl text-xs hover:bg-blue-700 transition-colors shadow-md shadow-blue-200">
+                  Create free account →
                 </a>
               </div>
+            </div>
+          </div>
+        </div>
 
-              <!-- No phone found -->
-              <div id="phone-none" class="hidden flex items-center gap-3 p-3 bg-gray-50 border border-gray-200 rounded-xl">
-                <i class="fas fa-phone-slash text-gray-400 shrink-0 text-sm"></i>
-                <div class="text-xs text-gray-500">No direct mobile found for this contact. <a href="https://app.datagma.com/register" class="text-blue-600 font-bold hover:underline">Try another search →</a></div>
-              </div>
+        <!-- ══════════════════════════════════════════════════════════
+             EMAIL PANEL
+        ═══════════════════════════════════════════════════════════ -->
+        <div id="email-panel" class="panel-content hidden">
 
-              <!-- Email -->
-              <div id="email-row" class="flex items-center gap-3">
-                <div class="w-9 h-9 bg-violet-50 rounded-xl flex items-center justify-center shrink-0">
-                  <i class="fas fa-envelope text-violet-600 text-sm"></i>
-                </div>
-                <div class="min-w-0 flex-1">
-                  <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Professional email</div>
-                  <div id="email-value" class="font-mono text-sm text-gray-800 font-semibold truncate"></div>
-                </div>
-              </div>
+          <!-- One search mode: name + company OR domain -->
+          <div class="mb-5 p-4 bg-violet-50 border border-violet-100 rounded-xl text-xs text-violet-700 font-medium flex items-start gap-2">
+            <i class="fas fa-info-circle mt-0.5 shrink-0"></i>
+            <span>Enter a <strong>company name</strong> (e.g. Stripe) or a <strong>domain</strong> (e.g. stripe.com) — both work.</span>
+          </div>
 
-              <!-- Email limit reached -->
-              <div id="email-limit" class="hidden flex items-center gap-3 p-3 bg-gray-50 border border-gray-200 rounded-xl">
-                <i class="fas fa-envelope text-gray-300 shrink-0"></i>
-                <div class="text-xs text-gray-500">Email limit reached. <a href="https://app.datagma.com/register" class="text-blue-600 font-bold hover:underline">Register free to continue →</a></div>
-              </div>
-
+          <form id="email-form" class="space-y-3">
+            <div class="grid sm:grid-cols-2 gap-3">
+              <input type="text" name="emailFullName" placeholder="Full name (e.g. John Smith)"
+                class="demo-input w-full px-4 py-3 rounded-xl border border-gray-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent bg-white placeholder-gray-400" />
+              <input type="text" name="companyOrDomain" placeholder="Company or domain (e.g. stripe.com)"
+                class="demo-input w-full px-4 py-3 rounded-xl border border-gray-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent bg-white placeholder-gray-400" />
             </div>
 
-            <!-- CTA footer -->
-            <div class="px-5 py-4 bg-blue-50/50 border-t border-blue-100 flex flex-col sm:flex-row items-center justify-between gap-3">
-              <div class="text-xs text-gray-500 font-semibold">
-                <i class="fas fa-lock mr-1 text-blue-400"></i>Register free to see full numbers & get 3 phones/month
-              </div>
-              <a href="https://app.datagma.com/register"
-                class="shrink-0 bg-blue-600 text-white font-bold px-5 py-2 rounded-xl text-xs hover:bg-blue-700 transition-colors shadow-md shadow-blue-200">
-                Create free account →
-              </a>
-            </div>
+            <button id="email-submit" type="submit"
+              class="w-full bg-violet-600 hover:bg-violet-700 text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-md shadow-violet-200 flex items-center justify-center gap-2 text-sm">
+              <i class="fas fa-envelope text-xs"></i>
+              <span id="email-btn-text">Find work email</span>
+            </button>
+          </form>
 
+          <!-- Credits -->
+          <div class="mt-3 text-[11px] text-gray-400 font-semibold text-center">
+            <i class="fas fa-envelope mr-1 text-violet-400"></i>
+            <span id="emails-remaining">3</span> email searches left today
+            <span class="mx-2 text-gray-200">·</span>
+            Only verified emails are billed
+          </div>
+
+          <!-- Email error -->
+          <div id="email-error" class="hidden mt-4 p-4 bg-red-50 border border-red-200 rounded-2xl text-sm text-red-700 font-medium flex items-center gap-2">
+            <i class="fas fa-exclamation-circle text-red-400 shrink-0"></i>
+            <span id="email-error-msg">An error occurred.</span>
+          </div>
+
+          <!-- Email result -->
+          <div id="email-result" class="hidden mt-5">
+            <div class="rounded-2xl border border-gray-200 bg-gray-50/50 overflow-hidden">
+
+              <!-- Contact header -->
+              <div class="flex items-center gap-4 p-5 bg-white border-b border-gray-100">
+                <div id="e-avatar" class="w-11 h-11 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-extrabold text-sm shrink-0">?</div>
+                <div class="min-w-0">
+                  <div id="e-name" class="font-display font-bold text-gray-900 text-base leading-tight"></div>
+                  <div id="e-company" class="text-gray-500 text-xs mt-0.5"></div>
+                </div>
+              </div>
+
+              <!-- Email data -->
+              <div class="p-5 space-y-3">
+
+                <!-- Email found (verified) -->
+                <div id="e-email-verified" class="hidden flex items-center gap-3">
+                  <div class="w-9 h-9 bg-violet-50 rounded-xl flex items-center justify-center shrink-0">
+                    <i class="fas fa-envelope text-violet-600 text-sm"></i>
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <div class="flex items-center gap-2 mb-0.5">
+                      <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Work email</div>
+                      <span class="text-[9px] font-extrabold text-green-700 bg-green-50 border border-green-200 px-1.5 py-0.5 rounded-full">
+                        <i class="fas fa-check-circle mr-0.5"></i>Verified
+                      </span>
+                    </div>
+                    <div id="e-email-value" class="font-mono text-base font-bold text-gray-900 truncate"></div>
+                  </div>
+                </div>
+
+                <!-- Email probable (not verified, free) -->
+                <div id="e-email-probable" class="hidden flex items-start gap-3 p-3 bg-amber-50 border border-amber-200 rounded-xl">
+                  <i class="fas fa-exclamation-triangle text-amber-500 shrink-0 mt-0.5"></i>
+                  <div class="min-w-0">
+                    <div class="text-xs font-bold text-gray-800 mb-0.5">Most probable email (catchall domain — not verified)</div>
+                    <div id="e-probable-value" class="font-mono text-sm text-gray-700 truncate"></div>
+                    <div class="text-[10px] text-gray-400 mt-1">Not billed · Test with caution before sending</div>
+                  </div>
+                </div>
+
+                <!-- Not found -->
+                <div id="e-email-none" class="hidden flex items-center gap-3 p-3 bg-gray-50 border border-gray-200 rounded-xl">
+                  <i class="fas fa-envelope-open text-gray-300 shrink-0"></i>
+                  <div class="text-xs text-gray-500">No verified email found for this contact. <a href="https://app.datagma.com/register" class="text-blue-600 font-bold hover:underline">Try in your account →</a></div>
+                </div>
+
+              </div>
+
+              <!-- CTA footer -->
+              <div class="px-5 py-4 bg-violet-50/50 border-t border-violet-100 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div class="text-xs text-gray-500 font-semibold">
+                  <i class="fas fa-lock mr-1 text-violet-400"></i>Register free — 90 emails/month included
+                </div>
+                <a href="https://app.datagma.com/register"
+                  class="shrink-0 bg-violet-600 text-white font-bold px-5 py-2 rounded-xl text-xs hover:bg-violet-700 transition-colors shadow-md shadow-violet-200">
+                  Create free account →
+                </a>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -214,87 +286,13 @@
 
 <script>
 (function () {
-  var TOKEN_URL   = "/api/demo-token";
-  var ENRICH_URL  = "/api/demo-enrich";
-  var currentMode = "linkedin";
+  var TOKEN_URL  = "/api/demo-token";
+  var ENRICH_URL = "/api/demo-enrich";
+
   var cachedToken = null;
   var tokenExpiry = 0;
 
-  // ── DOM refs — all declared first ───────────────────────────────────────────
-  var tabs       = document.querySelectorAll(".demo-tab");
-  var inputGroups= document.querySelectorAll(".demo-inputs");
-  var form       = document.getElementById("demo-form");
-  var btnText    = document.getElementById("demo-btn-text");
-  var submitBtn  = document.getElementById("demo-submit");
-  var resultEl   = document.getElementById("demo-result");
-  var errorEl    = document.getElementById("demo-error");
-  var errorMsg   = document.getElementById("demo-error-msg");
-
-  if (!form) return; // safety guard
-
-  // ── UI helpers ──────────────────────────────────────────────────────────────
-  function hideError()  { if (errorEl)  errorEl.classList.add("hidden"); }
-  function hideResult() { if (resultEl) resultEl.classList.add("hidden"); }
-
-  function setLoading(on) {
-    if (!submitBtn || !btnText) return;
-    submitBtn.disabled = on;
-    if (btnText) btnText.textContent = on ? "Searching…" : (BTN_LABELS[currentMode] || "Search");
-    if (on) {
-      submitBtn.classList.add("opacity-60", "cursor-not-allowed");
-    } else {
-      submitBtn.classList.remove("opacity-60", "cursor-not-allowed");
-    }
-  }
-
-  function showError(msg) {
-    if (!errorEl || !errorMsg) return;
-    errorEl.classList.remove("hidden");
-    errorMsg.textContent = msg;
-    hideResult();
-  }
-
-  function updateCredits(credits) {
-    if (!credits) return;
-    var pr = document.getElementById("phones-remaining");
-    var er = document.getElementById("emails-remaining");
-    if (pr) pr.textContent = credits.phonesRemaining;
-    if (er) er.textContent = credits.emailsRemaining;
-  }
-
-  // ── Tab switching ───────────────────────────────────────────────────────────
-  var BTN_LABELS = {
-    linkedin:    "Find direct mobile",
-    nameCompany: "Find direct mobile",
-    nameDomain:  "Find direct mobile",
-    emailOnly:   "Find professional email",
-  };
-
-  function setActiveTab(mode) {
-    currentMode = mode;
-    tabs.forEach(function (t) {
-      var active = t.dataset.mode === mode;
-      t.classList.remove("bg-white", "text-blue-600", "shadow-sm", "text-gray-500", "hover:text-gray-700");
-      if (active) {
-        t.classList.add("bg-white", "text-blue-600", "shadow-sm");
-      } else {
-        t.classList.add("text-gray-500");
-      }
-    });
-    inputGroups.forEach(function (g) {
-      g.classList.toggle("hidden", g.dataset.for !== mode);
-    });
-    if (btnText) btnText.textContent = BTN_LABELS[mode] || "Search";
-    hideResult();
-    hideError();
-  }
-
-  tabs.forEach(function (t) {
-    t.addEventListener("click", function () { setActiveTab(t.dataset.mode); });
-  });
-  setActiveTab("linkedin");
-
-  // ── Token fetch ─────────────────────────────────────────────────────────────
+  // ── Token ───────────────────────────────────────────────────────────────────
   async function getToken() {
     if (cachedToken && Date.now() < tokenExpiry - 5000) return cachedToken;
     try {
@@ -304,143 +302,244 @@
       cachedToken = d.token;
       tokenExpiry = Date.now() + (d.expiresIn || 300) * 1000;
       return cachedToken;
-    } catch (_) {
-      return null;
-    }
+    } catch (_) { return null; }
   }
 
-  // ── Display result ──────────────────────────────────────────────────────────
-  function showResult(data) {
-    if (!data.found && !data.phone && !data.email) {
-      showError("No contact found. Try a different search or check the inputs.");
-      return;
-    }
+  // ── Helpers ─────────────────────────────────────────────────────────────────
+  function q(id) { return document.getElementById(id); }
+  function show(id) { var el = q(id); if (el) el.classList.remove("hidden"); }
+  function hide(id) { var el = q(id); if (el) el.classList.add("hidden"); }
+  function setText(id, txt) { var el = q(id); if (el) el.textContent = txt; }
 
-    if (resultEl) resultEl.classList.remove("hidden");
-    hideError();
-
-    var contact  = data.contact || {};
-    var name     = contact.fullName || "—";
-    var initials = name.split(" ").map(function (p) { return p[0] || ""; }).join("").slice(0, 2).toUpperCase() || "?";
-    var role     = [contact.jobTitle, contact.company].filter(Boolean).join(" · ");
-
-    var el;
-    el = document.getElementById("result-avatar"); if (el) el.textContent = initials;
-    el = document.getElementById("result-name");   if (el) el.textContent = name;
-    el = document.getElementById("result-role");   if (el) el.textContent = role;
-
-    // Phone
-    var phoneRow   = document.getElementById("phone-row");
-    var phoneLimit = document.getElementById("phone-limit");
-    var phoneNone  = document.getElementById("phone-none");
-    var phoneVal   = document.getElementById("phone-value");
-    var waBadge    = document.getElementById("whatsapp-badge");
-
-    if (phoneRow)   phoneRow.classList.add("hidden");
-    if (phoneLimit) phoneLimit.classList.add("hidden");
-    if (phoneNone)  phoneNone.classList.add("hidden");
-
-    if (data.phone && phoneRow && phoneVal) {
-      phoneRow.classList.remove("hidden");
-      phoneVal.textContent = data.phone.masked;
-      if (waBadge) waBadge.classList.toggle("hidden", !data.phone.whatsapp);
-    } else if (data.phoneLimitReached && phoneLimit) {
-      phoneLimit.classList.remove("hidden");
-    } else if (phoneNone) {
-      phoneNone.classList.remove("hidden");
-    }
-
-    // Email
-    var emailRow   = document.getElementById("email-row");
-    var emailLimit = document.getElementById("email-limit");
-    var emailVal   = document.getElementById("email-value");
-
-    if (emailRow)   emailRow.classList.add("hidden");
-    if (emailLimit) emailLimit.classList.add("hidden");
-
-    if (data.email && emailRow && emailVal) {
-      emailRow.classList.remove("hidden");
-      emailVal.textContent = data.email;
-    } else if (data.emailLimitReached && emailLimit) {
-      emailLimit.classList.remove("hidden");
-    }
-
-    updateCredits(data.credits);
-  }
-
-  // ── Form submit ─────────────────────────────────────────────────────────────
-  form.addEventListener("submit", async function (e) {
-    e.preventDefault();
-    hideError();
-    setLoading(true);
-
-    var token = await getToken();
-    if (!token) {
-      showError("Could not initialize demo. Please refresh the page.");
-      setLoading(false);
-      return;
-    }
-
-    var params = new URLSearchParams({ t: token, mode: currentMode });
-
-    if (currentMode === "linkedin") {
-      var li = (form.querySelector("[name=linkedin]") || {}).value || "";
-      li = li.trim();
-      if (!li) { showError("Please enter a LinkedIn URL."); setLoading(false); return; }
-      params.set("linkedin", li);
-    } else if (currentMode === "nameCompany") {
-      var fn = ((form.querySelector("[name=fullName]") || {}).value || "").trim();
-      var cn = ((form.querySelector("[name=companyName]") || {}).value || "").trim();
-      if (!fn || !cn) { showError("Please enter both full name and company name."); setLoading(false); return; }
-      params.set("fullName", fn);
-      params.set("companyName", cn);
-    } else if (currentMode === "nameDomain") {
-      var fn2 = ((form.querySelector("[name=fullName2]") || {}).value || "").trim();
-      var dom = ((form.querySelector("[name=domain]") || {}).value || "").trim();
-      if (!fn2 || !dom) { showError("Please enter both full name and domain."); setLoading(false); return; }
-      params.set("fullName", fn2);
-      params.set("domain", dom);
-    } else if (currentMode === "emailOnly") {
-      var fn4 = ((form.querySelector("[name=fullName4]") || {}).value || "").trim();
-      var dom2 = ((form.querySelector("[name=domain2]") || {}).value || "").trim();
-      if (!fn4 || !dom2) { showError("Please enter both full name and domain."); setLoading(false); return; }
-      params.set("fullName", fn4);
-      params.set("domain", dom2);
-    }
-
-    try {
-      var resp = await fetch(ENRICH_URL + "?" + params.toString());
-      var json = await resp.json();
-
-      if (resp.status === 429) {
-        showError("Daily search limit reached. Create a free account to continue.");
-      } else if (resp.status === 402) {
-        showError("Demo credits exhausted for today. Try again tomorrow or create a free account.");
-      } else if (resp.status === 401) {
-        cachedToken = null;
-        showError("Session expired. Please try again.");
-      } else if (resp.status === 404 || (json && json.found === false && !json.contact?.fullName)) {
-        showResult({ found: false, phone: null, email: null, contact: json?.contact || {} });
-      } else if (!resp.ok) {
-        showError(json && json.error === "api_unreachable"
-          ? "Datagma API is temporarily unavailable."
-          : "Search failed. Please try again.");
-      } else {
-        showResult(json);
-      }
-    } catch (_) {
-      showError("Network error. Please check your connection and try again.");
-    }
-
-    setLoading(false);
+  // ── Main tab switching ───────────────────────────────────────────────────────
+  var mainTabs = document.querySelectorAll(".main-tab");
+  mainTabs.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var panelId = btn.dataset.panel;
+      mainTabs.forEach(function (b) {
+        var active = b.dataset.panel === panelId;
+        b.classList.remove("bg-white", "text-blue-600", "shadow-sm", "text-gray-500", "text-violet-600");
+        if (active) {
+          b.classList.add("bg-white", "shadow-sm");
+          b.classList.add(panelId === "phone-panel" ? "text-blue-600" : "text-violet-600");
+        } else {
+          b.classList.add("text-gray-500");
+        }
+      });
+      document.querySelectorAll(".panel-content").forEach(function (p) {
+        p.classList.toggle("hidden", p.id !== panelId);
+      });
+      // Reset results
+      hide("phone-result"); hide("phone-error");
+      hide("email-result"); hide("email-error");
+    });
   });
+  // Init active state
+  (function () {
+    var phoneTab = q("main-tab-phone");
+    if (phoneTab) { phoneTab.classList.add("bg-white", "text-blue-600", "shadow-sm"); }
+    var emailTab = q("main-tab-email");
+    if (emailTab) { emailTab.classList.add("text-gray-500"); }
+  })();
 
-  // Prefetch token silently
+  // ── Phone sub-tab switching ──────────────────────────────────────────────────
+  var phoneMode = "linkedin";
+  var phoneSubtabs = document.querySelectorAll(".phone-subtab");
+  var phoneInputGroups = document.querySelectorAll(".phone-inputs");
+
+  function setPhoneSubtab(mode) {
+    phoneMode = mode;
+    phoneSubtabs.forEach(function (t) {
+      var active = t.dataset.mode === mode;
+      t.classList.remove("bg-white", "text-blue-600", "shadow-sm", "text-gray-500");
+      if (active) { t.classList.add("bg-white", "text-blue-600", "shadow-sm"); }
+      else { t.classList.add("text-gray-500"); }
+    });
+    phoneInputGroups.forEach(function (g) {
+      g.classList.toggle("hidden", g.dataset.for !== mode);
+    });
+    hide("phone-result"); hide("phone-error");
+  }
+  phoneSubtabs.forEach(function (t) {
+    t.addEventListener("click", function () { setPhoneSubtab(t.dataset.mode); });
+  });
+  setPhoneSubtab("linkedin");
+
+  // ── Loading state helpers ────────────────────────────────────────────────────
+  function setPhoneLoading(on) {
+    var btn = q("phone-submit"); var txt = q("phone-btn-text");
+    if (!btn || !txt) return;
+    btn.disabled = on;
+    txt.textContent = on ? "Searching…" : "Find direct mobile";
+    if (on) { btn.classList.add("opacity-60", "cursor-not-allowed"); }
+    else    { btn.classList.remove("opacity-60", "cursor-not-allowed"); }
+  }
+  function setEmailLoading(on) {
+    var btn = q("email-submit"); var txt = q("email-btn-text");
+    if (!btn || !txt) return;
+    btn.disabled = on;
+    txt.textContent = on ? "Searching…" : "Find work email";
+    if (on) { btn.classList.add("opacity-60", "cursor-not-allowed"); }
+    else    { btn.classList.remove("opacity-60", "cursor-not-allowed"); }
+  }
+
+  // ── Phone form ───────────────────────────────────────────────────────────────
+  var phoneForm = q("phone-form");
+  if (phoneForm) {
+    phoneForm.addEventListener("submit", async function (e) {
+      e.preventDefault();
+      hide("phone-error"); hide("phone-result");
+      setPhoneLoading(true);
+
+      var token = await getToken();
+      if (!token) {
+        show("phone-error"); setText("phone-error-msg", "Could not initialize demo. Please refresh.");
+        setPhoneLoading(false); return;
+      }
+
+      var params = new URLSearchParams({ t: token, mode: phoneMode });
+
+      if (phoneMode === "linkedin") {
+        var li = ((phoneForm.querySelector("[name=linkedin]") || {}).value || "").trim();
+        if (!li) { show("phone-error"); setText("phone-error-msg", "Please enter a LinkedIn URL."); setPhoneLoading(false); return; }
+        params.set("linkedin", li);
+      } else if (phoneMode === "nameCompany") {
+        var fn = ((phoneForm.querySelector("[name=fullNameC]") || {}).value || "").trim();
+        var cn = ((phoneForm.querySelector("[name=companyName]") || {}).value || "").trim();
+        if (!fn || !cn) { show("phone-error"); setText("phone-error-msg", "Please enter both full name and company."); setPhoneLoading(false); return; }
+        params.set("fullName", fn); params.set("companyName", cn);
+      } else if (phoneMode === "nameDomain") {
+        var fn2 = ((phoneForm.querySelector("[name=fullNameD]") || {}).value || "").trim();
+        var dom = ((phoneForm.querySelector("[name=domain]") || {}).value || "").trim();
+        if (!fn2 || !dom) { show("phone-error"); setText("phone-error-msg", "Please enter both full name and domain."); setPhoneLoading(false); return; }
+        params.set("fullName", fn2); params.set("domain", dom);
+      }
+
+      try {
+        var resp = await fetch(ENRICH_URL + "?" + params.toString());
+        var json = await resp.json();
+
+        if (resp.status === 429 || resp.status === 402) {
+          show("phone-error"); setText("phone-error-msg", "Daily search limit reached. Create a free account to continue.");
+        } else if (resp.status === 401) {
+          cachedToken = null; show("phone-error"); setText("phone-error-msg", "Session expired. Please try again.");
+        } else if (!resp.ok) {
+          show("phone-error"); setText("phone-error-msg", "Search failed. Please try again.");
+        } else {
+          renderPhoneResult(json);
+        }
+      } catch (_) {
+        show("phone-error"); setText("phone-error-msg", "Network error. Please check your connection.");
+      }
+      setPhoneLoading(false);
+    });
+  }
+
+  function renderPhoneResult(data) {
+    var contact = data.contact || {};
+    var name = contact.fullName || "—";
+    var initials = name.split(" ").map(function(p){return(p[0]||"");}).join("").slice(0,2).toUpperCase() || "?";
+    var role = [contact.jobTitle, contact.company].filter(Boolean).join(" · ");
+
+    setText("p-avatar", initials);
+    setText("p-name", name);
+    setText("p-role", role);
+
+    if (data.credits && data.credits.phonesRemaining !== undefined) {
+      setText("phones-remaining", data.credits.phonesRemaining);
+    }
+
+    hide("p-phone-row"); hide("p-phone-none"); hide("p-found-badge"); hide("p-whatsapp");
+
+    if (data.phone) {
+      show("p-found-badge"); show("p-phone-row");
+      setText("p-phone-value", data.phone.masked);
+      if (data.phone.whatsapp) show("p-whatsapp");
+    } else {
+      show("p-phone-none");
+    }
+
+    show("phone-result");
+  }
+
+  // ── Email form ───────────────────────────────────────────────────────────────
+  var emailForm = q("email-form");
+  if (emailForm) {
+    emailForm.addEventListener("submit", async function (e) {
+      e.preventDefault();
+      hide("email-error"); hide("email-result");
+      setEmailLoading(true);
+
+      var token = await getToken();
+      if (!token) {
+        show("email-error"); setText("email-error-msg", "Could not initialize demo. Please refresh.");
+        setEmailLoading(false); return;
+      }
+
+      var fn = ((emailForm.querySelector("[name=emailFullName]") || {}).value || "").trim();
+      var co = ((emailForm.querySelector("[name=companyOrDomain]") || {}).value || "").trim();
+
+      if (!fn || !co) {
+        show("email-error"); setText("email-error-msg", "Please enter both full name and company or domain.");
+        setEmailLoading(false); return;
+      }
+
+      var params = new URLSearchParams({ t: token, mode: "findEmail", fullName: fn, companyName: co });
+
+      try {
+        var resp = await fetch(ENRICH_URL + "?" + params.toString());
+        var json = await resp.json();
+
+        if (resp.status === 429 || resp.status === 402) {
+          show("email-error"); setText("email-error-msg", "Daily search limit reached. Create a free account to continue.");
+        } else if (resp.status === 401) {
+          cachedToken = null; show("email-error"); setText("email-error-msg", "Session expired. Please try again.");
+        } else if (!resp.ok) {
+          show("email-error"); setText("email-error-msg", "Search failed. Please try again.");
+        } else {
+          renderEmailResult(json);
+        }
+      } catch (_) {
+        show("email-error"); setText("email-error-msg", "Network error. Please check your connection.");
+      }
+      setEmailLoading(false);
+    });
+  }
+
+  function renderEmailResult(data) {
+    var contact = data.contact || {};
+    var name = contact.fullName || "—";
+    var initials = name.split(" ").map(function(p){return(p[0]||"");}).join("").slice(0,2).toUpperCase() || "?";
+
+    setText("e-avatar", initials);
+    setText("e-name", name);
+    setText("e-company", contact.company || "");
+
+    if (data.credits && data.credits.emailsRemaining !== undefined) {
+      setText("emails-remaining", data.credits.emailsRemaining);
+    }
+
+    hide("e-email-verified"); hide("e-email-probable"); hide("e-email-none");
+
+    if (data.emailStatus === "verified" && data.email) {
+      show("e-email-verified");
+      setText("e-email-value", data.email);
+    } else if (data.emailStatus === "probable" && data.email) {
+      show("e-email-probable");
+      setText("e-probable-value", data.email);
+    } else {
+      show("e-email-none");
+    }
+
+    show("email-result");
+  }
+
+  // Prefetch token
   getToken();
 })();
 </script>
 
 <style>
-.demo-tab { cursor: pointer; }
-#phone-value { letter-spacing: 0.05em; }
+.phone-subtab, .main-tab { cursor: pointer; }
+#p-phone-value { letter-spacing: 0.05em; }
 </style>

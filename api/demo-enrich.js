@@ -1,27 +1,27 @@
 /**
  * GET /api/demo-enrich?t=TOKEN&mode=...
  *
- * v2 — 5 modes:
- *   linkedin    → /v1/search by LinkedIn URL      (phone + email, ~30 credits)
- *   nameCompany → /v2/full name+company           (phone + email, ~31 credits)
- *   nameDomain  → /v2/full name+domain            (phone + email, ~31 credits)
- *   nameEmail   → /v1/search by email+name        (phone + email, ~30 credits)
- *   emailOnly   → /v2/full name+domain, email only (email only,   ~1 credit)
+ * Phone modes  → /v1/search (linkedin) or /v2/full (name+company/domain)
+ * Email mode   → /v6/findEmail (name + company OR domain passed as "company")
  *
- * Security: HMAC token + Origin check + per-IP rate limits
+ * Rate limits (configurable via env):
+ *   DEMO_PHONE_LIMIT (default 100) phones/IP/24h
+ *   DEMO_EMAIL_LIMIT (default 100) emails/IP/24h
  */
 
 import { createHmac } from "node:crypto";
 
 const DATAGMA_SEARCH = "https://gateway.datagma.net/api/ingress/v1/search";
 const DATAGMA_FULL   = "https://gateway.datagma.net/api/ingress/v2/full";
+const DATAGMA_EMAIL  = "https://gateway.datagma.net/api/ingress/v6/findEmail";
+
 const ALLOWED_ORIGINS = [
   "https://datagma.com",
   "https://www.datagma.com",
   "https://datagma.vercel.app",
 ];
 
-// ── HMAC token verification ───────────────────────────────────────────────────
+// ── HMAC token ────────────────────────────────────────────────────────────────
 function verifyToken(token, secret) {
   if (!token || !secret) return false;
   const now = Math.floor(Date.now() / 300_000);
@@ -54,10 +54,6 @@ function consumeCredit(map, ip, max, windowMs = 86_400_000) {
 function clean(raw, max = 100) {
   return String(raw ?? "").trim().replace(/[<>"'&]/g, "").slice(0, max);
 }
-function cleanEmail(raw) {
-  const s = clean(raw, 150).toLowerCase();
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s) ? s : "";
-}
 function cleanLinkedin(raw) {
   const s = clean(raw, 300);
   return /linkedin\.com\//i.test(s) ? s : "";
@@ -69,7 +65,7 @@ function cleanDomain(raw) {
   return /[\s@/?#]/.test(s) ? "" : s.toLowerCase();
 }
 
-// ── Phone masking (+33 6 65 40 90 47 → +33 6 65 ••••47) ─────────────────────
+// ── Phone masking (+33 6 65 40 90 47 → +33665•••47) ──────────────────────────
 function maskPhone(phone) {
   const s = String(phone).replace(/[\s\-\.()\u00a0]/g, "");
   if (s.length < 6) return s;
@@ -88,8 +84,7 @@ async function callAPI(baseUrl, params, apiKey) {
     for (const [k, v] of Object.entries(params)) {
       if (v !== undefined && v !== null && v !== "") url.searchParams.set(k, String(v));
     }
-    const finalUrl = url.toString();
-    const r    = await fetch(finalUrl, {
+    const r    = await fetch(url.toString(), {
       headers: { accept: "application/json" },
       signal:  AbortSignal.timeout(25_000),
     });
@@ -101,22 +96,20 @@ async function callAPI(baseUrl, params, apiKey) {
 }
 function safeJson(text) { try { return JSON.parse(text); } catch { return null; } }
 
-// ── Detect Datagma API-level errors ──────────────────────────────────────────
+// ── Detect Datagma API errors ─────────────────────────────────────────────────
 function apiError(data) {
   if (!data || typeof data !== "object") return null;
   if (data.code === 13 || data.message === "can't get credit") return "no_credits";
-  if (data.code === 5  && data.message === "Not found") return "not_found";
+  if (data.code === 5) return "not_found";
   if (data.code === 3) return "bad_request";
   return null;
 }
 
-// ── Extract phones ────────────────────────────────────────────────────────────
-// /v1/search:  data.person.phones[].{ displayInternational, linkedWhatsapp, whatsapp.isIn }
-// /v2/full:    data.phoneFull.phones[].{ displayInternational, linkedWhatsapp }
+// ── Extract phones ─────────────────────────────────────────────────────────────
+// /v1/search  → data.person.phones[].{ displayInternational, linkedWhatsapp, whatsapp.isIn }
+// /v2/full    → data.phoneFull.phones[].{ displayInternational, linkedWhatsapp }
 function extractPhones(data) {
   if (!data) return [];
-
-  // /v1/search shape
   const searchPerson = data.person;
   if (searchPerson && Array.isArray(searchPerson.phones) && searchPerson.phones.length > 0) {
     return searchPerson.phones.map((p) => ({
@@ -124,8 +117,6 @@ function extractPhones(data) {
       whatsapp: !!(p.linkedWhatsapp ?? p.whatsapp?.isIn ?? false),
     })).filter((p) => p.number && p.number.length > 4);
   }
-
-  // /v2/full shape — phoneFull is an OBJECT { phones: [...], emails: [...] }
   const pf = data.phoneFull;
   if (pf && typeof pf === "object" && Array.isArray(pf.phones)) {
     return pf.phones.map((p) => ({
@@ -133,47 +124,36 @@ function extractPhones(data) {
       whatsapp: !!(p.linkedWhatsapp ?? false),
     })).filter((p) => p.number && p.number.length > 4);
   }
-
   return [];
 }
 
-// ── Extract email ─────────────────────────────────────────────────────────────
-// /v1/search:  data.person.emails[].address
-// /v2/full:    data.email  OR  data.emailV2  OR  data.person.basic.legacyEmail
-function extractEmail(data) {
+// ── Extract email from phone-finder API responses ─────────────────────────────
+// /v1/search → data.person.emails[].address
+// /v2/full   → data.email or data.emailV2 or data.person.basic.legacyEmail
+function extractPhoneApiEmail(data) {
   if (!data) return null;
   const isValid = (s) => typeof s === "string" && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.trim());
-
-  // /v1/search shape
   const searchPerson = data.person;
   if (searchPerson && Array.isArray(searchPerson.emails)) {
     for (const e of searchPerson.emails) {
       if (isValid(e.address)) return e.address.trim().toLowerCase();
     }
   }
-
-  // /v2/full top-level fields
   for (const field of [data.email, data.emailV2]) {
     if (isValid(field)) return field.trim().toLowerCase();
   }
-
-  // /v2/full person.basic.legacyEmail
   const basic = data.person?.basic ?? null;
   if (basic && isValid(basic.legacyEmail)) return basic.legacyEmail.trim().toLowerCase();
-
   return null;
 }
 
-// ── Extract contact info ──────────────────────────────────────────────────────
-// /v1/search:  data.person.{ names[], jobs[], addresses[], urls[], images[] }
-// /v2/full:    data.person.basic.{ name, firstName, lastName, linkedInUrl, ... }
+// ── Extract contact info ───────────────────────────────────────────────────────
+// /v2/full   → data.person.basic.{ name, linkedInUrl, city, region, country }
+// /v1/search → data.person.{ names[], jobs[], addresses[], urls[] }
 function extractContact(data) {
   if (!data) return {};
-
   const person = data.person ?? null;
   if (!person) return {};
-
-  // /v2/full shape has person.basic
   if (person.basic) {
     const b = person.basic;
     return {
@@ -185,14 +165,11 @@ function extractContact(data) {
       photo:       null,
     };
   }
-
-  // /v1/search shape
   const nameObj  = (person.names ?? [])[0] ?? null;
   const fullName = nameObj ? `${nameObj.first ?? ""} ${nameObj.last ?? ""}`.trim() : null;
   const job      = (person.jobs ?? [])[0] ?? null;
   const location = (person.addresses ?? [])[0]?.display ?? null;
   const linkedin = (person.urls ?? []).find((u) => u.domain === "linkedin.com")?.url ?? null;
-
   return {
     fullName,
     jobTitle:    job?.title   ?? null,
@@ -203,7 +180,7 @@ function extractContact(data) {
   };
 }
 
-// ── Main handler ──────────────────────────────────────────────────────────────
+// ── Main handler ───────────────────────────────────────────────────────────────
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Cache-Control", "no-store");
@@ -229,112 +206,149 @@ export default async function handler(req, res) {
   const ip   = (req.headers["x-forwarded-for"] ?? "unknown").split(",")[0].trim();
   const mode = clean(req.query?.mode ?? "linkedin", 20);
 
-  const linkedin    = cleanLinkedin(req.query?.linkedin    ?? "");
-  const email       = cleanEmail(   req.query?.email       ?? "");
-  const fullName    = clean(        req.query?.fullName    ?? "");
-  const domain      = cleanDomain(  req.query?.domain      ?? "");
-  const companyName = clean(        req.query?.companyName ?? "");
-
-  const valid =
-    (mode === "linkedin"    && linkedin) ||
-    (mode === "nameEmail"   && fullName && email) ||
-    (mode === "nameDomain"  && fullName && domain) ||
-    (mode === "nameCompany" && fullName && companyName) ||
-    (mode === "emailOnly"   && fullName && (domain || companyName));
-
-  if (!valid) return res.status(400).json({ error: "missing_inputs", mode });
-
-  // Rate limits — generous during testing, tighten for prod
   const PHONE_LIMIT = process.env.DEMO_PHONE_LIMIT ? parseInt(process.env.DEMO_PHONE_LIMIT) : 100;
   const EMAIL_LIMIT = process.env.DEMO_EMAIL_LIMIT ? parseInt(process.env.DEMO_EMAIL_LIMIT) : 100;
 
   const phoneLimits = checkLimit(phoneRateMap, ip, PHONE_LIMIT);
   const emailLimits = checkLimit(emailRateMap, ip, EMAIL_LIMIT);
 
-  const wantPhone = mode !== "emailOnly" && !phoneLimits.exceeded;
+  // Read inputs
+  const linkedin    = cleanLinkedin(req.query?.linkedin    ?? "");
+  const fullName    = clean(        req.query?.fullName    ?? "");
+  const domain      = cleanDomain(  req.query?.domain      ?? "");
+  const companyName = clean(        req.query?.companyName ?? "");
+  // For email finder: "company" accepts both a company name or a domain
+  const companyOrDomain = companyName || domain;
 
-  // ── Call Datagma ────────────────────────────────────────────────────────────
-  let apiData = null;
+  // Validate
+  const valid =
+    (mode === "linkedin"   && linkedin) ||
+    (mode === "nameDomain" && fullName && domain) ||
+    (mode === "nameCompany"&& fullName && companyName) ||
+    (mode === "findEmail"  && fullName && companyOrDomain);
 
-  try {
-    if (mode === "linkedin") {
-      const r = await callAPI(DATAGMA_SEARCH, {
-        username: linkedin, minimumMatch: 1, whatsappCheck: true,
-      }, apiKey);
-      if (r.status === 0) return res.status(503).json({ error: "api_unreachable" });
-      apiData = r.data;
+  if (!valid) return res.status(400).json({ error: "missing_inputs", mode });
 
-    } else if (mode === "nameEmail") {
-      const r = await callAPI(DATAGMA_SEARCH, {
-        email, fullName, minimumMatch: 1, whatsappCheck: true,
-      }, apiKey);
-      if (r.status === 0) return res.status(503).json({ error: "api_unreachable" });
-      apiData = r.data;
+  // ── PHONE MODES ─────────────────────────────────────────────────────────────
+  if (mode === "linkedin" || mode === "nameDomain" || mode === "nameCompany") {
 
-    } else if (mode === "nameDomain" || mode === "emailOnly") {
-      const params = { fullName, domain, data: "EMAIL" };
-      if (wantPhone) params.phoneFull = true;
-      const r = await callAPI(DATAGMA_FULL, params, apiKey);
-      if (r.status === 0) return res.status(503).json({ error: "api_unreachable" });
-      apiData = r.data;
-
-    } else if (mode === "nameCompany") {
-      const params = { fullName, companyName, data: "EMAIL" };
-      if (wantPhone) params.phoneFull = true;
-      const r = await callAPI(DATAGMA_FULL, params, apiKey);
-      if (r.status === 0) return res.status(503).json({ error: "api_unreachable" });
-      apiData = r.data;
+    if (phoneLimits.exceeded) {
+      return res.status(429).json({
+        error: "rate_limited",
+        credits: { phonesRemaining: 0, resetsAt: phoneLimits.resetAt },
+      });
     }
-  } catch {
-    return res.status(502).json({ error: "upstream_error" });
+
+    let apiData = null;
+    try {
+      if (mode === "linkedin") {
+        const r = await callAPI(DATAGMA_SEARCH, {
+          username: linkedin, minimumMatch: 1, whatsappCheck: true,
+        }, apiKey);
+        if (r.status === 0) return res.status(503).json({ error: "api_unreachable" });
+        apiData = r.data;
+      } else if (mode === "nameDomain") {
+        const r = await callAPI(DATAGMA_FULL, {
+          fullName, domain, data: "EMAIL", phoneFull: true,
+        }, apiKey);
+        if (r.status === 0) return res.status(503).json({ error: "api_unreachable" });
+        apiData = r.data;
+      } else if (mode === "nameCompany") {
+        const r = await callAPI(DATAGMA_FULL, {
+          fullName, companyName, data: "EMAIL", phoneFull: true,
+        }, apiKey);
+        if (r.status === 0) return res.status(503).json({ error: "api_unreachable" });
+        apiData = r.data;
+      }
+    } catch {
+      return res.status(502).json({ error: "upstream_error" });
+    }
+
+    if (!apiData) return res.status(404).json({ error: "not_found" });
+    const err = apiError(apiData);
+    if (err === "no_credits") return res.status(402).json({ error: "no_credits" });
+    if (err === "not_found")  return res.status(404).json({ error: "not_found" });
+
+    const phones  = extractPhones(apiData);
+    const contact = extractContact(apiData);
+    const hasPhone = phones.length > 0;
+
+    let phoneResult = null;
+    if (hasPhone) {
+      consumeCredit(phoneRateMap, ip, PHONE_LIMIT);
+      phoneResult = {
+        masked:   maskPhone(phones[0].number),
+        whatsapp: phones[0].whatsapp,
+        count:    phones.length,
+      };
+    }
+
+    const phoneLimitsAfter = checkLimit(phoneRateMap, ip, PHONE_LIMIT);
+
+    return res.status(200).json({
+      contact,
+      phone:   phoneResult,
+      credits: { phonesRemaining: phoneLimitsAfter.remaining, resetsAt: phoneLimitsAfter.resetAt },
+      found:   hasPhone || !!(contact.fullName),
+    });
   }
 
-  if (!apiData) return res.status(404).json({ error: "not_found" });
+  // ── EMAIL MODE (/v6/findEmail) ───────────────────────────────────────────────
+  if (mode === "findEmail") {
 
-  // Handle Datagma API-level errors
-  const datagmaErr = apiError(apiData);
-  if (datagmaErr === "no_credits") return res.status(402).json({ error: "no_credits" });
-  if (datagmaErr === "not_found")  return res.status(404).json({ error: "not_found" });
+    if (emailLimits.exceeded) {
+      return res.status(429).json({
+        error: "rate_limited",
+        credits: { emailsRemaining: 0, resetsAt: emailLimits.resetAt },
+      });
+    }
 
-  // Extract
-  const phones   = extractPhones(apiData);
-  const rawEmail = extractEmail(apiData);
-  const contact  = extractContact(apiData);
+    let apiData = null;
+    try {
+      const r = await callAPI(DATAGMA_EMAIL, {
+        fullName,
+        company:              companyOrDomain,
+        findEmailV2Step:      3,
+        findEmailV2Country:   "General",
+      }, apiKey);
+      if (r.status === 0) return res.status(503).json({ error: "api_unreachable" });
+      apiData = r.data;
+    } catch {
+      return res.status(502).json({ error: "upstream_error" });
+    }
 
-  const hasPhone = phones.length > 0;
-  const hasEmail = !!rawEmail;
+    if (!apiData) return res.status(404).json({ error: "not_found" });
+    const err = apiError(apiData);
+    if (err === "no_credits") return res.status(402).json({ error: "no_credits" });
 
-  let phoneResult = null;
-  let emailResult = null;
+    // /v6/findEmail response shape
+    const status        = apiData.status ?? "NotFound";  // "Valid" | "MostProbable" | "NotFound"
+    const verifiedEmail = status === "Valid"        ? (apiData.email ?? null) : null;
+    const probableEmail = status === "MostProbable" ? ((apiData.mostProbableEmail ?? [])[0] ?? null) : null;
+    const foundEmail    = verifiedEmail || probableEmail;
 
-  if (hasPhone && !phoneLimits.exceeded) {
-    consumeCredit(phoneRateMap, ip, PHONE_LIMIT);
-    phoneResult = {
-      masked:   maskPhone(phones[0].number),
-      whatsapp: phones[0].whatsapp,
-      count:    phones.length,
-    };
+    if (!foundEmail && status === "NotFound") {
+      return res.status(200).json({
+        found: false,
+        contact: { fullName, company: companyOrDomain },
+        email: null, emailStatus: "not_found",
+        credits: { emailsRemaining: emailLimits.remaining, resetsAt: emailLimits.resetAt },
+      });
+    }
+
+    // Only consume credit for verified emails (Datagma doesn't bill for probable)
+    if (verifiedEmail) consumeCredit(emailRateMap, ip, EMAIL_LIMIT);
+
+    const emailLimitsAfter = checkLimit(emailRateMap, ip, EMAIL_LIMIT);
+
+    return res.status(200).json({
+      found:       true,
+      contact:     { fullName, company: companyOrDomain },
+      email:       foundEmail,
+      emailStatus: verifiedEmail ? "verified" : "probable",
+      credits:     { emailsRemaining: emailLimitsAfter.remaining, resetsAt: emailLimitsAfter.resetAt },
+    });
   }
 
-  if (hasEmail && !emailLimits.exceeded) {
-    consumeCredit(emailRateMap, ip, EMAIL_LIMIT);
-    emailResult = rawEmail;
-  }
-
-  const phoneLimitsAfter = checkLimit(phoneRateMap, ip, PHONE_LIMIT);
-  const emailLimitsAfter = checkLimit(emailRateMap, ip, EMAIL_LIMIT);
-
-  return res.status(200).json({
-    contact,
-    phone:             phoneResult,
-    email:             emailResult,
-    phoneLimitReached: hasPhone && phoneLimits.exceeded,
-    emailLimitReached: hasEmail && emailLimits.exceeded,
-    credits: {
-      phonesRemaining: phoneLimitsAfter.remaining,
-      emailsRemaining: emailLimitsAfter.remaining,
-      resetsAt:        phoneLimitsAfter.resetAt,
-    },
-    found: hasPhone || hasEmail || !!(contact.fullName),
-  });
+  return res.status(400).json({ error: "unknown_mode", mode });
 }
