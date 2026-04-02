@@ -57,14 +57,14 @@ const TURNSTILE_SITE_KEY = (import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "1x0000
         <div id="phone-panel" class="panel-content">
 
           <!-- Sub-tabs -->
-          <div class="flex flex-wrap gap-1.5 mb-5 bg-gray-50 rounded-xl p-1.5">
+          <div class="grid grid-cols-3 gap-1.5 mb-5 bg-gray-50 rounded-xl p-1.5">
             {[
               { id: "linkedin",    label: "LinkedIn URL",   icon: "fab fa-linkedin" },
               { id: "nameCompany", label: "Name + Company", icon: "fas fa-building" },
               { id: "nameDomain",  label: "Name + Domain",  icon: "fas fa-globe"    },
             ].map((tab) => (
               <button
-                class="phone-subtab flex-1 min-w-[110px] flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition-all"
+                class="phone-subtab flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg text-xs font-bold transition-all text-center leading-tight"
                 data-mode={tab.id}
               >
                 <i class={`${tab.icon} text-[10px]`}></i>

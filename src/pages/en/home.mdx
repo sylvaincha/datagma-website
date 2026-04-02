@@ -74,12 +74,12 @@ import DemoWidget from '../../components/DemoWidget.astro';
         </p>
 
         {/* Key differentiator — visible to all personas early */}
-        <div class="flex flex-wrap gap-2 mb-5">
+        <div class="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 mb-5">
           {[
-            { icon: "fas fa-user", text: "Search by name + country" },
-            { icon: "fab fa-linkedin", text: "LinkedIn URL optional" },
-            { icon: "fas fa-mobile-alt", text: "Real mobiles only, no switchboard" },
-            { icon: "fab fa-whatsapp", text: "WhatsApp detection included" },
+            { icon: "fas fa-user",       text: "Name + country" },
+            { icon: "fab fa-linkedin",   text: "No LinkedIn needed" },
+            { icon: "fas fa-mobile-alt", text: "Direct mobiles only" },
+            { icon: "fab fa-whatsapp",   text: "WhatsApp detection" },
           ].map((tag) => (
             <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-700 bg-white border border-gray-200 px-3 py-1.5 rounded-full shadow-soft-sm">
               <i class={`${tag.icon} text-blue-500 text-[10px]`}></i>
@@ -365,8 +365,8 @@ import DemoWidget from '../../components/DemoWidget.astro';
         </div>
 
         {/* Cost comparison grid — cross-persona */}
-        <div class="grid md:grid-cols-3 gap-5 mb-10">
-          <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-red-100">
+        <div class="grid md:grid-cols-3 gap-5 mb-10 items-stretch">
+          <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-red-100 flex flex-col">
             <div class="w-12 h-12 bg-red-50 rounded-2xl flex items-center justify-center mb-4">
               <i class="fas fa-phone-slash text-red-500 text-xl"></i>
             </div>
@@ -379,7 +379,7 @@ import DemoWidget from '../../components/DemoWidget.astro';
             </div>
           </div>
 
-          <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-orange-100">
+          <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-orange-100 flex flex-col">
             <div class="w-12 h-12 bg-orange-50 rounded-2xl flex items-center justify-center mb-4">
               <i class="fas fa-coins text-orange-500 text-xl"></i>
             </div>
@@ -392,7 +392,7 @@ import DemoWidget from '../../components/DemoWidget.astro';
             </div>
           </div>
 
-          <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-blue-200 ring-2 ring-blue-400/30">
+          <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-blue-200 ring-2 ring-blue-400/30 flex flex-col justify-center">
             <div class="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center mb-4">
               <i class="fas fa-mobile-alt text-white text-xl"></i>
             </div>
@@ -523,7 +523,7 @@ import DemoWidget from '../../components/DemoWidget.astro';
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
 
       {/* Phone Finder — featured */}
-      <div class="sm:col-span-2 lg:col-span-2 bento-card p-7 relative overflow-hidden">
+      <div class="sm:col-span-2 lg:col-span-2 bento-card p-7 relative overflow-hidden flex flex-col">
         <div class="absolute top-0 right-0 w-72 h-72 bg-blue-50 rounded-full blur-3xl opacity-70 -translate-y-1/2 translate-x-1/2"></div>
         <div class="relative z-10">
           <div class="flex items-start justify-between mb-5">
@@ -549,7 +549,7 @@ import DemoWidget from '../../components/DemoWidget.astro';
       </div>
 
       {/* Email Finder */}
-      <div class="bento-card p-6 relative overflow-hidden">
+      <div class="bento-card p-6 relative overflow-hidden flex flex-col">
         <div class="absolute top-0 right-0 w-32 h-32 bg-violet-50 rounded-full blur-2xl opacity-80 -translate-y-1/2 translate-x-1/2"></div>
         <div class="relative z-10">
           <div class="w-11 h-11 bg-violet-100 rounded-2xl flex items-center justify-center mb-4">
@@ -712,7 +712,7 @@ import DemoWidget from '../../components/DemoWidget.astro';
       </p>
     </div>
 
-    <div class="grid sm:grid-cols-3 gap-5 mb-8">
+    <div class="grid sm:grid-cols-3 gap-5 mb-8 pt-5">
       {[
         {
           name: "Regular",
@@ -745,7 +745,7 @@ import DemoWidget from '../../components/DemoWidget.astro';
           featured: false,
         },
       ].map((plan) => (
-        <div class={`bento-card p-6 relative ${plan.featured ? 'ring-2 ring-blue-600 shadow-soft-xl' : ''}`}>
+        <div class={`bento-card p-6 relative flex flex-col ${plan.featured ? 'ring-2 ring-blue-600 shadow-soft-xl overflow-visible' : ''}`}>
           {plan.featured && (
             <div class="absolute -top-3.5 left-1/2 -translate-x-1/2">
               <span class="bg-blue-600 text-white text-xs font-extrabold px-4 py-1.5 rounded-full shadow-md shadow-blue-200">Most popular</span>
