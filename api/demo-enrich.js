@@ -1,7 +1,7 @@
 /**
  * GET /api/demo-enrich?t=TOKEN&mode=...
  *
- * 5 modes:
+ * v2 — 5 modes:
  *   linkedin    → /v1/search by LinkedIn URL      (phone + email, ~30 credits)
  *   nameCompany → /v2/full name+company           (phone + email, ~31 credits)
  *   nameDomain  → /v2/full name+domain            (phone + email, ~31 credits)
