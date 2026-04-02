@@ -289,7 +289,7 @@ export default async function handler(req, res) {
 
   // Handle Datagma API-level errors
   const datagmaErr = apiError(apiData);
-  if (datagmaErr === "no_credits") return res.status(402).json({ error: "no_credits", _raw: apiData });
+  if (datagmaErr === "no_credits") return res.status(402).json({ error: "no_credits" });
   if (datagmaErr === "not_found")  return res.status(404).json({ error: "not_found" });
 
   // Extract
