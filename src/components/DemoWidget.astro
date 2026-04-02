@@ -279,8 +279,10 @@ const TURNSTILE_SITE_KEY = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "1x00000
 
       </div>
 
-      <!-- Turnstile invisible container — shared by both forms -->
-      <div id="cf-turnstile-container" class="hidden"></div>
+      <!-- Turnstile container — fixed off-screen, NOT display:none (CF requires DOM visibility) -->
+      <div id="cf-turnstile-container"
+        style="position:fixed;top:-200px;left:-200px;width:300px;height:65px;overflow:hidden;opacity:0;pointer-events:none;"
+        aria-hidden="true"></div>
 
     </div>
   </div>
@@ -330,17 +332,18 @@ const TURNSTILE_SITE_KEY = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "1x00000
     var siteKey = script.dataset.sitekey || "1x00000000000000000000AA";
 
     cfWidgetId = window.turnstile.render(container, {
-      sitekey:           siteKey,
-      size:              "invisible",   // zero UI friction
-      theme:             "light",
+      sitekey: siteKey,
+      theme:   "light",
+      // No size:"invisible" — use Managed mode as configured in CF dashboard.
+      // execute() is called explicitly below so the challenge runs immediately.
+      execution: "execute",
       callback: function (token) {
-        cfToken  = token;
-        cfReady  = true;
+        cfToken = token;
+        cfReady = true;
       },
       "expired-callback": function () {
         cfToken = null;
         cfReady = false;
-        // Auto-refresh
         if (cfWidgetId !== null) window.turnstile.reset(cfWidgetId);
       },
       "error-callback": function () {
@@ -348,6 +351,9 @@ const TURNSTILE_SITE_KEY = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "1x00000
         cfReady = false;
       },
     });
+
+    // Trigger the challenge immediately after render
+    if (cfWidgetId !== null) window.turnstile.execute(cfWidgetId);
   }
 
   // Turnstile calls window.onTurnstileLoad when the JS is ready (we set onload param)
@@ -360,15 +366,23 @@ const TURNSTILE_SITE_KEY = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "1x00000
     }
   })();
 
-  // ── Get Turnstile token — waits up to 8s if not ready yet ───────────────
+  // ── Get Turnstile token — waits up to 10s, re-triggers execute() if needed ──
   function getCfToken() {
     return new Promise(function (resolve) {
       if (cfToken) { resolve(cfToken); return; }
+      // Re-trigger the challenge in case it hasn't fired yet
+      if (cfWidgetId !== null && typeof window.turnstile !== "undefined") {
+        try { window.turnstile.execute(cfWidgetId); } catch (_) {}
+      }
       var waited = 0;
       var iv = setInterval(function () {
         waited += 200;
-        if (cfToken) { clearInterval(iv); resolve(cfToken); }
-        else if (waited >= 8000) { clearInterval(iv); resolve(null); } // timeout → let server decide
+        if (cfToken) {
+          clearInterval(iv); resolve(cfToken);
+        } else if (waited >= 10000) {
+          clearInterval(iv);
+          resolve(null); // timeout after 10s — server will block; user sees friendly error
+        }
       }, 200);
     });
   }
@@ -514,7 +528,7 @@ const TURNSTILE_SITE_KEY = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "1x00000
         var json = await resp.json();
 
         if (resp.status === 403 && json && json.error === "bot_detected") {
-          show("phone-error"); setText("phone-error-msg", "Bot protection triggered. Please try again in a moment.");
+          show("phone-error"); setText("phone-error-msg", "Security check failed. Please wait a moment and try again.");
         } else if (resp.status === 429 || resp.status === 402) {
           show("phone-error"); setText("phone-error-msg", "Daily search limit reached. Create a free account to continue.");
         } else if (resp.status === 401) {
@@ -591,7 +605,7 @@ const TURNSTILE_SITE_KEY = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "1x00000
         var json = await resp.json();
 
         if (resp.status === 403 && json && json.error === "bot_detected") {
-          show("email-error"); setText("email-error-msg", "Bot protection triggered. Please try again in a moment.");
+          show("email-error"); setText("email-error-msg", "Security check failed. Please wait a moment and try again.");
         } else if (resp.status === 429 || resp.status === 402) {
           show("email-error"); setText("email-error-msg", "Daily search limit reached. Create a free account to continue.");
         } else if (resp.status === 401) {
