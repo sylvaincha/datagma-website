@@ -302,6 +302,12 @@ export default async function handler(req, res) {
     return res.status(404).json({ error: "not_found" });
   }
 
+  // TEMP DEBUG — remove after diagnosis
+  const isDev = process.env.VERCEL_ENV !== "production";
+  if (isDev) {
+    return res.status(200).json({ _debug: true, apiData, apiKey: apiKey ? apiKey.slice(0,4) + "…" : "MISSING" });
+  }
+
   // Extract data
   const phones  = extractPhones(apiData);
   const rawEmail = extractEmail(apiData);
