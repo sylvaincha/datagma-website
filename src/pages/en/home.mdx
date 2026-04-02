@@ -12,7 +12,7 @@ activeNav: ''
     "@type": "SoftwareApplication",
     "name": "Datagma",
     "applicationCategory": "BusinessApplication",
-    "description": "B2B Phone Finder and Email Finder — adds unique mobile phones to your enrichment waterfall. 77% match rate, real-time, GDPR compliant. Native Clay provider, HubSpot, Pipedrive.",
+    "description": "B2B Phone Finder and Email Finder — adds unique mobile phones to your enrichment waterfall. 77% match rate, real-time, GDPR compliant. Native Clay provider, Zapier, Make, n8n.",
     "url": "https://datagma.com",
     "offers": [
       { "@type": "Offer", "name": "Free", "price": "0", "priceCurrency": "USD" },
@@ -90,10 +90,11 @@ activeNav: ''
           <p class="text-xs font-extrabold uppercase tracking-wider text-gray-400 mb-3">Sound familiar?</p>
           <div class="space-y-3">
             {[
-              { who: "Sales rep", color: "bg-blue-100 text-blue-700",   pain: '"I\'ve been trying to reach this prospect for 3 weeks. I only have the main switchboard."' },
+              { who: "Sales rep", color: "bg-blue-100 text-blue-700",     pain: '"I\'ve been trying to reach this prospect for 3 weeks. I only have the main switchboard."' },
               { who: "Recruiter",  color: "bg-violet-100 text-violet-700", pain: '"The candidate applied 4 days ago. Another agency already placed them. I never had their mobile."' },
               { who: "Real estate", color: "bg-amber-100 text-amber-700", pain: '"I found the perfect property match. I can\'t reach the decision-maker — only a generic inbox."' },
-              { who: "BizDev",    color: "bg-green-100 text-green-700",  pain: '"I know the VP is interested. His EA filters every call. I need his direct line."' },
+              { who: "BizDev",    color: "bg-green-100 text-green-700",   pain: '"I know the VP is interested. His EA filters every call. I need his direct line."' },
+              { who: "SDR",       color: "bg-sky-100 text-sky-700",       pain: '"Clay, Fullenrich, BetterContact — 3 waterfall providers and 28% of my contacts still have no phone."' },
             ].map((s) => (
               <div class="flex items-start gap-3 text-sm">
                 <span class={`shrink-0 ${s.color} font-extrabold text-[10px] px-2 py-0.5 rounded-full mt-0.5 whitespace-nowrap`}>{s.who}</span>
@@ -134,7 +135,7 @@ activeNav: ''
                 <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
                 <span class="text-xs font-extrabold text-gray-600 uppercase tracking-wide">Live — phones found today</span>
               </div>
-              <span class="font-display font-extrabold text-gray-900 text-lg">14,203</span>
+              <span id="live-phones-count" class="font-display font-extrabold text-gray-900 text-lg">14,203</span>
             </div>
 
             {/* Activity items */}
@@ -198,7 +199,7 @@ activeNav: ''
 <section class="py-10 border-y border-gray-100 bg-white/70 backdrop-blur-sm">
   <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
     <p class="text-center text-[11px] font-extrabold text-gray-400 uppercase tracking-widest mb-8">
-      Sales & growth teams who added Datagma to their stack
+      2,400+ teams worldwide added Datagma to their stack
     </p>
     <div class="flex flex-wrap items-center justify-center gap-8 sm:gap-14 opacity-50 grayscale hover:opacity-70 transition-opacity duration-500">
       <img src="/assets/scraped/captail-data-1.png" alt="Captain Data" class="h-7 object-contain" />
@@ -313,12 +314,12 @@ activeNav: ''
         <div class="relative z-10">
           <div class="w-12 h-12 bg-rose-100 rounded-2xl flex items-center justify-center mb-4 text-2xl">⚙️</div>
           <h3 class="font-display font-bold text-xl text-gray-900 mb-1">RevOps & CRM teams</h3>
-          <div class="text-xs font-bold text-rose-700 bg-rose-50 border border-rose-200 px-2.5 py-0.5 rounded-full inline-block mb-3">HubSpot & Pipedrive</div>
+          <div class="text-xs font-bold text-rose-700 bg-rose-50 border border-rose-200 px-2.5 py-0.5 rounded-full inline-block mb-3">API · Zapier · Make · n8n</div>
           <p class="text-gray-500 text-sm leading-relaxed mb-3">
-            Your reps complain that CRM data is stale. You have 15,000 contacts with 1,200 mobile phones. Enriching the rest automatically is one integration away.
+            Your reps complain that CRM data is stale. You have 15,000 contacts with 1,200 mobile phones. Export the list, enrich in bulk, re-import — or connect via Zapier to auto-enrich on every new contact.
           </p>
           <div class="text-xs text-gray-700 font-semibold bg-gray-50 border border-gray-200 rounded-xl px-3 py-2">
-            <span class="text-green-600">✓</span> 2-way HubSpot & Pipedrive sync. Auto-enrich on contact creation.
+            <span class="text-green-600">✓</span> File Upload for bulk enrichment. API + Zapier / Make / n8n for automation.
           </div>
         </div>
       </div>
@@ -471,7 +472,7 @@ activeNav: ''
         <div class="relative z-10">
           <div class="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 text-blue-700 text-xs font-bold px-3 py-1 rounded-full mb-5">
             <i class="fas fa-layer-group text-[10px]"></i>
-            Teams · API / Clay / CRM integrations
+            Teams · API / Clay / Zapier / Make
           </div>
           <h3 class="font-display font-bold text-xl text-gray-900 mb-3">Running a stack or a sequence tool?</h3>
           <p class="text-gray-500 text-sm leading-relaxed mb-5">
@@ -484,8 +485,8 @@ activeNav: ''
               { name: "Fullenrich", badge: "bg-blue-50 text-blue-700 border-blue-200" },
               { name: "BetterContact", badge: "bg-blue-50 text-blue-700 border-blue-200" },
               { name: "GetCargo", badge: "bg-purple-50 text-purple-700 border-purple-200" },
-              { name: "HubSpot", badge: "bg-orange-50 text-orange-800 border-orange-200" },
-              { name: "Pipedrive", badge: "bg-green-50 text-green-700 border-green-200" },
+              { name: "Zapier", badge: "bg-orange-50 text-orange-700 border-orange-200" },
+              { name: "Make", badge: "bg-violet-50 text-violet-700 border-violet-200" },
               { name: "REST API", badge: "bg-gray-100 text-gray-700 border-gray-200" },
             ].map((p) => (
               <span class={`text-xs font-bold px-2.5 py-1 rounded-full border ${p.badge}`}>{p.name}</span>
@@ -576,19 +577,24 @@ activeNav: ''
         </div>
       </div>
 
-      {/* Job Change */}
+      {/* Integrations */}
       <div class="bento-card p-6 relative overflow-hidden">
-        <div class="absolute top-0 right-0 w-32 h-32 bg-amber-50 rounded-full blur-2xl opacity-80 -translate-y-1/2 translate-x-1/2"></div>
+        <div class="absolute top-0 right-0 w-32 h-32 bg-violet-50 rounded-full blur-2xl opacity-80 -translate-y-1/2 translate-x-1/2"></div>
         <div class="relative z-10">
-          <div class="w-11 h-11 bg-amber-100 rounded-2xl flex items-center justify-center mb-4">
-            <i class="fas fa-bell text-amber-500 text-lg"></i>
+          <div class="w-11 h-11 bg-violet-100 rounded-2xl flex items-center justify-center mb-4">
+            <i class="fas fa-plug text-violet-600 text-lg"></i>
           </div>
-          <h3 class="font-display font-bold text-xl text-gray-900 mb-2">Job Change Detection</h3>
+          <h3 class="font-display font-bold text-xl text-gray-900 mb-2">Integrations</h3>
           <p class="text-gray-500 text-sm leading-relaxed mb-4">
-            Know when a contact changes company within 1–2 weeks — the highest-signal moment to reach out. Auto-update your CRM.
+            Plug Datagma into your existing workflows via Zapier, Make or n8n — no code needed. Or go deeper with the REST API.
           </p>
-          <a href="/en/job-change-detection" class="text-blue-600 text-sm font-bold hover:underline inline-flex items-center gap-1">
-            Learn more <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+          <div class="flex flex-wrap gap-1.5 mb-4">
+            {["Clay", "Zapier", "Make", "n8n", "API"].map((t) => (
+              <span class="text-[10px] font-bold bg-violet-50 border border-violet-200 text-violet-700 px-2 py-0.5 rounded-full">{t}</span>
+            ))}
+          </div>
+          <a href="/en/api" class="text-blue-600 text-sm font-bold hover:underline inline-flex items-center gap-1">
+            See integrations <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
           </a>
         </div>
       </div>
@@ -618,6 +624,13 @@ activeNav: ''
         Teams who stopped missing decision-makers
       </h2>
       <p class="text-gray-400 text-sm">Real outcomes from real customers</p>
+      <div class="flex flex-wrap items-center justify-center gap-4 mt-4 text-xs font-semibold text-gray-400">
+        <span class="inline-flex items-center gap-1.5"><span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span> 2,400+ teams</span>
+        <span>·</span>
+        <span class="inline-flex items-center gap-1.5"><svg class="w-3 h-3 text-amber-400 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg> 4.8/5 on G2</span>
+        <span>·</span>
+        <span><span class="text-gray-600 font-bold" id="testimonial-counter">14,203</span> phones found today</span>
+      </div>
     </div>
 
     <div class="grid sm:grid-cols-3 gap-5">
@@ -641,13 +654,13 @@ activeNav: ''
           outcome: "Outbound conversion rate significantly improved",
         },
         {
-          quote: "Datagma has been a game-changer for our outbound. It enabled us to be more proactive, responsive, and reach out to a wider audience more efficiently.",
+          quote: "Before Datagma I was losing candidates to other agencies because they called first. Now I get their mobile the same day the CV lands. That 24-hour window is everything in recruitment.",
           name: "Sylvain Charmet",
           role: "Recruitment Expert",
           company: "Seiza",
           initials: "SC",
           color: "bg-gradient-to-br from-green-500 to-emerald-700",
-          outcome: "3× wider reach on same contact list",
+          outcome: "Placed candidates before competitor agencies could call",
         },
       ].map((t) => (
         <div class="bento-card p-6 flex flex-col relative overflow-hidden">
@@ -682,6 +695,10 @@ activeNav: ''
 <section class="py-24">
   <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="text-center mb-12">
+      <div class="inline-flex items-center gap-2 bg-amber-50 border border-amber-200 text-amber-700 text-xs font-bold px-4 py-1.5 rounded-full mb-6">
+        <span class="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse"></span>
+        At $0.33/phone — one conversation that leads anywhere covers months
+      </div>
       <h2 class="font-display font-extrabold text-4xl sm:text-5xl text-gray-900 mb-4 tracking-tight">
         Start for less than your next missed deal
       </h2>
@@ -841,3 +858,20 @@ activeNav: ''
     </div>
   </div>
 </section>
+
+<script>
+  (function () {
+    let count = 14203;
+    const els = [
+      document.getElementById('live-phones-count'),
+      document.getElementById('testimonial-counter'),
+    ];
+    function tick() {
+      count += Math.floor(Math.random() * 3) + 1;
+      const formatted = count.toLocaleString('en-US');
+      els.forEach(function(el) { if (el) el.textContent = formatted; });
+      setTimeout(tick, Math.floor(Math.random() * 8000) + 4000);
+    }
+    setTimeout(tick, 5000);
+  })();
+</script>

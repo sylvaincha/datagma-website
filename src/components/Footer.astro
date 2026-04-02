@@ -7,71 +7,71 @@ const copy = {
   en: {
     product: "Product", company: "Company", legal: "Legal",
     emailFinder: "Email Finder", phoneFinder: "Phone Finder",
-    jobChange: "Job Change Detection", chromeExt: "Chrome Extension",
+    chromeExt: "Chrome Extension", fileUpload: "File Upload",
     api: "API", pricing: "Pricing", blog: "Blog",
     about: "About", contact: "Contact", trust: "Trust Center",
     privacy: "Privacy Policy", terms: "Terms", dpa: "DPA",
-    tagline: "Real-time B2B data enrichment — emails, phones, job changes.",
+    tagline: "Real-time B2B data enrichment — verified emails and direct mobiles.",
     rights: "All rights reserved.",
   },
   fr: {
     product: "Produit", company: "Entreprise", legal: "Légal",
     emailFinder: "Recherche d'email", phoneFinder: "Recherche de téléphone",
-    jobChange: "Changement de poste", chromeExt: "Extension Chrome",
+    chromeExt: "Extension Chrome", fileUpload: "Upload de fichier",
     api: "API", pricing: "Tarifs", blog: "Blog",
     about: "À propos", contact: "Contact", trust: "Centre de confiance",
     privacy: "Politique de confidentialité", terms: "CGU", dpa: "DPA",
-    tagline: "Enrichissement de données B2B en temps réel — emails, téléphones, changements de poste.",
+    tagline: "Enrichissement de données B2B en temps réel — emails vérifiés et mobiles directs.",
     rights: "Tous droits réservés.",
   },
   de: {
     product: "Produkt", company: "Unternehmen", legal: "Rechtliches",
     emailFinder: "E-Mail-Finder", phoneFinder: "Telefonnummer-Finder",
-    jobChange: "Jobwechsel-Erkennung", chromeExt: "Chrome-Erweiterung",
+    chromeExt: "Chrome-Erweiterung", fileUpload: "Datei-Upload",
     api: "API", pricing: "Preise", blog: "Blog",
     about: "Über uns", contact: "Kontakt", trust: "Trust Center",
     privacy: "Datenschutz", terms: "AGB", dpa: "DPA",
-    tagline: "Echtzeit-B2B-Datenanreicherung — E-Mails, Telefone, Jobwechsel.",
+    tagline: "Echtzeit-B2B-Datenanreicherung — verifizierte E-Mails und direkte Mobilnummern.",
     rights: "Alle Rechte vorbehalten.",
   },
   nl: {
     product: "Product", company: "Bedrijf", legal: "Juridisch",
     emailFinder: "E-mailfinder", phoneFinder: "Telefoonfinder",
-    jobChange: "Functiewisseldetectie", chromeExt: "Chrome-extensie",
+    chromeExt: "Chrome-extensie", fileUpload: "Bestand uploaden",
     api: "API", pricing: "Prijzen", blog: "Blog",
     about: "Over ons", contact: "Contact", trust: "Trust Center",
     privacy: "Privacybeleid", terms: "Voorwaarden", dpa: "DPA",
-    tagline: "Realtime B2B-data-enrichment — e-mails, telefoons, functiewissels.",
+    tagline: "Realtime B2B-data-enrichment — geverifieerde e-mails en directe mobiele nummers.",
     rights: "Alle rechten voorbehouden.",
   },
   it: {
     product: "Prodotto", company: "Azienda", legal: "Legale",
     emailFinder: "Ricerca email", phoneFinder: "Ricerca telefono",
-    jobChange: "Cambio lavoro", chromeExt: "Estensione Chrome",
+    chromeExt: "Estensione Chrome", fileUpload: "Upload file",
     api: "API", pricing: "Prezzi", blog: "Blog",
     about: "Chi siamo", contact: "Contatto", trust: "Trust Center",
     privacy: "Privacy", terms: "Termini", dpa: "DPA",
-    tagline: "Enrichment dati B2B in tempo reale — email, telefoni, cambi di lavoro.",
+    tagline: "Enrichment dati B2B in tempo reale — email verificate e cellulari diretti.",
     rights: "Tutti i diritti riservati.",
   },
   es: {
     product: "Producto", company: "Empresa", legal: "Legal",
     emailFinder: "Buscador de email", phoneFinder: "Buscador de teléfono",
-    jobChange: "Detección de cambio de trabajo", chromeExt: "Extensión Chrome",
+    chromeExt: "Extensión Chrome", fileUpload: "Subida de archivos",
     api: "API", pricing: "Precios", blog: "Blog",
     about: "Sobre nosotros", contact: "Contacto", trust: "Centro de confianza",
     privacy: "Privacidad", terms: "Términos", dpa: "DPA",
-    tagline: "Enriquecimiento de datos B2B en tiempo real — emails, teléfonos, cambios de trabajo.",
+    tagline: "Enriquecimiento de datos B2B en tiempo real — emails verificados y móviles directos.",
     rights: "Todos los derechos reservados.",
   },
   pt: {
     product: "Produto", company: "Empresa", legal: "Legal",
     emailFinder: "Pesquisa de email", phoneFinder: "Pesquisa de telefone",
-    jobChange: "Mudança de emprego", chromeExt: "Extensão Chrome",
+    chromeExt: "Extensão Chrome", fileUpload: "Upload de ficheiro",
     api: "API", pricing: "Preços", blog: "Blog",
     about: "Sobre nós", contact: "Contacto", trust: "Centro de confiança",
     privacy: "Privacidade", terms: "Termos", dpa: "DPA",
-    tagline: "Enriquecimento de dados B2B em tempo real — emails, telefones, mudanças de emprego.",
+    tagline: "Enriquecimento de dados B2B em tempo real — emails verificados e telemóveis diretos.",
     rights: "Todos os direitos reservados.",
   },
 };
@@ -110,8 +110,8 @@ const year = new Date().getFullYear();
         <ul class="space-y-2 text-sm">
           <li><a href={`${p}/email-finder`} class="hover:text-white transition-colors">{t.emailFinder}</a></li>
           <li><a href={`${p}/phone-finder`} class="hover:text-white transition-colors">{t.phoneFinder}</a></li>
-          <li><a href={`${p}/job-change-detection`} class="hover:text-white transition-colors">{t.jobChange}</a></li>
           <li><a href={`${p}/chrome-extension`} class="hover:text-white transition-colors">{t.chromeExt}</a></li>
+          <li><a href={`${p}/file-upload`} class="hover:text-white transition-colors">{t.fileUpload}</a></li>
           <li><a href={`${p}/api`} class="hover:text-white transition-colors">{t.api}</a></li>
           <li><a href={`${p}/pricing`} class="hover:text-white transition-colors">{t.pricing}</a></li>
         </ul>

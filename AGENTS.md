@@ -23,15 +23,13 @@ Le site est construit avec la même stack technique qu'Enrich-CRM (`/Users/sylva
 | **Email Finder** | Trouve des emails pro vérifiés à partir d'un nom + entreprise ou URL LinkedIn |
 | **Phone Finder** | Trouve des numéros directs (mobiles et fixes) |
 | **Job Change Detection** | Alerte quand un contact change d'entreprise ou de poste (dans les 1-2 semaines) |
-| **CRM Enrichment** | Enrichit HubSpot et Pipedrive avec données fraîches |
+| **Bulk Enrichment** | Upload CSV → enrichissement en masse → téléchargement des résultats |
 | **API** | API REST pour enrichir en masse ou à la volée |
 | **Chrome Extension** | Extension pour prospecter directement depuis LinkedIn |
 | **File Upload** | Upload CSV pour enrichir en bulk |
 
 ### Intégrations
-- **HubSpot** (native, 2-way enrichment)
-- **Pipedrive** (native, 2-way enrichment)
-- **Zapier / Make / n8n** (via HTTP)
+- **Zapier / Make / n8n** (via HTTP / webhooks)
 - **Clay** (provider natif)
 - **API REST** (tous plans payants)
 - **WhatsApp** (sur tous les plans payants)
@@ -69,8 +67,6 @@ Le site est construit avec la même stack technique qu'Enrich-CRM (`/Users/sylva
 /{lang}/job-change-detection → Job Change Detection
 /{lang}/chrome-extension    → Extension Chrome
 /{lang}/api                 → Documentation API
-/{lang}/hubspot             → Intégration HubSpot
-/{lang}/pipedrive           → Intégration Pipedrive
 /{lang}/zapier              → Intégration Zapier/Make/n8n
 /{lang}/how-it-works        → Comment ça marche
 /{lang}/data-coverage       → Couverture des données
@@ -210,8 +206,6 @@ Le projet **Enrich-CRM** (`/Users/sylvain/Documents/enrich-crm`) est le projet d
 - [ ] `/en/job-change-detection` — Feature page Job Change Detection
 
 ### Phase 2 — Intégrations et API
-- [ ] `/en/hubspot` — Intégration HubSpot
-- [ ] `/en/pipedrive` — Intégration Pipedrive
 - [ ] `/en/api` — Documentation API / Developer page
 - [ ] `/en/chrome-extension` — Extension Chrome
 - [ ] `/en/zapier` — Intégrations Zapier/Make/n8n
@@ -245,7 +239,7 @@ Le projet **Enrich-CRM** (`/Users/sylvain/Documents/enrich-crm`) est le projet d
 ### ICP (Ideal Customer Profile)
 - SDR / BDR / AE qui prospectent en outbound
 - Growth Hackers qui enrichissent des listes Clay/N8N
-- RevOps qui maintiennent la qualité CRM (HubSpot, Pipedrive)
+- RevOps qui maintiennent la qualité CRM (via API, Zapier ou File Upload)
 - Développeurs qui intègrent un Email Finder ou Phone Finder dans leurs apps
 
 ### Ton et style

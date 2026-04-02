@@ -25,7 +25,7 @@ alwaysApply: true
 - Job Change Detection (alertes temps réel)
 - Chrome Extension
 - API REST
-- Intégrations : HubSpot, Pipedrive, Zapier, Make, n8n, Clay
+- Intégrations : Zapier, Make, n8n, Clay (via API — pas d'intégration native CRM)
 
 ## Plans pricing
 - Free : $0, 90 emails/an, 3 téléphones/an
