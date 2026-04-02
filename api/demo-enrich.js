@@ -176,7 +176,7 @@ function extractContact(data) {
   if (person.basic) {
     const b = person.basic;
     return {
-      fullName:    b.name ?? `${b.firstName ?? ""} ${b.lastName ?? ""}`.trim() || null,
+      fullName:    b.name ?? (`${b.firstName ?? ""} ${b.lastName ?? ""}`.trim() || null),
       jobTitle:    b.jobTitle   || null,
       company:     b.company    || null,
       linkedinUrl: b.linkedInUrl || null,
