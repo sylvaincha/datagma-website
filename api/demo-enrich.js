@@ -88,11 +88,15 @@ async function callAPI(baseUrl, params, apiKey) {
     for (const [k, v] of Object.entries(params)) {
       if (v !== undefined && v !== null && v !== "") url.searchParams.set(k, String(v));
     }
-    const r    = await fetch(url.toString(), {
+    const finalUrl = url.toString();
+    // Debug log — remove after diagnosis
+    console.log("[demo-enrich] calling:", finalUrl.replace(apiKey, apiKey.slice(0,4) + "…"));
+    const r    = await fetch(finalUrl, {
       headers: { accept: "application/json" },
       signal:  AbortSignal.timeout(25_000),
     });
     const text = await r.text();
+    console.log("[demo-enrich] response status:", r.status, "body:", text.slice(0, 200));
     return { ok: r.ok, status: r.status, data: safeJson(text) };
   } catch (e) {
     return { ok: false, status: 0, data: null, error: e.message };
@@ -292,7 +296,7 @@ export default async function handler(req, res) {
 
   // Handle Datagma API-level errors
   const datagmaErr = apiError(apiData);
-  if (datagmaErr === "no_credits") return res.status(402).json({ error: "no_credits" });
+  if (datagmaErr === "no_credits") return res.status(402).json({ error: "no_credits", _apiKey: apiKey ? apiKey.slice(0,6) : "MISSING", _raw: apiData });
   if (datagmaErr === "not_found")  return res.status(404).json({ error: "not_found" });
 
   // Extract
