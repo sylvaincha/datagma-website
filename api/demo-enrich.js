@@ -446,7 +446,7 @@ export default async function handler(req, res) {
     if (!foundEmail && status === "NotFound") {
       return res.status(200).json({
         found: false,
-        contact: { fullName, company: companyOrDomain },
+        contact: { fullName, company: domain },
         email: null, emailStatus: "not_found",
         credits: { emailsRemaining: emailLimits.remaining, resetsAt: emailLimits.resetAt },
       });
@@ -462,7 +462,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json({
       found:       true,
-      contact:     { fullName, company: companyOrDomain },
+      contact:     { fullName, company: domain },
       email:       foundEmail,
       emailStatus: verifiedEmail ? "verified" : "probable",
       credits:     { emailsRemaining: emailLimitsAfter.remaining, resetsAt: emailLimitsAfter.resetAt },
