@@ -1,21 +1,695 @@
 ---
 layout: ../../layouts/BaseLayout.astro
-title: 'Datagma — Real-time B2B Data Enrichment: Email Finder, Phone Finder & Job Change Detection'
-description: 'Find verified emails and direct phones, detect job changes in real time. Datagma enriches your CRM with fresh B2B data via API, HubSpot, Pipedrive, Chrome Extension, Zapier, Make and n8n.'
+title: 'Datagma — B2B Phone Finder & Email Finder with 77% Match Rate'
+description: 'Find verified mobile phones and emails in real time. 77% match rate — 2× more than Lusha. Search by name, company or country — no LinkedIn URL needed. GDPR compliant.'
 canonical: 'https://datagma.com/en/home'
 activeNav: ''
 ---
 
-{/* TODO: Build the home page content */}
+<script type="application/ld+json" set:html={JSON.stringify([
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Datagma",
+    "applicationCategory": "BusinessApplication",
+    "description": "B2B data enrichment platform — Phone Finder, Email Finder, Job Change Detection. 77% mobile match rate, real-time crawling, GDPR compliant.",
+    "url": "https://datagma.com",
+    "offers": [
+      { "@type": "Offer", "name": "Free", "price": "0", "priceCurrency": "USD" },
+      { "@type": "Offer", "name": "Regular", "price": "39", "priceCurrency": "USD", "billingPeriod": "P1M" },
+      { "@type": "Offer", "name": "Popular", "price": "79", "priceCurrency": "USD", "billingPeriod": "P1M" },
+      { "@type": "Offer", "name": "Expert", "price": "209", "priceCurrency": "USD", "billingPeriod": "P1M" }
+    ],
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8",
+      "reviewCount": "120"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How many phone numbers does Datagma find compared to Lusha?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Datagma finds 77% of mobile phones in India (vs 44% for Lusha), 69% in the UK (vs 29% for Lusha), and 74% in the US (vs 41% for Lusha). All Datagma numbers are real mobiles — no landlines." }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I search for a contact without a LinkedIn URL?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes. Datagma lets you search by first name, last name, and country — no LinkedIn URL required. You can also search by company name, email, or website." }
+      },
+      {
+        "@type": "Question",
+        "name": "Is Datagma GDPR compliant?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes. Datagma crawls public sources in real time and does not maintain a database of personal data. This makes it GDPR compliant by design, with no extra settings required." }
+      },
+      {
+        "@type": "Question",
+        "name": "What does 1 credit cost and what does it buy?",
+        "acceptedAnswer": { "@type": "Answer", "text": "1 credit = 1 verified email (with company and person enrichment data). 30 credits = 1 mobile phone number. On the Popular annual plan, a phone costs approximately $0.33 and an email approximately $0.011." }
+      },
+      {
+        "@type": "Question",
+        "name": "Does Datagma integrate with Clay, HubSpot and Zapier?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes. Datagma is a native Clay provider, has a native two-way HubSpot and Pipedrive integration, and works with Zapier, Make, n8n, and any tool via REST API." }
+      }
+    ]
+  }
+])}></script>
 
-<main class="pt-28 pb-20">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-    <h1 class="font-display font-extrabold text-5xl text-gray-900 mb-6">
-      Find emails, phones & job changes — in real time
-    </h1>
-    <p class="text-xl text-gray-600 max-w-2xl mx-auto mb-8">
-      Datagma enriches your B2B contacts with verified emails, direct phone numbers, and real-time job change alerts. Integrates with HubSpot, Pipedrive, Clay, Zapier, Make, n8n and your API.
-    </p>
-    <a href="https://app.datagma.com/register" class="btn btn-cta hero-cta">Start free — 90 emails/month</a>
+{/* ─── HERO ─────────────────────────────────────────────── */}
+<section class="relative pt-32 pb-20 overflow-hidden">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center max-w-4xl mx-auto">
+
+      {/* Badge */}
+      <div class="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 text-blue-700 text-xs font-bold px-4 py-1.5 rounded-full mb-6 fade-up">
+        <span class="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></span>
+        Real-time enrichment · No static database · GDPR by design
+      </div>
+
+      {/* H1 */}
+      <h1 class="font-display font-extrabold text-5xl sm:text-6xl lg:text-7xl text-gray-900 leading-[1.05] tracking-tight mb-6 fade-up delay-100">
+        Find the B2B phones<br/>
+        <span class="text-blue-600">nobody else can find</span>
+      </h1>
+
+      {/* Subheadline */}
+      <p class="text-lg sm:text-xl text-gray-500 max-w-2xl mx-auto mb-8 leading-relaxed fade-up delay-200">
+        Datagma delivers <strong class="text-gray-800 font-semibold">77% mobile match rate</strong> — nearly 2× more than Lusha.
+        Every number is a real mobile. Search by name, company, or country — no LinkedIn URL needed.
+      </p>
+
+      {/* CTAs */}
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-3 mb-6 fade-up delay-200">
+        <a href="https://app.datagma.com/register" class="btn btn-cta hero-cta px-8 py-4 text-base font-bold rounded-2xl">
+          Start free — 90 emails &amp; 3 phones included
+        </a>
+        <a href="/en/pricing" class="inline-flex items-center gap-2 px-6 py-4 text-sm font-bold text-gray-600 hover:text-blue-600 transition-colors">
+          View pricing
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+      <p class="text-xs text-gray-400 fade-up delay-200">Free plan · No credit card required · Cancel anytime</p>
+
+      {/* Quick stats */}
+      <div class="grid grid-cols-3 gap-4 max-w-xl mx-auto mt-14 fade-up delay-200">
+        <div class="text-center">
+          <div class="font-display font-extrabold text-3xl text-gray-900">7M+</div>
+          <div class="text-xs text-gray-500 mt-1">phones found daily</div>
+        </div>
+        <div class="text-center border-x border-gray-200">
+          <div class="font-display font-extrabold text-3xl text-blue-600">77%</div>
+          <div class="text-xs text-gray-500 mt-1">mobile match rate</div>
+        </div>
+        <div class="text-center">
+          <div class="font-display font-extrabold text-3xl text-gray-900">75+</div>
+          <div class="text-xs text-gray-500 mt-1">data points per contact</div>
+        </div>
+      </div>
+    </div>
   </div>
-</main>
+</section>
+
+{/* ─── LOGO BAR ─────────────────────────────────────────── */}
+<section class="py-10 border-y border-gray-100 bg-white/60">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <p class="text-center text-xs font-bold text-gray-400 uppercase tracking-widest mb-8">
+      Used by sales &amp; growth teams at
+    </p>
+    <div class="flex flex-wrap items-center justify-center gap-8 sm:gap-12 opacity-60 grayscale">
+      <img src="/assets/scraped/captail-data-1.png" alt="Captain Data" class="h-7 object-contain" />
+      <img src="/assets/scraped/charfelee-1.png" alt="Chargebee" class="h-7 object-contain" />
+      <img src="/assets/scraped/lemlist-1.png" alt="Lemlist" class="h-7 object-contain" />
+      <img src="/assets/scraped/ramp-1.png" alt="Ramp" class="h-8 object-contain" />
+      <img src="/assets/scraped/LOGO-HYPERLEX.png" alt="Hyperlex" class="h-7 object-contain" />
+      <img src="/assets/scraped/IHS_Markit_logo.svg" alt="IHS Markit" class="h-7 object-contain" />
+    </div>
+  </div>
+</section>
+
+{/* ─── BENCHMARK (THE PROOF) ───────────────────────────── */}
+<section class="py-24 bg-gray-950 text-white relative overflow-hidden">
+  {/* Background grid */}
+  <div class="absolute inset-0 bg-grid-pattern opacity-[0.04]"></div>
+  <div class="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-14">
+      <div class="inline-flex items-center gap-2 bg-white/10 text-white/80 text-xs font-bold px-4 py-1.5 rounded-full mb-5">
+        Independent benchmark · 400 LinkedIn profiles · 3 markets
+      </div>
+      <h2 class="font-display font-extrabold text-4xl sm:text-5xl mb-4">
+        We tested it. Here are the numbers.
+      </h2>
+      <p class="text-gray-400 text-lg max-w-2xl mx-auto">
+        We bought subscriptions to Lusha, Kaspr, and Apollo. We enriched 400 random LinkedIn profiles. This is what we found.
+      </p>
+    </div>
+
+    {/* Benchmark table */}
+    <div class="overflow-x-auto rounded-2xl border border-white/10">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-white/10">
+            <th class="text-left px-6 py-4 text-gray-400 font-semibold">Market</th>
+            <th class="px-6 py-4 text-blue-400 font-bold text-center bg-blue-950/40">Datagma</th>
+            <th class="px-6 py-4 text-gray-400 font-semibold text-center">Lusha</th>
+            <th class="px-6 py-4 text-gray-400 font-semibold text-center">Kaspr</th>
+            <th class="px-6 py-4 text-gray-400 font-semibold text-center">Apollo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-b border-white/5">
+            <td class="px-6 py-4 font-semibold text-white">🇮🇳 India</td>
+            <td class="px-6 py-4 text-center bg-blue-950/40">
+              <span class="font-extrabold text-blue-400 text-xl">77%</span>
+            </td>
+            <td class="px-6 py-4 text-center text-gray-400 font-semibold">44%</td>
+            <td class="px-6 py-4 text-center text-gray-400 font-semibold">46%</td>
+            <td class="px-6 py-4 text-center text-gray-400 font-semibold">3%</td>
+          </tr>
+          <tr class="border-b border-white/5">
+            <td class="px-6 py-4 font-semibold text-white">🇬🇧 UK</td>
+            <td class="px-6 py-4 text-center bg-blue-950/40">
+              <span class="font-extrabold text-blue-400 text-xl">69%</span>
+            </td>
+            <td class="px-6 py-4 text-center text-gray-400 font-semibold">29%</td>
+            <td class="px-6 py-4 text-center text-gray-400 font-semibold">44%</td>
+            <td class="px-6 py-4 text-center text-gray-400 font-semibold">22%</td>
+          </tr>
+          <tr class="border-b border-white/5">
+            <td class="px-6 py-4 font-semibold text-white">🇺🇸 US</td>
+            <td class="px-6 py-4 text-center bg-blue-950/40">
+              <span class="font-extrabold text-blue-400 text-xl">74%</span>
+            </td>
+            <td class="px-6 py-4 text-center text-gray-400 font-semibold">41%</td>
+            <td class="px-6 py-4 text-center text-gray-400 font-semibold">39%</td>
+            <td class="px-6 py-4 text-center text-gray-400 font-semibold">64%</td>
+          </tr>
+          <tr>
+            <td class="px-6 py-4 font-semibold text-white">Only mobiles?</td>
+            <td class="px-6 py-4 text-center bg-blue-950/40">
+              <span class="text-green-400 font-bold text-base">✓ Yes</span>
+            </td>
+            <td class="px-6 py-4 text-center text-gray-500">Mixed</td>
+            <td class="px-6 py-4 text-center text-gray-500">Mixed</td>
+            <td class="px-6 py-4 text-center text-red-400 text-xs">89% landlines</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="text-center text-xs text-gray-500 mt-4">
+      Apollo returned mostly landlines — 89% of "mobile" numbers were fixed lines. Datagma delivers only true mobile numbers.
+      <a href="/en/blog/the-phone-numbers-api-guide" class="text-blue-400 hover:underline ml-1">Read the full benchmark →</a>
+    </p>
+  </div>
+</section>
+
+{/* ─── UNIQUE DIFFERENTIATOR: SEARCH WITHOUT LINKEDIN ─── */}
+<section class="py-24">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid lg:grid-cols-2 gap-12 items-center">
+      <div>
+        <div class="inline-flex items-center gap-2 bg-green-50 border border-green-200 text-green-700 text-xs font-bold px-4 py-1.5 rounded-full mb-5">
+          Unique to Datagma
+        </div>
+        <h2 class="font-display font-extrabold text-4xl sm:text-5xl text-gray-900 mb-5 leading-tight">
+          Find anyone with just their<br/>
+          <span class="text-blue-600">name and country</span>
+        </h2>
+        <p class="text-gray-500 text-lg leading-relaxed mb-8">
+          Most tools only work if you have a LinkedIn URL. Datagma lets you search by first name, last name, and country — and still returns a verified email and mobile phone.
+          No LinkedIn Premium required. No URL hunting.
+        </p>
+        <ul class="space-y-3 mb-8">
+          {[
+            "First name + last name + country",
+            "Company name or website",
+            "LinkedIn URL (when you have it)",
+            "Email address (for reverse lookup)",
+            "Job title + company name",
+          ].map((item) => (
+            <li class="flex items-center gap-3 text-gray-700 font-medium">
+              <span class="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center shrink-0">
+                <svg class="w-3 h-3 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              {item}
+            </li>
+          ))}
+        </ul>
+        <a href="https://app.datagma.com/register" class="btn-primary px-6 py-3 rounded-xl text-sm font-bold inline-flex items-center gap-2">
+          Try it free
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      {/* Arcade demo */}
+      <div class="rounded-2xl overflow-hidden shadow-soft-xl border border-gray-200 bg-white">
+        <div class="bg-gray-100 px-4 py-2.5 flex items-center gap-2 border-b border-gray-200">
+          <div class="flex gap-1.5">
+            <div class="w-3 h-3 rounded-full bg-red-400"></div>
+            <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
+            <div class="w-3 h-3 rounded-full bg-green-400"></div>
+          </div>
+          <span class="text-xs text-gray-500 font-medium ml-1">datagma.com — Live demo</span>
+        </div>
+        <div style="position:relative;padding-bottom:62%;height:0;overflow:hidden;">
+          <iframe
+            src="https://demo.arcade.software/cpyP3FfxhgI9EUhm6Q9S?embed&show_copy_link=true"
+            title="Find employee from company name & job title — Datagma demo"
+            style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;"
+            loading="lazy"
+            allow="clipboard-write"
+          ></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{/* ─── FEATURES GRID ────────────────────────────────────── */}
+<section class="py-24 bg-gray-50/80">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-14">
+      <h2 class="font-display font-extrabold text-4xl sm:text-5xl text-gray-900 mb-4">
+        Everything you need to fill your pipeline
+      </h2>
+      <p class="text-gray-500 text-lg max-w-xl mx-auto">
+        One platform. Six tools. All your contacts enriched.
+      </p>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+
+      {/* Phone Finder — STAR */}
+      <div class="bento-card p-6 lg:col-span-1 relative">
+        <div class="absolute top-4 right-4">
+          <span class="bg-blue-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wide">
+            Our specialty
+          </span>
+        </div>
+        <div class="w-11 h-11 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
+          <i class="fas fa-mobile-alt text-blue-600 text-lg"></i>
+        </div>
+        <h3 class="font-display font-bold text-xl text-gray-900 mb-2">Phone Finder</h3>
+        <p class="text-gray-500 text-sm leading-relaxed mb-4">
+          Mobile numbers only — no landlines. 77% match rate, WhatsApp detection built-in. Up to 50,000 contacts in bulk.
+        </p>
+        <a href="/en/phone-finder" class="text-blue-600 text-sm font-bold hover:underline inline-flex items-center gap-1">
+          Learn more <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      {/* Email Finder */}
+      <div class="bento-card p-6">
+        <div class="w-11 h-11 bg-violet-100 rounded-xl flex items-center justify-center mb-4">
+          <i class="fas fa-envelope text-violet-600 text-lg"></i>
+        </div>
+        <h3 class="font-display font-bold text-xl text-gray-900 mb-2">Email Finder</h3>
+        <p class="text-gray-500 text-sm leading-relaxed mb-4">
+          Verified emails with advanced catchall detection. Cross-referenced against LinkedIn, GitHub, Facebook. Lowest bounce rate guaranteed.
+        </p>
+        <a href="/en/email-finder" class="text-blue-600 text-sm font-bold hover:underline inline-flex items-center gap-1">
+          Learn more <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      {/* Job Change Detection */}
+      <div class="bento-card p-6">
+        <div class="w-11 h-11 bg-amber-100 rounded-xl flex items-center justify-center mb-4">
+          <i class="fas fa-bell text-amber-500 text-lg"></i>
+        </div>
+        <h3 class="font-display font-bold text-xl text-gray-900 mb-2">Job Change Detection</h3>
+        <p class="text-gray-500 text-sm leading-relaxed mb-4">
+          Detect when a prospect or client changes company — within 1–2 weeks. Automatically update your CRM and create a task for the owner.
+        </p>
+        <a href="/en/job-change-detection" class="text-blue-600 text-sm font-bold hover:underline inline-flex items-center gap-1">
+          Learn more <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      {/* Chrome Extension */}
+      <div class="bento-card p-6">
+        <div class="w-11 h-11 bg-blue-50 rounded-xl flex items-center justify-center mb-4">
+          <i class="fab fa-chrome text-blue-500 text-lg"></i>
+        </div>
+        <h3 class="font-display font-bold text-xl text-gray-900 mb-2">Chrome Extension</h3>
+        <p class="text-gray-500 text-sm leading-relaxed mb-4">
+          Get verified emails and mobile phones directly from any LinkedIn profile. Works on Sales Navigator. No session cookie needed.
+        </p>
+        <a href="/en/chrome-extension" class="text-blue-600 text-sm font-bold hover:underline inline-flex items-center gap-1">
+          Learn more <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      {/* File Upload */}
+      <div class="bento-card p-6">
+        <div class="w-11 h-11 bg-green-100 rounded-xl flex items-center justify-center mb-4">
+          <i class="fas fa-file-upload text-green-600 text-lg"></i>
+        </div>
+        <h3 class="font-display font-bold text-xl text-gray-900 mb-2">File Upload</h3>
+        <p class="text-gray-500 text-sm leading-relaxed mb-4">
+          Upload a CSV with incomplete contacts. Get back 75+ enriched data points — email, phone, company, funding, tech stack and more.
+        </p>
+        <a href="/en/file-upload" class="text-blue-600 text-sm font-bold hover:underline inline-flex items-center gap-1">
+          Learn more <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      {/* API */}
+      <div class="bento-card p-6">
+        <div class="w-11 h-11 bg-gray-100 rounded-xl flex items-center justify-center mb-4">
+          <i class="fas fa-code text-gray-700 text-lg"></i>
+        </div>
+        <h3 class="font-display font-bold text-xl text-gray-900 mb-2">REST API</h3>
+        <p class="text-gray-500 text-sm leading-relaxed mb-4">
+          Simple GET calls. Input: LinkedIn URL, full name, email, or company. Output: email, phone, 75+ data points. Up and running in 5 minutes.
+        </p>
+        <a href="/en/api" class="text-blue-600 text-sm font-bold hover:underline inline-flex items-center gap-1">
+          View docs <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{/* ─── WHY DATAGMA ──────────────────────────────────────── */}
+<section class="py-24">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-14">
+      <h2 class="font-display font-extrabold text-4xl sm:text-5xl text-gray-900 mb-4">
+        Why teams choose Datagma
+      </h2>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {[
+        {
+          icon: "fas fa-mobile-alt",
+          color: "text-blue-600",
+          bg: "bg-blue-50",
+          title: "Only real mobiles",
+          desc: "We never return landlines. Every phone number we deliver is a verified mobile — so you never waste a credit on a number you can't use."
+        },
+        {
+          icon: "fas fa-bolt",
+          color: "text-amber-500",
+          bg: "bg-amber-50",
+          title: "Real-time crawling",
+          desc: "No static database. Every enrichment request triggers a live web crawl. Data is always fresh — even if your contact changed jobs last week."
+        },
+        {
+          icon: "fas fa-shield-alt",
+          color: "text-green-600",
+          bg: "bg-green-50",
+          title: "GDPR by design",
+          desc: "Because we don't store personal data in a database, Datagma is GDPR compliant by design — no extra settings, no suppression lists."
+        },
+        {
+          icon: "fab fa-whatsapp",
+          color: "text-green-500",
+          bg: "bg-green-50",
+          title: "WhatsApp built-in",
+          desc: "Detect which numbers are linked to WhatsApp, then click to call or message directly from the Datagma interface. Included in all paid plans."
+        },
+        {
+          icon: "fas fa-coins",
+          color: "text-amber-600",
+          bg: "bg-amber-50",
+          title: "Pay only for what you get",
+          desc: "No result? No charge. Credits are only consumed when we successfully return data. Unused credits roll over for up to 12 months."
+        },
+        {
+          icon: "fas fa-plug",
+          color: "text-violet-600",
+          bg: "bg-violet-50",
+          title: "Works in your stack",
+          desc: "Native Clay provider. Two-way HubSpot and Pipedrive sync. Zapier, Make, n8n. REST API. Fullenrich, BetterContact, GetCargo BYOK."
+        },
+      ].map((item) => (
+        <div class="flex gap-4 p-5 rounded-2xl bg-white border border-gray-100 shadow-soft-sm">
+          <div class={`w-10 h-10 ${item.bg} rounded-xl flex items-center justify-center shrink-0 mt-0.5`}>
+            <i class={`${item.icon} ${item.color} text-base`}></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-gray-900 mb-1">{item.title}</h3>
+            <p class="text-sm text-gray-500 leading-relaxed">{item.desc}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+{/* ─── INTEGRATIONS ─────────────────────────────────────── */}
+<section class="py-20 bg-gray-950 text-white">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <h2 class="font-display font-extrabold text-3xl sm:text-4xl mb-4">
+      Works inside every tool your team uses
+    </h2>
+    <p class="text-gray-400 text-lg mb-12 max-w-xl mx-auto">
+      Native integrations for CRM enrichment. API-first for waterfall workflows. BYOK support on Fullenrich, BetterContact, and GetCargo.
+    </p>
+
+    <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4 mb-10">
+      {[
+        { name: "HubSpot", img: "/assets/scraped/HubSpot_Logo.svg" },
+        { name: "Pipedrive", img: "/assets/scraped/2.Pipedrive.svg" },
+        { name: "Zapier", img: "/assets/scraped/Zapier_logo.svg" },
+        { name: "Make", img: "/assets/scraped/make-logo.svg" },
+        { name: "Clay", label: "Clay" },
+        { name: "Captain Data", img: "/assets/scraped/6.Captain_Data_Black.svg" },
+      ].map((tool) => (
+        <div class="bg-white/8 border border-white/10 rounded-xl p-3 flex items-center justify-center h-14">
+          {tool.img
+            ? <img src={tool.img} alt={tool.name} class="h-6 object-contain brightness-0 invert opacity-70" />
+            : <span class="text-white/70 font-bold text-sm">{tool.label}</span>
+          }
+        </div>
+      ))}
+    </div>
+
+    <div class="flex flex-wrap gap-3 justify-center text-sm">
+      <a href="/en/hubspot" class="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full font-semibold transition-colors">HubSpot →</a>
+      <a href="/en/pipedrive" class="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full font-semibold transition-colors">Pipedrive →</a>
+      <a href="/en/clay" class="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full font-semibold transition-colors">Clay →</a>
+      <a href="/en/zapier" class="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full font-semibold transition-colors">Zapier / Make →</a>
+      <a href="/en/api" class="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full font-semibold transition-colors">REST API →</a>
+    </div>
+  </div>
+</section>
+
+{/* ─── TESTIMONIALS ─────────────────────────────────────── */}
+<section class="py-24 bg-gray-50/80">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-12">
+      <h2 class="font-display font-extrabold text-4xl text-gray-900 mb-3">
+        What our customers say
+      </h2>
+    </div>
+
+    <div class="grid sm:grid-cols-3 gap-6">
+      {[
+        {
+          quote: "Datagma's data has been transformative for our business operations. Their APIs integrate seamlessly, boosting efficiency significantly. We're impressed by the accuracy and reliability.",
+          name: "Varun Anand",
+          role: "Head of Operations",
+          company: "Clay.com",
+          initials: "VA",
+          color: "bg-blue-600",
+        },
+        {
+          quote: "Datagma has revolutionized our outbound operation and made a significant impact on our product integrations.",
+          name: "Marc Francis",
+          role: "Co-Founder",
+          company: "Captain Data",
+          initials: "MF",
+          color: "bg-gray-800",
+        },
+        {
+          quote: "Datagma has been a game-changer for our outbound. It has enabled us to be more proactive, responsive, and reach out to a wider audience more efficiently.",
+          name: "Sylvain Charmet",
+          role: "Recruitment Expert",
+          company: "Seiza",
+          initials: "SC",
+          color: "bg-green-600",
+        },
+      ].map((t) => (
+        <div class="bento-card p-6 flex flex-col">
+          <div class="flex gap-1 mb-4">
+            {[1,2,3,4,5].map(() => (
+              <svg class="w-4 h-4 text-amber-400 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            ))}
+          </div>
+          <p class="text-gray-600 text-sm leading-relaxed flex-1 mb-5">"{t.quote}"</p>
+          <div class="flex items-center gap-3">
+            <div class={`w-9 h-9 ${t.color} rounded-full flex items-center justify-center text-white font-bold text-xs shrink-0`}>
+              {t.initials}
+            </div>
+            <div>
+              <div class="font-bold text-sm text-gray-900">{t.name}</div>
+              <div class="text-xs text-gray-500">{t.role} · {t.company}</div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+{/* ─── PRICING TEASER ───────────────────────────────────── */}
+<section class="py-24">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-12">
+      <h2 class="font-display font-extrabold text-4xl sm:text-5xl text-gray-900 mb-4">
+        Simple, transparent pricing
+      </h2>
+      <p class="text-gray-500 text-lg">
+        1 credit = 1 email · 30 credits = 1 phone · Pay only when we find data
+      </p>
+    </div>
+
+    <div class="grid sm:grid-cols-3 gap-5 mb-8">
+      {[
+        {
+          name: "Regular",
+          price: "$39",
+          period: "/mo · billed annually",
+          phones: "1,200",
+          emails: "36,000",
+          features: ["Sales Navigator Export", "Credit rollover", "API access", "WhatsApp integration", "10 seats included"],
+          featured: false,
+        },
+        {
+          name: "Popular",
+          price: "$79",
+          period: "/mo · billed annually",
+          phones: "3,000",
+          emails: "90,000",
+          features: ["Everything in Regular", "File Upload enrichment", "Priority support", "WhatsApp integration", "10 seats included"],
+          featured: true,
+        },
+        {
+          name: "Expert",
+          price: "$209",
+          period: "/mo · billed annually",
+          phones: "9,000",
+          emails: "270,000",
+          features: ["Everything in Popular", "Dedicated account manager", "Custom integrations", "SLA available", "10 seats included"],
+          featured: false,
+        },
+      ].map((plan) => (
+        <div class={`bento-card p-6 relative ${plan.featured ? 'ring-2 ring-blue-600' : ''}`}>
+          {plan.featured && (
+            <div class="absolute -top-3 left-1/2 -translate-x-1/2">
+              <span class="bg-blue-600 text-white text-xs font-bold px-4 py-1 rounded-full">Most popular</span>
+            </div>
+          )}
+          <div class="mb-5">
+            <div class="font-display font-bold text-gray-500 text-sm uppercase tracking-wide mb-1">{plan.name}</div>
+            <div class="flex items-baseline gap-1">
+              <span class="font-display font-extrabold text-4xl text-gray-900">{plan.price}</span>
+              <span class="text-gray-400 text-sm">{plan.period}</span>
+            </div>
+            <div class="mt-3 flex gap-3 text-xs text-gray-500">
+              <span class="bg-green-50 text-green-700 font-semibold px-2 py-0.5 rounded-full">{plan.phones} phones/yr</span>
+              <span class="bg-blue-50 text-blue-700 font-semibold px-2 py-0.5 rounded-full">{plan.emails} emails/yr</span>
+            </div>
+          </div>
+          <ul class="space-y-2 mb-6">
+            {plan.features.map((f) => (
+              <li class="flex items-center gap-2 text-sm text-gray-600">
+                <svg class="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                {f}
+              </li>
+            ))}
+          </ul>
+          <a
+            href="https://app.datagma.com/register"
+            class={`block text-center py-2.5 rounded-xl text-sm font-bold transition-all ${plan.featured ? 'btn-primary' : 'border border-gray-200 text-gray-700 hover:border-blue-400 hover:text-blue-600'}`}
+          >
+            Get started
+          </a>
+        </div>
+      ))}
+    </div>
+
+    <div class="text-center">
+      <p class="text-gray-500 text-sm mb-2">
+        Free plan available — 90 emails &amp; 3 phones per year, forever free. No credit card required.
+      </p>
+      <a href="/en/pricing" class="text-blue-600 font-bold text-sm hover:underline">
+        View full pricing including Enterprise →
+      </a>
+    </div>
+  </div>
+</section>
+
+{/* ─── FAQ ──────────────────────────────────────────────── */}
+<section class="py-20 bg-gray-50/80">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 class="font-display font-extrabold text-3xl text-gray-900 mb-10 text-center">
+      Frequently asked questions
+    </h2>
+    <div class="space-y-3">
+      {[
+        {
+          q: "How does Datagma's match rate compare to Lusha?",
+          a: "In an independent benchmark on 400 LinkedIn profiles across India, UK, and US, Datagma found 69–77% of mobile numbers versus 29–44% for Lusha. Datagma also returns only true mobiles — Lusha mixes in landlines.",
+        },
+        {
+          q: "Can I search without a LinkedIn URL?",
+          a: "Yes. You can find a contact using just their first name, last name, and country. You can also search by company name, website, email, or job title + company. No LinkedIn URL required.",
+        },
+        {
+          q: "Is Datagma GDPR compliant?",
+          a: "Yes. Datagma crawls publicly available information in real time and does not maintain a database of personal data. This makes it GDPR compliant by design, without any suppression settings needed.",
+        },
+        {
+          q: "How does the credit system work?",
+          a: "1 credit = 1 verified email (with full person and company enrichment). 30 credits = 1 mobile phone number. You're only charged when we successfully return data — no result means no credit deducted.",
+        },
+        {
+          q: "Does Datagma work with Clay?",
+          a: "Yes. Datagma is a native provider in Clay. Add your Datagma API key to use it directly in your Clay tables for phone and email enrichment — including in waterfall sequences.",
+        },
+        {
+          q: "Do credits roll over?",
+          a: "Yes. Unused credits roll over every month for up to 12 months as long as your subscription is active. On annual plans, all credits are available immediately at purchase.",
+        },
+      ].map((item) => (
+        <details class="group bg-white border border-gray-200 rounded-2xl overflow-hidden">
+          <summary class="flex items-center justify-between gap-4 px-6 py-4 cursor-pointer list-none">
+            <span class="font-semibold text-gray-900 text-sm">{item.q}</span>
+            <svg class="w-4 h-4 text-blue-500 shrink-0 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          </summary>
+          <div class="px-6 pb-5 text-gray-500 text-sm leading-relaxed border-t border-gray-100 pt-4">{item.a}</div>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+{/* ─── FINAL CTA ────────────────────────────────────────── */}
+<section class="py-24 bg-blue-600 relative overflow-hidden">
+  <div class="absolute inset-0 bg-grid-pattern opacity-[0.06]"></div>
+  <div class="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <h2 class="font-display font-extrabold text-4xl sm:text-5xl text-white mb-5 leading-tight">
+      Start finding phones nobody else has
+    </h2>
+    <p class="text-blue-100 text-lg mb-8 max-w-xl mx-auto">
+      Free plan included. No credit card required. 90 emails and 3 phones to try the product — then upgrade when you're ready.
+    </p>
+    <div class="flex flex-col sm:flex-row gap-3 justify-center">
+      <a href="https://app.datagma.com/register" class="btn btn-cta hero-cta px-8 py-4 text-base font-bold rounded-2xl">
+        Create free account
+      </a>
+      <a href="/en/pricing" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl border border-white/30 text-white font-bold text-base hover:bg-white/10 transition-colors">
+        View pricing
+      </a>
+    </div>
+  </div>
+</section>

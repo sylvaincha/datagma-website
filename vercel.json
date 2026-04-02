@@ -1,9 +1,18 @@
 {
-  "functions": {
-    "api/demo-stream.js": { "maxDuration": 120 },
-    "api/demo-enrich.js": { "maxDuration": 120 },
-    "api/demo-token.js":  { "maxDuration": 10 },
-    "api/oauth/auth.js":  { "maxDuration": 10 },
-    "api/oauth/callback.js": { "maxDuration": 15 }
-  }
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "redirects": [
+    { "source": "/", "destination": "/en/home", "permanent": false },
+    { "source": "/home", "destination": "/en/home", "permanent": true },
+    { "source": "/pricing", "destination": "/en/pricing", "permanent": true },
+    { "source": "/email-finder", "destination": "/en/email-finder", "permanent": true },
+    { "source": "/phone-finder", "destination": "/en/phone-finder", "permanent": true },
+    { "source": "/chrome-extension", "destination": "/en/chrome-extension", "permanent": true },
+    { "source": "/api", "destination": "/en/api", "permanent": true },
+    { "source": "/hubspot", "destination": "/en/hubspot", "permanent": true },
+    { "source": "/zapier", "destination": "/en/zapier", "permanent": true },
+    { "source": "/file-upload", "destination": "/en/file-upload", "permanent": true },
+    { "source": "/lusha-alternative", "destination": "/en/vs-lusha", "permanent": true },
+    { "source": "/clearbit-alternative", "destination": "/en/vs-clearbit", "permanent": true }
+  ]
 }
