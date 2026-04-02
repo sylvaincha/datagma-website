@@ -1,0 +1,57 @@
+/* Lightweight modern theme tweaks for Decap CMS.
+   Note: Decap doesn't expose a formal theming API; these selectors are best-effort
+   and may need adjustments on major Decap updates. */
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji",
+    "Segoe UI Emoji";
+  background: #f8fafc;
+}
+
+/* Subtle global smoothing */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Reduce "2005" vibes: soften containers and increase spacing */
+.css-1pahdxg, /* common toolbar wrapper in some builds */
+.css-12oz5g7,
+.css-1hvr7cj {
+  border-radius: 14px !important;
+}
+
+/* Buttons */
+button,
+[role="button"] {
+  border-radius: 12px !important;
+}
+
+/* Inputs */
+input,
+textarea,
+select {
+  border-radius: 12px !important;
+}
+
+/* Add a little depth to main panels */
+div[class*="Sidebar"],
+div[class*="sidebar"],
+div[class*="Card"],
+div[class*="card"],
+div[class*="Pane"],
+div[class*="pane"] {
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.06) !important;
+}
+
+/* Preview pane background */
+div[class*="PreviewPane"],
+div[class*="preview-pane"],
+div[class*="Preview"] iframe {
+  background: white !important;
+}
+

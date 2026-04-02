@@ -1,0 +1,117 @@
+---
+/**
+ * Minimal tab component for JSON-like payload examples.
+ * Keep data in TS modules (avoids MDX parsing issues with `{}` / template strings).
+ */
+import type { HomeTab } from "../data/homeTabs";
+
+const { tabs = [] as HomeTab[] } = Astro.props;
+const initialKey = tabs[0]?.key ?? "";
+---
+
+<div class="bento-card overflow-hidden">
+  <div class="grid grid-cols-1 lg:grid-cols-12">
+    <div class="lg:col-span-4 border-b lg:border-b-0 lg:border-r border-gray-200 bg-white/80">
+      <div class="p-4">
+        <div class="text-xs font-extrabold tracking-wider text-gray-400 uppercase">Example outputs</div>
+        <div class="mt-1 text-lg font-extrabold text-gray-900">What you get back</div>
+      </div>
+
+      <div class="p-2 space-y-2">
+        {tabs.map((t) => (
+          <button
+            type="button"
+            class="w-full text-left px-4 py-3 rounded-xl font-bold text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-all flex items-center gap-3 data-tab-btn"
+            data-tab-key={t.key}
+          >
+            <div class={`w-8 h-8 rounded-lg bg-gray-100 ${t.accentClass} flex items-center justify-center`}>
+              <i class={`fas ${t.icon}`}></i>
+            </div>
+            <div>
+              <div class="text-sm">{t.title}</div>
+              <div class="text-xs text-gray-400 font-medium">{t.subtitle}</div>
+            </div>
+          </button>
+        ))}
+      </div>
+    </div>
+
+    <div class="lg:col-span-8 bg-gray-900 p-6 md:p-8 overflow-y-auto relative">
+      <div class="absolute top-4 right-4 flex items-center">
+        <button
+          type="button"
+          class="data-tab-copy-btn inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/10 hover:bg-white/15 border border-white/10 text-white/80 hover:text-white transition"
+          data-copy-response
+          aria-label="Copy response"
+          title="Copy"
+        >
+          <i class="fas fa-copy"></i>
+        </button>
+      </div>
+
+      {tabs.map((t) => (
+        <div
+          class={`data-tab-content ${t.key === initialKey ? "block" : "hidden"} h-full overflow-auto custom-scrollbar`}
+          data-tab-key={t.key}
+        >
+          <pre class={`font-mono text-xs md:text-sm ${t.accentClass} whitespace-pre-wrap break-words leading-relaxed p-4`}>
+{JSON.stringify(t.payload, null, 2)}
+          </pre>
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    const root = document.currentScript && document.currentScript.parentElement;
+    if (!root) return;
+
+    const btns = Array.from(root.querySelectorAll(".data-tab-btn"));
+    const panels = Array.from(root.querySelectorAll(".data-tab-content"));
+
+    const setActive = (key) => {
+      btns.forEach((b) => {
+        const isActive = b.getAttribute("data-tab-key") === key;
+        b.classList.toggle("bg-white", isActive);
+        b.classList.toggle("shadow-sm", isActive);
+        b.classList.toggle("border", isActive);
+        b.classList.toggle("border-gray-200", isActive);
+        b.classList.toggle("text-gray-900", isActive);
+      });
+      panels.forEach((p) => {
+        const isActive = p.getAttribute("data-tab-key") === key;
+        p.classList.toggle("hidden", !isActive);
+        p.classList.toggle("block", isActive);
+      });
+    };
+
+    btns.forEach((b) =>
+      b.addEventListener("click", () => setActive(b.getAttribute("data-tab-key")))
+    );
+
+    const copyBtn = root.querySelector("[data-copy-response]");
+    if (copyBtn) {
+      copyBtn.addEventListener("click", async () => {
+        const active = root.querySelector(".data-tab-content:not(.hidden) pre");
+        const text = active ? active.innerText : "";
+        if (!text) return;
+        try {
+          await navigator.clipboard.writeText(text);
+        } catch {
+          const ta = document.createElement("textarea");
+          ta.value = text;
+          ta.setAttribute("readonly", "");
+          ta.style.position = "fixed";
+          ta.style.top = "-9999px";
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand("copy");
+          document.body.removeChild(ta);
+        }
+      });
+    }
+  })();
+</script>
+

@@ -1,0 +1,88 @@
+---
+type Props = {
+  class?: string;
+};
+
+const row1 =
+  [
+    { src: "../images/logos/carousel/accenture.png", alt: "Accenture" },
+    { src: "../images/logos/carousel/hubspot.png", alt: "HubSpot" },
+    { src: "../images/logos/carousel/orange.png", alt: "Orange" },
+    { src: "../images/logos/carousel/zapier.png", alt: "Zapier" },
+    { src: "../images/logos/carousel/intercom.png", alt: "Intercom" },
+    { src: "../images/logos/carousel/algolia.png", alt: "Algolia" },
+    { src: "../images/logos/carousel/yahoo_international.png", alt: "Yahoo" },
+    { src: "../images/logos/carousel/devoteam.png", alt: "Devoteam" },
+    { src: "../images/logos/carousel/sopra_steria.png", alt: "Sopra Steria" },
+    { src: "../images/logos/carousel/cegid.png", alt: "Cegid" },
+    { src: "../images/logos/carousel/eskimoz.png", alt: "Eskimoz" },
+    { src: "../images/logos/carousel/folk.png", alt: "Folk" },
+    { src: "../images/logos/carousel/weglot.png", alt: "Weglot" },
+    { src: "../images/logos/carousel/zeliq.png", alt: "Zeliq" },
+    { src: "../images/logos/carousel/churnzero.png", alt: "ChurnZero" },
+  ];
+
+const row2 =
+  [
+    { src: "../images/logos/carousel/n2f_smart_spend_management.png", alt: "N2F" },
+    { src: "../images/logos/carousel/agicap.png", alt: "Agicap" },
+    { src: "../images/logos/carousel/leeto.png", alt: "Leeto" },
+    { src: "../images/logos/carousel/pretto.png", alt: "Pretto" },
+    { src: "../images/logos/carousel/greenkub.png", alt: "Greenkub" },
+    { src: "../images/logos/carousel/signitic_by_positive.png", alt: "Signitic" },
+    { src: "../images/logos/carousel/lesbigboss.png", alt: "LesBigBoss" },
+    { src: "../images/logos/carousel/converteo.png", alt: "Converteo" },
+    { src: "../images/logos/carousel/invox.png", alt: "Invox" },
+    { src: "../images/logos/carousel/taleez.png", alt: "Taleez" },
+    { src: "../images/logos/carousel/floqer.png", alt: "Floqer" },
+    { src: "../images/logos/carousel/seiza.png", alt: "Seiza" },
+    { src: "../images/logos/carousel/empowill.png", alt: "Empowill" },
+    { src: "../images/logos/carousel/beedeez.png", alt: "Beedeez" },
+    { src: "../images/logos/carousel/golden_bees_groupe_figaro.png", alt: "Golden Bees" },
+  ];
+
+const imgClass = "h-10 sm:h-12 w-auto object-contain opacity-100 transition duration-300";
+---
+
+<div class={`w-full ${Astro.props.class ?? ""}`}>
+  <div
+    class="w-full inline-flex flex-nowrap overflow-hidden [mask-image:_linear-gradient(to_right,transparent_0,_black_64px,_black_calc(100%-64px),transparent_100%)] sm:[mask-image:_linear-gradient(to_right,transparent_0,_black_128px,_black_calc(100%-128px),transparent_100%)] mb-8 relative z-10"
+  >
+    <ul class="flex items-center justify-center md:justify-start [&_li]:mx-8 sm:[&_li]:mx-14 [&_img]:max-w-none animate-infinite-scroll items-start">
+      {row1.map((logo) => (
+        <li><img src={logo.src} alt={logo.alt} class={imgClass} loading="lazy" decoding="async" /></li>
+      ))}
+    </ul>
+    <ul
+      class="flex items-center justify-center md:justify-start [&_li]:mx-8 sm:[&_li]:mx-14 [&_img]:max-w-none animate-infinite-scroll items-start"
+      aria-hidden="true"
+    >
+      {row1.map((logo) => (
+        <li><img src={logo.src} alt={logo.alt} class={imgClass} loading="lazy" decoding="async" /></li>
+      ))}
+    </ul>
+  </div>
+
+  <div
+    class="w-full inline-flex flex-nowrap overflow-hidden [mask-image:_linear-gradient(to_right,transparent_0,_black_64px,_black_calc(100%-64px),transparent_100%)] sm:[mask-image:_linear-gradient(to_right,transparent_0,_black_128px,_black_calc(100%-128px),transparent_100%)] relative z-10"
+  >
+    <ul
+      class="flex items-center justify-center md:justify-start [&_li]:mx-8 sm:[&_li]:mx-14 [&_img]:max-w-none animate-infinite-scroll items-start"
+      style="animation-direction: reverse"
+    >
+      {row2.map((logo) => (
+        <li><img src={logo.src} alt={logo.alt} class={imgClass} loading="lazy" decoding="async" /></li>
+      ))}
+    </ul>
+    <ul
+      class="flex items-center justify-center md:justify-start [&_li]:mx-8 sm:[&_li]:mx-14 [&_img]:max-w-none animate-infinite-scroll items-start"
+      aria-hidden="true"
+      style="animation-direction: reverse"
+    >
+      {row2.map((logo) => (
+        <li><img src={logo.src} alt={logo.alt} class={imgClass} loading="lazy" decoding="async" /></li>
+      ))}
+    </ul>
+  </div>
+</div>
+

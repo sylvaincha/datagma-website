@@ -1,0 +1,87 @@
+---
+import fs from "node:fs";
+
+/**
+ * Temporary adapter during migration:
+ * - Reads the legacy HTML file from `/<lang>/*.html`
+ * - Extracts the `<main>...</main>` block
+ * - Injects it as raw HTML (avoids MDX parsing issues)
+ *
+ * Later we’ll replace these with real Astro/MDX components.
+ */
+const { file } = Astro.props;
+
+if (!file || typeof file !== "string") {
+  throw new Error("LegacyMain requires a `file` prop (ex: `home.html`).");
+}
+
+// IMPORTANT: do not rely on process.cwd() (can differ between dev/build/preview).
+// Resolve from this file location: src/components/LegacyMain.astro -> ../../<lang>/<file>
+const supportedLangs = ["fr", "en", "de", "nl", "it", "es", "pt"];
+const segments = Astro.url?.pathname?.split("/")?.filter(Boolean) ?? [];
+const lang = supportedLangs.includes(segments[0]) ? segments[0] : "en";
+
+const absUrl = new URL(`../../${lang}/${file}`, import.meta.url);
+let html;
+try {
+  html = fs.readFileSync(absUrl, "utf-8");
+} catch {
+  // Fallback to English if the localized legacy file isn't present yet.
+  const fallbackUrl = new URL(`../../en/${file}`, import.meta.url);
+  html = fs.readFileSync(fallbackUrl, "utf-8");
+}
+const mainRe = new RegExp("<main\\b[\\s\\S]*?<\\/main>", "i");
+const m = html.match(mainRe);
+
+if (!m) {
+  throw new Error(`LegacyMain: could not find <main>...</main> in ${absUrl.pathname}`);
+}
+
+let mainHtml = m[0];
+// Remove any legacy footer embedded in <main> (we render a global footer)
+const footerRe = new RegExp("<footer\\b[\\s\\S]*?<\\/footer>", "gi");
+mainHtml = mainHtml.replace(footerRe, "");
+
+// ── Strip ALL script tags — Astro's set:html sanitizes both inline and src-based scripts.
+// External scripts are injected below via <script is:inline> which bypasses Astro's sanitizer.
+mainHtml = mainHtml.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, "");
+
+// Detect external script files declared in the HTML (e.g. /js/home-v2-scripts.js)
+// so we can re-inject them using Astro's native <script is:inline> mechanism.
+const externalScriptRe = /<script\b[^>]+\bsrc\s*=\s*["']([^"']+)["'][^>]*>/gi;
+const externalScripts: string[] = [];
+let esMatch;
+// Run on the original html (before stripping) — check if file has script refs
+const esRe = /<script\b[^>]+\bsrc\s*=\s*["']([^"']+)["'][^>]*>/gi;
+while ((esMatch = esRe.exec(m[0])) !== null) {
+  const src = esMatch[1];
+  // Only include absolute paths served from our own origin (starts with /)
+  if (src.startsWith('/')) externalScripts.push(src);
+}
+
+// Ensure the injected <main> creates its own stacking context.
+// This prevents background layers with negative z-index (ex: -z-10) from ending up behind <body>.
+const mainOpenRe = /<main\b([^>]*)>/i;
+mainHtml = mainHtml.replace(mainOpenRe, (full, attrs) => {
+  const hasIsolate = /\bisolate\b/i.test(full);
+  if (hasIsolate) return full;
+
+  // Append `isolate` to existing class=""
+  const classDouble = /class="([^"]*)"/i;
+  const classSingle = /class='([^']*)'/i;
+
+  if (classDouble.test(attrs)) {
+    return `<main${attrs.replace(classDouble, (m2, cls) => `class="${cls} isolate"`)}>`;
+  }
+  if (classSingle.test(attrs)) {
+    return `<main${attrs.replace(classSingle, (m2, cls) => `class='${cls} isolate'`)}>`;
+  }
+
+  // No class attr: add one.
+  return `<main${attrs} class="isolate">`;
+});
+---
+
+<Fragment set:html={mainHtml} />
+{externalScripts.map(src => <script is:inline src={src} defer />)}
+

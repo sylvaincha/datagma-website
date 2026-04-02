@@ -1,0 +1,40 @@
+/* Page-specific styles extracted from `en/enrich-crm-crm-enrichment.html`. */
+
+/* Unified main navigation styles */
+.main-nav .nav-link {
+  color: #374151;
+  font-weight: 500;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s, color 0.2s, box-shadow 0.2s;
+}
+.main-nav .nav-link:hover,
+.main-nav .nav-link:focus {
+  background-color: #f3f4f6;
+  color: #0e132a;
+  outline: none;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+.main-nav .nav-link.active {
+  background-color: #0e132a;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(14, 19, 42, 0.12);
+}
+
+/* Contrast helpers (legacy) */
+section.bg-gradient-to-br.text-white .text-indigo-200 {
+  color: #e0e7ff;
+}
+.bg-gray-800 .text-gray-400,
+.bg-gray-900 .text-gray-400 {
+  color: #d1d5db;
+}
+.bg-gray-800 .text-gray-500,
+.bg-gray-900 .text-gray-500 {
+  color: #e5e7eb;
+}
+.bg-gray-800 .text-gray-600,
+.bg-gray-900 .text-gray-600 {
+  color: #f3f4f6;
+}
+

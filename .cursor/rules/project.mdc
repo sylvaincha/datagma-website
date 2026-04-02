@@ -1,0 +1,52 @@
+---
+description: "Règles globales pour le projet Datagma Website"
+globs: ["**/*"]
+alwaysApply: true
+---
+
+# Projet : Datagma Website
+
+## Stack technique
+- **Astro** (static output) + **Tailwind CSS** + **MDX**
+- Site multilingue : EN, FR, DE, NL, IT, ES, PT
+- Routage : `/{lang}/{page}` (ex: `/en/home`, `/fr/pricing`)
+- Déploiement : Vercel static
+
+## Marque Datagma
+- **Couleur principale** : bleu (`blue-600`, #2563eb) — PAS violet/indigo
+- **Nom du produit** : Datagma (toujours capital D)
+- **URL app** : https://app.datagma.com
+- **Register** : https://app.datagma.com/register
+- **Login** : https://app.datagma.com/login
+
+## Fonctionnalités produit
+- Email Finder (emails vérifiés)
+- Phone Finder (numéros directs)
+- Job Change Detection (alertes temps réel)
+- Chrome Extension
+- API REST
+- Intégrations : HubSpot, Pipedrive, Zapier, Make, n8n, Clay
+
+## Plans pricing
+- Free : $0, 90 emails/an, 3 téléphones/an
+- Regular : $39/mois (annuel), 36k emails/an
+- Popular : $79/mois (annuel), 90k emails/an
+- Expert : $209/mois (annuel), 270k emails/an
+- Enterprise : sur devis (5+ users)
+
+## Règles de code
+1. Toujours répondre en français à l'utilisateur
+2. Utiliser le design system existant (classes CSS dans `src/styles/global.css`)
+3. Les nouvelles pages : format MDX dans `src/pages/{lang}/{page}.mdx`
+4. Ne jamais mentionner "Enrich-CRM" dans le contenu — ce site est pour Datagma
+5. Couleur primaire = bleu (pas violet/indigo d'Enrich-CRM)
+6. Traduction : vouvoiement FR, Sie DE, u NL, Lei IT, usted ES, você PT
+
+## Référence architecture
+Le projet `enrich-crm` (`/Users/sylvain/Documents/enrich-crm`) est la référence technique :
+- Même design system
+- Même structure Astro
+- Même architecture multilingue
+- Scripts de traduction GPT-4o dans `enrich-crm/scripts/`
+
+Pour copier un pattern, lire le fichier correspondant dans enrich-crm et adapter le contenu.

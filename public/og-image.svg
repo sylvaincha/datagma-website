@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" fill="none" role="img" aria-label="Enrich-CRM  Real-time enrichment & intent signals">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FAFAF9"/>
+      <stop offset="1" stop-color="#F8FAFC"/>
+    </linearGradient>
+    <radialGradient id="amber" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(220 160) rotate(20) scale(520 380)">
+      <stop stop-color="#FFE36E" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#FFE36E" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="blue" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(980 160) rotate(-10) scale(560 420)">
+      <stop stop-color="#60A5FA" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#60A5FA" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="slate" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(720 560) rotate(-8) scale(620 420)">
+      <stop stop-color="#94A3B8" stop-opacity="0.25"/>
+      <stop offset="1" stop-color="#94A3B8" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#9CA3AF" stroke-opacity="0.22" stroke-width="1"/>
+    </pattern>
+    <linearGradient id="headline" x1="360" y1="250" x2="840" y2="330" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2563EB"/>
+      <stop offset="1" stop-color="#7C3AED"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="14" stdDeviation="18" flood-color="#0F172A" flood-opacity="0.10"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#amber)"/>
+  <rect width="1200" height="630" fill="url(#blue)"/>
+  <rect width="1200" height="630" fill="url(#slate)"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+
+  <g filter="url(#shadow)">
+    <rect x="96" y="120" width="1008" height="390" rx="36" fill="white" fill-opacity="0.86" stroke="#E5E7EB"/>
+  </g>
+
+  <g>
+    <g transform="translate(148 182)">
+      <rect x="0" y="0" width="54" height="54" rx="14" fill="#111827"/>
+      <path d="M34 17l-10 20h8l-3 13 12-21h-8l1-12z" fill="white" opacity="0.92"/>
+    </g>
+
+    <text x="222" y="224" font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif" font-size="28" font-weight="800" fill="#111827">
+      Enrich-CRM
+    </text>
+    <text x="148" y="294" font-family="Space Grotesk, Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif" font-size="54" font-weight="800" fill="#111827">
+      Real-time enrichment
+    </text>
+    <text x="148" y="352" font-family="Space Grotesk, Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif" font-size="54" font-weight="800" fill="url(#headline)">
+      &amp; intent signals
+    </text>
+    <text x="148" y="410" font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif" font-size="24" font-weight="600" fill="#4B5563">
+      Keep CRM records fresh. Trigger workflows. Prioritize accounts with high-quality data.
+    </text>
+
+    <g transform="translate(148 442)">
+      <rect x="0" y="0" width="420" height="56" rx="28" fill="#111827"/>
+      <text x="24" y="36" font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif" font-size="18" font-weight="800" fill="white">
+        HubSpot + Clay + API + CSV
+      </text>
+    </g>
+
+    <g transform="translate(604 442)">
+      <rect x="0" y="0" width="420" height="56" rx="28" fill="#F8FAFC" stroke="#E5E7EB"/>
+      <text x="24" y="36" font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif" font-size="18" font-weight="800" fill="#111827">
+        250+ company datapoints " 50+ contact datapoints
+      </text>
+    </g>
+  </g>
+</svg>
+

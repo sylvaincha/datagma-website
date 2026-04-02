@@ -1,0 +1,19 @@
+/* Blog-only font stack (Notion-ish mono vibe).
+   Loaded only via `BlogLayout.astro` so it won't affect the marketing site. */
+
+@import "@fontsource/ibm-plex-mono/latin-400.css";
+@import "@fontsource/ibm-plex-mono/latin-500.css";
+@import "@fontsource/ibm-plex-mono/latin-600.css";
+@import "@fontsource/ibm-plex-mono/latin-700.css";
+
+.blog-root {
+  --blog-font: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
+  font-family: var(--blog-font);
+}
+
+/* Existing templates use `.font-display` for headings; override within blog only. */
+.blog-root .font-display {
+  font-family: var(--blog-font) !important;
+}
+

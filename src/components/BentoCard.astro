@@ -1,0 +1,8 @@
+---
+const { class: className = "" } = Astro.props;
+---
+
+<div class={`bento-card ${className}`}>
+  <slot />
+</div>
+

@@ -1,0 +1,194 @@
+---
+import fs from "node:fs";
+import path from "node:path";
+import { parse } from "node-html-parser";
+
+const { file, slug, lang } = Astro.props;
+
+if (!file || typeof file !== "string") {
+  throw new Error("LocalizedLegacyMain requires a `file` prop (ex: `home.html`).");
+}
+if (!slug || typeof slug !== "string") {
+  throw new Error("LocalizedLegacyMain requires a `slug` prop (ex: `home`).");
+}
+if (!lang || typeof lang !== "string") {
+  throw new Error("LocalizedLegacyMain requires a `lang` prop (ex: `fr`).");
+}
+
+function extractMain(html) {
+  const mainRe = /<main\b[\s\S]*?<\/main>/i;
+  const m = html.match(mainRe);
+  if (!m) throw new Error("Could not find <main>...</main>.");
+  return m[0];
+}
+
+function normalize(s) {
+  return String(s).replace(/\s+/g, " ").trim();
+}
+
+function looksNonTranslatable(raw) {
+  const t = normalize(raw);
+  if (!t) return true;
+  if (t.length <= 2) return true;
+  if (t.startsWith("{") || t.startsWith("[")) return true;
+  if (/^(\/|https?:\/\/|www\.)/i.test(t)) return true;
+  if (/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i.test(t)) return true;
+  // Bare domains / hostnames (often examples or identifiers)
+  if (!/\s/.test(t) && /^[a-z0-9-]+(\.[a-z0-9-]+)+$/i.test(t)) return true;
+  // Bare host/path (often example links)
+  if (!/\s/.test(t) && /^[a-z0-9-]+(\.[a-z0-9-]+)+\/\S+$/i.test(t)) return true;
+  // ISO timestamps often shown as examples
+  if (!/\s/.test(t) && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(t)) return true;
+  // Field-like identifiers (snake_case, dot.notation, camelCase) should stay verbatim
+  if (!/\s/.test(t)) {
+    if (/[._]/.test(t) && /^[A-Za-z0-9._-]{3,}$/.test(t)) return true;
+    if (/[a-z][A-Z]/.test(t) && /^[A-Za-z0-9-]+$/.test(t)) return true;
+  }
+  if (/^[\d\s.,:+\-–—→×%$€£~]+$/.test(t)) return true;
+  if (/@/.test(t)) return true;
+  if (/^[A-Z0-9._-]{6,}$/.test(t)) return true;
+  // Long enumerations / sample values in coverage tables aren't meant to be localized.
+  if (slug === "data-coverage") {
+    if (t.length >= 220) return true;
+    if (t.length >= 120 && t.includes(",") && t.split(",").length >= 6) return true;
+    if (!/\s/.test(t) && /^[a-z][a-z0-9-]{2,20}$/.test(t)) return true;
+    if (t.startsWith("Preview:")) return true;
+    if (t === "The") return true;
+    if (t.startsWith("We\u2019re building creative tools to grow businesses")) return true;
+  }
+  return false;
+}
+
+function readJsonIfExists(url) {
+  try {
+    if (!fs.existsSync(url)) return null;
+    return JSON.parse(fs.readFileSync(url, "utf-8"));
+  } catch {
+    return null;
+  }
+}
+
+// Prefer a native localized HTML page when available.
+// Fallback: read EN legacy HTML and translate at build-time.
+const projectRoot = process.cwd();
+const localizedLegacyPath = path.join(projectRoot, lang, file);
+const legacyPath = fs.existsSync(localizedLegacyPath)
+  ? localizedLegacyPath
+  : path.join(projectRoot, "en", file);
+const srcHtml = fs.readFileSync(legacyPath, "utf-8");
+let mainHtml = extractMain(srcHtml);
+
+// Remove any legacy footer embedded in <main> (we render a global footer).
+mainHtml = mainHtml.replace(/<footer\b[\s\S]*?<\/footer>/gi, "");
+
+// Ensure isolate class and mark as statically translated.
+mainHtml = mainHtml.replace(/<main\b([^>]*)>/i, (full, attrs) => {
+  const hasIsolate = /\bisolate\b/i.test(full);
+  const hasMarker = /\bdata-i18n-static\b/i.test(full);
+  const extra = `${hasIsolate ? "" : " isolate"}`;
+
+  // Append to class=""
+  const classDouble = /class="([^"]*)"/i;
+  if (classDouble.test(attrs)) {
+    const withClass = attrs.replace(classDouble, (m2, cls) => `class="${cls}${extra}"`);
+    const marker = hasMarker ? "" : ` data-i18n-static="1"`;
+    return `<main${withClass}${marker}>`;
+  }
+
+  const marker = hasMarker ? "" : ` data-i18n-static="1"`;
+  return `<main${attrs} class="isolate"${marker}>`;
+});
+
+const common =
+  readJsonIfExists(path.join(projectRoot, "public", "i18n", lang, "common.json")) || {};
+const page =
+  readJsonIfExists(path.join(projectRoot, "public", "i18n", lang, `${slug}.json`)) || {};
+const dict = { ...common };
+
+// Merge page dictionary while avoiding this common pitfall:
+// if page.json still has untranslated English values (value === key),
+// it should not override a valid translated value present in common.json.
+for (const [k, v] of Object.entries(page)) {
+  if (typeof v !== "string") {
+    dict[k] = v;
+    continue;
+  }
+  const pageVal = normalize(v);
+  const keyVal = normalize(k);
+  const commonVal = typeof common[k] === "string" ? normalize(common[k]) : "";
+  const pageLooksUntranslated = pageVal && pageVal === keyVal;
+  const commonLooksTranslated = commonVal && commonVal !== keyVal;
+
+  dict[k] = pageLooksUntranslated && commonLooksTranslated ? common[k] : v;
+}
+
+const root = parse(mainHtml, {
+  lowerCaseTagName: false,
+  comment: false,
+  blockTextElements: {
+    script: true,
+    style: true,
+    pre: true,
+    code: true,
+    noscript: true,
+  },
+});
+
+const shouldTranslateNodes = !fs.existsSync(localizedLegacyPath);
+
+const getTranslation = (raw) => {
+  const k = normalize(raw);
+  if (!k) return null;
+  if (looksNonTranslatable(k)) return null;
+  const v = dict[k];
+  return typeof v === "string" && v ? v : null;
+};
+
+if (shouldTranslateNodes) {
+  // Text nodes
+  root.querySelectorAll("*").forEach((el) => {
+    const tag = String(el.tagName || "").toLowerCase();
+    if (tag === "pre" || tag === "code" || tag === "script" || tag === "style" || tag === "noscript") return;
+    if (
+      slug === "data-coverage" &&
+      (tag === "table" ||
+        tag === "thead" ||
+        tag === "tbody" ||
+        tag === "tr" ||
+        tag === "td" ||
+        tag === "th")
+    )
+      return;
+
+    for (const node of el.childNodes || []) {
+      if (node.nodeType !== 3) continue;
+      const raw = node.rawText ?? node.text ?? "";
+      const trimmed = raw.trim();
+      if (!trimmed) continue;
+      const translated = getTranslation(trimmed);
+      if (!translated) continue;
+
+      const lead = raw.match(/^\s*/)?.[0] ?? "";
+      const tail = raw.match(/\s*$/)?.[0] ?? "";
+      node.rawText = `${lead}${translated}${tail}`;
+    }
+  });
+
+  // Common attributes
+  const attrNames = ["placeholder", "aria-label", "title"];
+  root.querySelectorAll(attrNames.map((a) => `[${a}]`).join(",")).forEach((el) => {
+    attrNames.forEach((attr) => {
+      const raw = el.getAttribute(attr);
+      if (!raw) return;
+      const translated = getTranslation(raw);
+      if (!translated) return;
+      el.setAttribute(attr, translated);
+    });
+  });
+}
+
+const outHtml = root.toString();
+---
+
+<Fragment set:html={outHtml} />
+

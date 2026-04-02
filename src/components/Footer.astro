@@ -1,0 +1,147 @@
+---
+const supportedLangs = ["fr", "en", "de", "nl", "it", "es", "pt"];
+const segments = Astro.url?.pathname?.split("/")?.filter(Boolean) ?? [];
+const lang = supportedLangs.includes(segments[0]) ? segments[0] : "en";
+
+const copy = {
+  en: {
+    product: "Product", company: "Company", legal: "Legal",
+    emailFinder: "Email Finder", phoneFinder: "Phone Finder",
+    jobChange: "Job Change Detection", chromeExt: "Chrome Extension",
+    api: "API", pricing: "Pricing", blog: "Blog",
+    about: "About", contact: "Contact", trust: "Trust Center",
+    privacy: "Privacy Policy", terms: "Terms", dpa: "DPA",
+    tagline: "Real-time B2B data enrichment — emails, phones, job changes.",
+    rights: "All rights reserved.",
+  },
+  fr: {
+    product: "Produit", company: "Entreprise", legal: "Légal",
+    emailFinder: "Recherche d'email", phoneFinder: "Recherche de téléphone",
+    jobChange: "Changement de poste", chromeExt: "Extension Chrome",
+    api: "API", pricing: "Tarifs", blog: "Blog",
+    about: "À propos", contact: "Contact", trust: "Centre de confiance",
+    privacy: "Politique de confidentialité", terms: "CGU", dpa: "DPA",
+    tagline: "Enrichissement de données B2B en temps réel — emails, téléphones, changements de poste.",
+    rights: "Tous droits réservés.",
+  },
+  de: {
+    product: "Produkt", company: "Unternehmen", legal: "Rechtliches",
+    emailFinder: "E-Mail-Finder", phoneFinder: "Telefonnummer-Finder",
+    jobChange: "Jobwechsel-Erkennung", chromeExt: "Chrome-Erweiterung",
+    api: "API", pricing: "Preise", blog: "Blog",
+    about: "Über uns", contact: "Kontakt", trust: "Trust Center",
+    privacy: "Datenschutz", terms: "AGB", dpa: "DPA",
+    tagline: "Echtzeit-B2B-Datenanreicherung — E-Mails, Telefone, Jobwechsel.",
+    rights: "Alle Rechte vorbehalten.",
+  },
+  nl: {
+    product: "Product", company: "Bedrijf", legal: "Juridisch",
+    emailFinder: "E-mailfinder", phoneFinder: "Telefoonfinder",
+    jobChange: "Functiewisseldetectie", chromeExt: "Chrome-extensie",
+    api: "API", pricing: "Prijzen", blog: "Blog",
+    about: "Over ons", contact: "Contact", trust: "Trust Center",
+    privacy: "Privacybeleid", terms: "Voorwaarden", dpa: "DPA",
+    tagline: "Realtime B2B-data-enrichment — e-mails, telefoons, functiewissels.",
+    rights: "Alle rechten voorbehouden.",
+  },
+  it: {
+    product: "Prodotto", company: "Azienda", legal: "Legale",
+    emailFinder: "Ricerca email", phoneFinder: "Ricerca telefono",
+    jobChange: "Cambio lavoro", chromeExt: "Estensione Chrome",
+    api: "API", pricing: "Prezzi", blog: "Blog",
+    about: "Chi siamo", contact: "Contatto", trust: "Trust Center",
+    privacy: "Privacy", terms: "Termini", dpa: "DPA",
+    tagline: "Enrichment dati B2B in tempo reale — email, telefoni, cambi di lavoro.",
+    rights: "Tutti i diritti riservati.",
+  },
+  es: {
+    product: "Producto", company: "Empresa", legal: "Legal",
+    emailFinder: "Buscador de email", phoneFinder: "Buscador de teléfono",
+    jobChange: "Detección de cambio de trabajo", chromeExt: "Extensión Chrome",
+    api: "API", pricing: "Precios", blog: "Blog",
+    about: "Sobre nosotros", contact: "Contacto", trust: "Centro de confianza",
+    privacy: "Privacidad", terms: "Términos", dpa: "DPA",
+    tagline: "Enriquecimiento de datos B2B en tiempo real — emails, teléfonos, cambios de trabajo.",
+    rights: "Todos los derechos reservados.",
+  },
+  pt: {
+    product: "Produto", company: "Empresa", legal: "Legal",
+    emailFinder: "Pesquisa de email", phoneFinder: "Pesquisa de telefone",
+    jobChange: "Mudança de emprego", chromeExt: "Extensão Chrome",
+    api: "API", pricing: "Preços", blog: "Blog",
+    about: "Sobre nós", contact: "Contacto", trust: "Centro de confiança",
+    privacy: "Privacidade", terms: "Termos", dpa: "DPA",
+    tagline: "Enriquecimento de dados B2B em tempo real — emails, telefones, mudanças de emprego.",
+    rights: "Todos os direitos reservados.",
+  },
+};
+
+const t = copy[lang] || copy.en;
+const p = lang === "en" ? "/en" : `/${lang}`;
+const year = new Date().getFullYear();
+---
+
+<footer class="bg-gray-950 text-gray-400 pt-16 pb-10">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
+
+      <!-- Brand -->
+      <div>
+        <a href={`${p}/home`} class="flex items-center gap-2 mb-4">
+          <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+            <span class="text-white font-extrabold text-sm">D</span>
+          </div>
+          <span class="text-white font-bold text-lg">Datagma</span>
+        </a>
+        <p class="text-sm leading-relaxed mb-4">{t.tagline}</p>
+        <div class="flex gap-3">
+          <a href="https://www.linkedin.com/company/datagma" target="_blank" rel="noopener" class="hover:text-white transition-colors" aria-label="LinkedIn">
+            <i class="fab fa-linkedin text-lg"></i>
+          </a>
+          <a href="https://twitter.com/datagma" target="_blank" rel="noopener" class="hover:text-white transition-colors" aria-label="Twitter">
+            <i class="fab fa-twitter text-lg"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Product -->
+      <div>
+        <h3 class="text-white font-bold text-sm mb-4 uppercase tracking-wider">{t.product}</h3>
+        <ul class="space-y-2 text-sm">
+          <li><a href={`${p}/email-finder`} class="hover:text-white transition-colors">{t.emailFinder}</a></li>
+          <li><a href={`${p}/phone-finder`} class="hover:text-white transition-colors">{t.phoneFinder}</a></li>
+          <li><a href={`${p}/job-change-detection`} class="hover:text-white transition-colors">{t.jobChange}</a></li>
+          <li><a href={`${p}/chrome-extension`} class="hover:text-white transition-colors">{t.chromeExt}</a></li>
+          <li><a href={`${p}/api`} class="hover:text-white transition-colors">{t.api}</a></li>
+          <li><a href={`${p}/pricing`} class="hover:text-white transition-colors">{t.pricing}</a></li>
+        </ul>
+      </div>
+
+      <!-- Company -->
+      <div>
+        <h3 class="text-white font-bold text-sm mb-4 uppercase tracking-wider">{t.company}</h3>
+        <ul class="space-y-2 text-sm">
+          <li><a href={`${p}/about`} class="hover:text-white transition-colors">{t.about}</a></li>
+          <li><a href={`/${lang}/blog`} class="hover:text-white transition-colors">{t.blog}</a></li>
+          <li><a href={`${p}/contact`} class="hover:text-white transition-colors">{t.contact}</a></li>
+          <li><a href={`${p}/trust`} class="hover:text-white transition-colors">{t.trust}</a></li>
+        </ul>
+      </div>
+
+      <!-- Legal -->
+      <div>
+        <h3 class="text-white font-bold text-sm mb-4 uppercase tracking-wider">{t.legal}</h3>
+        <ul class="space-y-2 text-sm">
+          <li><a href={`${p}/privacy-policy`} class="hover:text-white transition-colors">{t.privacy}</a></li>
+          <li><a href={`${p}/terms`} class="hover:text-white transition-colors">{t.terms}</a></li>
+          <li><a href={`${p}/dpa`} class="hover:text-white transition-colors">{t.dpa}</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="border-t border-gray-800 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+      <p>© {year} Datagma. {t.rights}</p>
+      <p>Made with ♥ in France</p>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,158 @@
+@layer starlight.content {
+  .sl-markdown-content.blog-markdown {
+    --sl-content-gap-y: 1.5rem;
+  }
+
+  /* Slight mono-ish tracking on blog pages only. */
+  .blog-root {
+    letter-spacing: 0.005em;
+  }
+  .blog-root :is(h1, h2, h3) {
+    letter-spacing: 0.01em;
+  }
+
+  /* TOC active state (enhanced via JS). */
+  [data-blog-toc] a.is-active {
+    background: rgba(255, 255, 255, 0.75);
+    color: rgb(30 64 175);
+  }
+}
+
+/*
+ * Blog article styles — outside @layer so they beat Tailwind's preflight
+ * (unlayered CSS always wins over layered CSS).
+ */
+.sl-markdown-content.blog-markdown {
+  font-size: 1.0625rem;
+  line-height: 1.9;
+  color: #374151;
+}
+
+/* Constrain text width for readability (~65ch); images stay full width */
+.sl-markdown-content.blog-markdown > :is(p, ul, ol, blockquote, dl) {
+  max-width: 65ch;
+}
+
+/* Paragraph spacing */
+.sl-markdown-content.blog-markdown p {
+  margin-top: 1.25rem;
+  margin-bottom: 0;
+}
+
+.sl-markdown-content.blog-markdown > p:first-child {
+  margin-top: 0;
+}
+
+/* Headings — must override Tailwind preflight (font-size/weight: inherit) */
+.sl-markdown-content.blog-markdown :is(h1, h2, h3, h4, h5, h6) {
+  color: #111827;
+  font-weight: 700;
+  line-height: 1.25;
+  scroll-margin-top: 7.5rem;
+}
+
+.sl-markdown-content.blog-markdown h2 {
+  font-size: 1.625rem;
+  letter-spacing: -0.01em;
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.sl-markdown-content.blog-markdown > h2:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
+.sl-markdown-content.blog-markdown h3 {
+  font-size: 1.375rem;
+  letter-spacing: -0.01em;
+  margin-top: 2rem;
+}
+
+.sl-markdown-content.blog-markdown h4 {
+  font-size: 1.125rem;
+  margin-top: 1.5rem;
+}
+
+/* Images */
+.sl-markdown-content.blog-markdown :is(img, figure) {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.sl-markdown-content.blog-markdown figure img {
+  margin: 0;
+  border-radius: 0.75rem;
+}
+
+/* Lists */
+.sl-markdown-content.blog-markdown li + li {
+  margin-top: 0.5rem;
+}
+
+.sl-markdown-content.blog-markdown ul,
+.sl-markdown-content.blog-markdown ol {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+
+/* Blockquotes */
+.sl-markdown-content.blog-markdown blockquote {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem 1.25rem;
+  background: #f9fafb;
+  border-radius: 0.75rem;
+  border-left: 3px solid #3b82f6;
+}
+
+/* Bold text */
+.sl-markdown-content.blog-markdown strong {
+  color: #111827;
+  font-weight: 700;
+}
+
+/* Links */
+.sl-markdown-content.blog-markdown a {
+  color: #2563eb;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.sl-markdown-content.blog-markdown a:hover {
+  color: #1d4ed8;
+}
+
+/* Tables */
+.sl-markdown-content.blog-markdown table {
+  display: block;
+  overflow: auto;
+  border-spacing: 0;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.sl-markdown-content.blog-markdown :is(th, td) {
+  border-bottom: 1px solid #e5e7eb;
+  padding: 0.625rem 1rem;
+  vertical-align: baseline;
+}
+
+.sl-markdown-content.blog-markdown th {
+  color: #111827;
+  font-weight: 600;
+  text-align: start;
+}
+
+/* Horizontal rules */
+.sl-markdown-content.blog-markdown hr {
+  border: 0;
+  border-bottom: 1px solid #e5e7eb;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}

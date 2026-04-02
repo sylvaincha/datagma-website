@@ -1,0 +1,278 @@
+# No-auth local editing: Decap will write to your local git repo
+# via `decap-server` (run `npm run cms:local`).
+backend:
+  name: proxy
+  proxy_url: http://localhost:8081/api/v1
+  branch: main
+
+site_url: http://localhost:4321
+display_url: http://localhost:4321
+
+editor:
+  preview: true
+
+publish_mode: simple
+
+media_folder: "public/uploads"
+public_folder: "/uploads"
+
+collections:
+  - name: "blog_en"
+    label: "Blog (EN)"
+    folder: "src/content/blog/en"
+    create: true
+    slug: "{{slug}}"
+    summary: "{{title}}"
+    sortable_fields: ["title", "description"]
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Date", name: "date", widget: "datetime", required: false }
+      - { label: "Tags", name: "tags", widget: "list", required: false, field: { label: "Tag", name: "tag", widget: "string" } }
+      - { label: "Description", name: "description", widget: "text", required: false }
+      - label: "Images (order matters: hero first)"
+        name: "images"
+        widget: "list"
+        required: false
+        field: { label: "Image", name: "image", widget: "image" }
+      - { label: "Source URL", name: "sourceUrl", widget: "string", required: false }
+      - { label: "Draft", name: "draft", widget: "boolean", required: false, default: false }
+      - label: "Body"
+        name: "body"
+        widget: "markdown"
+        modes: ["rich_text", "raw"]
+        buttons:
+          [
+            "bold",
+            "italic",
+            "link",
+            "heading-two",
+            "heading-three",
+            "quote",
+            "bulleted-list",
+            "numbered-list",
+            "code",
+          ]
+        editor_components: ["image", "code-block", "callout", "cta", "figure", "youtube"]
+
+  - name: "blog_fr"
+    label: "Blog (FR)"
+    folder: "src/content/blog/fr"
+    create: true
+    slug: "{{slug}}"
+    summary: "{{title}}"
+    sortable_fields: ["title", "description"]
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Date", name: "date", widget: "datetime", required: false }
+      - { label: "Tags", name: "tags", widget: "list", required: false, field: { label: "Tag", name: "tag", widget: "string" } }
+      - { label: "Description", name: "description", widget: "text", required: false }
+      - label: "Images (order matters: hero first)"
+        name: "images"
+        widget: "list"
+        required: false
+        field: { label: "Image", name: "image", widget: "image" }
+      - { label: "Source URL", name: "sourceUrl", widget: "string", required: false }
+      - { label: "Draft", name: "draft", widget: "boolean", required: false, default: false }
+      - label: "Body"
+        name: "body"
+        widget: "markdown"
+        modes: ["rich_text", "raw"]
+        buttons:
+          [
+            "bold",
+            "italic",
+            "link",
+            "heading-two",
+            "heading-three",
+            "quote",
+            "bulleted-list",
+            "numbered-list",
+            "code",
+          ]
+        editor_components: ["image", "code-block", "callout", "cta", "figure", "youtube"]
+
+  - name: "blog_de"
+    label: "Blog (DE)"
+    folder: "src/content/blog/de"
+    create: true
+    slug: "{{slug}}"
+    summary: "{{title}}"
+    sortable_fields: ["title", "description"]
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Date", name: "date", widget: "datetime", required: false }
+      - { label: "Tags", name: "tags", widget: "list", required: false, field: { label: "Tag", name: "tag", widget: "string" } }
+      - { label: "Description", name: "description", widget: "text", required: false }
+      - label: "Images (order matters: hero first)"
+        name: "images"
+        widget: "list"
+        required: false
+        field: { label: "Image", name: "image", widget: "image" }
+      - { label: "Source URL", name: "sourceUrl", widget: "string", required: false }
+      - { label: "Draft", name: "draft", widget: "boolean", required: false, default: false }
+      - label: "Body"
+        name: "body"
+        widget: "markdown"
+        modes: ["rich_text", "raw"]
+        buttons:
+          [
+            "bold",
+            "italic",
+            "link",
+            "heading-two",
+            "heading-three",
+            "quote",
+            "bulleted-list",
+            "numbered-list",
+            "code",
+          ]
+        editor_components: ["image", "code-block", "callout", "cta", "figure", "youtube"]
+
+  - name: "blog_nl"
+    label: "Blog (NL)"
+    folder: "src/content/blog/nl"
+    create: true
+    slug: "{{slug}}"
+    summary: "{{title}}"
+    sortable_fields: ["title", "description"]
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Date", name: "date", widget: "datetime", required: false }
+      - { label: "Tags", name: "tags", widget: "list", required: false, field: { label: "Tag", name: "tag", widget: "string" } }
+      - { label: "Description", name: "description", widget: "text", required: false }
+      - label: "Images (order matters: hero first)"
+        name: "images"
+        widget: "list"
+        required: false
+        field: { label: "Image", name: "image", widget: "image" }
+      - { label: "Source URL", name: "sourceUrl", widget: "string", required: false }
+      - { label: "Draft", name: "draft", widget: "boolean", required: false, default: false }
+      - label: "Body"
+        name: "body"
+        widget: "markdown"
+        modes: ["rich_text", "raw"]
+        buttons:
+          [
+            "bold",
+            "italic",
+            "link",
+            "heading-two",
+            "heading-three",
+            "quote",
+            "bulleted-list",
+            "numbered-list",
+            "code",
+          ]
+        editor_components: ["image", "code-block", "callout", "cta", "figure", "youtube"]
+
+  - name: "blog_it"
+    label: "Blog (IT)"
+    folder: "src/content/blog/it"
+    create: true
+    slug: "{{slug}}"
+    summary: "{{title}}"
+    sortable_fields: ["title", "description"]
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Date", name: "date", widget: "datetime", required: false }
+      - { label: "Tags", name: "tags", widget: "list", required: false, field: { label: "Tag", name: "tag", widget: "string" } }
+      - { label: "Description", name: "description", widget: "text", required: false }
+      - label: "Images (order matters: hero first)"
+        name: "images"
+        widget: "list"
+        required: false
+        field: { label: "Image", name: "image", widget: "image" }
+      - { label: "Source URL", name: "sourceUrl", widget: "string", required: false }
+      - { label: "Draft", name: "draft", widget: "boolean", required: false, default: false }
+      - label: "Body"
+        name: "body"
+        widget: "markdown"
+        modes: ["rich_text", "raw"]
+        buttons:
+          [
+            "bold",
+            "italic",
+            "link",
+            "heading-two",
+            "heading-three",
+            "quote",
+            "bulleted-list",
+            "numbered-list",
+            "code",
+          ]
+        editor_components: ["image", "code-block", "callout", "cta", "figure", "youtube"]
+
+  - name: "blog_es"
+    label: "Blog (ES)"
+    folder: "src/content/blog/es"
+    create: true
+    slug: "{{slug}}"
+    summary: "{{title}}"
+    sortable_fields: ["title", "description"]
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Date", name: "date", widget: "datetime", required: false }
+      - { label: "Tags", name: "tags", widget: "list", required: false, field: { label: "Tag", name: "tag", widget: "string" } }
+      - { label: "Description", name: "description", widget: "text", required: false }
+      - label: "Images (order matters: hero first)"
+        name: "images"
+        widget: "list"
+        required: false
+        field: { label: "Image", name: "image", widget: "image" }
+      - { label: "Source URL", name: "sourceUrl", widget: "string", required: false }
+      - { label: "Draft", name: "draft", widget: "boolean", required: false, default: false }
+      - label: "Body"
+        name: "body"
+        widget: "markdown"
+        modes: ["rich_text", "raw"]
+        buttons:
+          [
+            "bold",
+            "italic",
+            "link",
+            "heading-two",
+            "heading-three",
+            "quote",
+            "bulleted-list",
+            "numbered-list",
+            "code",
+          ]
+        editor_components: ["image", "code-block", "callout", "cta", "figure", "youtube"]
+
+  - name: "blog_pt"
+    label: "Blog (PT)"
+    folder: "src/content/blog/pt"
+    create: true
+    slug: "{{slug}}"
+    summary: "{{title}}"
+    sortable_fields: ["title", "description"]
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Date", name: "date", widget: "datetime", required: false }
+      - { label: "Tags", name: "tags", widget: "list", required: false, field: { label: "Tag", name: "tag", widget: "string" } }
+      - { label: "Description", name: "description", widget: "text", required: false }
+      - label: "Images (order matters: hero first)"
+        name: "images"
+        widget: "list"
+        required: false
+        field: { label: "Image", name: "image", widget: "image" }
+      - { label: "Source URL", name: "sourceUrl", widget: "string", required: false }
+      - { label: "Draft", name: "draft", widget: "boolean", required: false, default: false }
+      - label: "Body"
+        name: "body"
+        widget: "markdown"
+        modes: ["rich_text", "raw"]
+        buttons:
+          [
+            "bold",
+            "italic",
+            "link",
+            "heading-two",
+            "heading-three",
+            "quote",
+            "bulleted-list",
+            "numbered-list",
+            "code",
+          ]
+        editor_components: ["image", "code-block", "callout", "cta", "figure", "youtube"]
+

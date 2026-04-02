@@ -1,0 +1,94 @@
+---
+import "../styles/global.css";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import siteScriptUrl from "../scripts/site.js?url";
+
+const supportedLangs = ["fr", "en", "de", "nl", "it", "es", "pt"];
+const segments = Astro.url?.pathname?.split("/")?.filter(Boolean) ?? [];
+const lang = supportedLangs.includes(segments[0]) ? segments[0] : "en";
+
+const fm = Astro.props?.frontmatter ?? {};
+const title = Astro.props?.title ?? fm.title ?? "Datagma";
+const description = Astro.props?.description ?? fm.description ?? "";
+const canonical = Astro.props?.canonical ?? fm.canonical ?? "";
+const activeNav = Astro.props?.activeNav ?? fm.activeNav ?? "";
+const robots = Astro.props?.robots ?? fm.robots ?? "";
+const alternates = Astro.props?.alternates ?? fm.alternates ?? null;
+
+const site = "https://datagma.com";
+const pageUrl = canonical ? canonical : Astro.url.href;
+const absUrl = pageUrl?.startsWith("http") ? pageUrl : new URL(pageUrl || "/", site).toString();
+const ogImageUrl = `${site}/og-image.png`;
+
+const localeByLang: Record<string, string> = {
+  en: "en-US", fr: "fr-FR", de: "de-DE", nl: "nl-NL", it: "it-IT", es: "es-ES", pt: "pt-PT",
+};
+const inLanguage = localeByLang[lang] || "en-US";
+
+// Organization JSON-LD
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": `${site}#organization`,
+    name: "Datagma",
+    url: site,
+    sameAs: [
+      "https://www.linkedin.com/company/datagma",
+    ],
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `${absUrl}#webpage`,
+    name: title,
+    description: description || undefined,
+    url: absUrl,
+    inLanguage,
+  },
+].filter(Boolean);
+
+const jsonLdString = JSON.stringify(jsonLd);
+---
+
+<!DOCTYPE html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta name="theme-color" content="#2563eb" />
+
+    <title>{title}</title>
+    {description ? <meta name="description" content={description} /> : null}
+    {canonical ? <link rel="canonical" href={canonical} /> : null}
+    {Array.isArray(alternates)
+      ? alternates.map((a) =>
+          a?.href && a?.hreflang ? <link rel="alternate" href={a.href} hreflang={a.hreflang} /> : null
+        )
+      : null}
+    {robots ? <meta name="robots" content={robots} /> : null}
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    {description ? <meta property="og:description" content={description} /> : null}
+    <meta property="og:url" content={absUrl} />
+    <meta property="og:site_name" content="Datagma" />
+    <meta property="og:image" content={ogImageUrl} />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    {description ? <meta name="twitter:description" content={description} /> : null}
+    <meta name="twitter:url" content={absUrl} />
+    <meta name="twitter:image" content={ogImageUrl} />
+
+    <script type="application/ld+json" set:html={jsonLdString}></script>
+  </head>
+
+  <body class="overflow-x-hidden">
+    <Nav active={activeNav} />
+    <slot />
+    <Footer />
+    <script type="module" src={siteScriptUrl}></script>
+  </body>
+</html>

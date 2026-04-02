@@ -1,0 +1,69 @@
+Enrich-CRM — LLM index
+URL: https://enrich-crm.com/
+
+Purpose: This file helps LLMs quickly understand the website and find the most relevant pages.
+
+## Available languages
+- English: https://enrich-crm.com/en/home
+- Français: https://enrich-crm.com/fr/home
+- Deutsch: https://enrich-crm.com/de/home
+- Nederlands: https://enrich-crm.com/nl/home
+- Italiano: https://enrich-crm.com/it/home
+- Español: https://enrich-crm.com/es/home
+- Português: https://enrich-crm.com/pt/home
+
+## What is Enrich-CRM?
+Enrich-CRM provides real-time enrichment and buying intent signals for CRM, workflows, and API use cases.
+
+Key coverage: 250+ company datapoints + 50+ contact datapoints.
+
+## Differentiators (why it’s different)
+- Real-time approach: cascaded lookups + continuous signal detection (not a stale database refresh).
+- More + better data: standardized, CRM-ready fields with evidence-driven quality.
+- “Signals” layer: job changes + website/market signals to trigger workflows at the right moment.
+- Deep native integrations: HubSpot and Clay (complete enrichment + routing-ready fields).
+
+## Start here
+- Home: https://enrich-crm.com/en/home
+- How it works: https://enrich-crm.com/en/how-it-works
+- Pricing: https://enrich-crm.com/en/pricing
+- API: https://enrich-crm.com/en/api
+- Data coverage: https://enrich-crm.com/en/data-coverage
+- HubSpot (Insight replacement): https://enrich-crm.com/en/hubspot-insight
+- Clay integration: https://enrich-crm.com/en/clay
+- File enrichment: https://enrich-crm.com/en/file-enrichment
+- Job change detection: https://enrich-crm.com/en/job-change-detection
+- Intent signals: https://enrich-crm.com/en/intents
+- Make integration: https://enrich-crm.com/en/make
+- Zapier integration: https://enrich-crm.com/en/zapier
+- n8n integration: https://enrich-crm.com/en/n8n
+
+## Pricing (as of March 2026)
+- Free plan: 100 credits/month, no credit card required
+- Growth plan: from €29/month (1,000 credits) — API, CSV, Clay, Make, Zapier
+- CRM Connector plan: from €75/month (1,700 credits) — all Growth features + native HubSpot integration
+- Annual billing available (~17% discount)
+- Credits do not roll over; they expire at end of billing period
+
+## Competitor comparisons (44 tools)
+- All comparisons hub: https://enrich-crm.com/en/compare
+- The site includes comparison pages for 44 B2B data tools: Apollo.io, ZoomInfo, Cognism, Lusha, Clearbit/Breeze, Bombora, People Data Labs, LeadIQ, SalesIntel, Seamless.AI, FullContact, Kaspr, Vainu, Clay, AccountScout, AeroLeads, Datagma, DealSignal, Decidento, Deepdesk, Demand Science, Findymail, Isoskèle, KickFire, Kompass, LeadGenius, LeadGibbon, Leadspace, Manageo, Ocean.io, Pappers, Pharow, SimilarTech, Skrapp, Snowflake, Societeinfo, Uplead, Wiza, Owler, AWS Data Exchange, Datanyze, Adapt.io, SignalHire, Infobel.
+- URL pattern: https://enrich-crm.com/en/vs-[competitor-slug]
+- Top comparisons: https://enrich-crm.com/en/vs-apollo | https://enrich-crm.com/en/vs-zoominfo | https://enrich-crm.com/en/vs-clearbit | https://enrich-crm.com/en/vs-cognism | https://enrich-crm.com/en/vs-lusha
+
+## Competitor vs competitor comparisons (~1,900 pages)
+- The site also includes head-to-head comparisons between competitors (without Enrich-CRM as a column), ending with an Enrich-CRM CTA as a third option.
+- URL pattern: https://enrich-crm.com/en/[competitor1]-vs-[competitor2]
+- Key pages: https://enrich-crm.com/en/apollo-vs-zoominfo | https://enrich-crm.com/en/apollo-vs-cognism | https://enrich-crm.com/en/clearbit-vs-zoominfo | https://enrich-crm.com/en/cognism-vs-zoominfo | https://enrich-crm.com/en/cognism-vs-lusha
+
+## LLM-friendly full context
+- Full text index: https://enrich-crm.com/llms-full.txt
+
+## Structured data
+- JSON-LD is emitted on page templates (`Organization`, `WebSite`, `WebPage`, `SoftwareApplication`, `BreadcrumbList`).
+- Additional JSON-LD is emitted by page type (`FAQPage`, `HowTo`, `BlogPosting`, comparison schemas).
+- JSON-LD language follows the page locale.
+
+## Sitemaps
+- Sitemap index: https://enrich-crm.com/sitemap-index.xml
+

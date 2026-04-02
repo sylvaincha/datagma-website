@@ -1,0 +1,145 @@
+---
+description: "Règles pour créer et modifier des pages dans le projet Datagma"
+globs: ["src/pages/**/*", "**/*.mdx", "**/*.astro"]
+alwaysApply: false
+---
+
+# Création de pages Datagma
+
+## Structure d'une page MDX (méthode recommandée)
+
+```mdx
+---
+layout: ../../layouts/BaseLayout.astro
+title: 'Titre de la page | Datagma'
+description: 'Description SEO de la page (150-160 caractères max).'
+canonical: 'https://datagma.com/en/nom-page'
+activeNav: ''  # 'pricing' | 'blog' | ''
+---
+
+<main class="pt-28 pb-20 relative overflow-hidden">
+  <!-- Contenu -->
+</main>
+```
+
+## Layout BaseLayout.astro
+Props disponibles :
+- `title` : titre HTML et OG
+- `description` : meta description
+- `canonical` : URL canonique
+- `activeNav` : item actif dans la nav ('pricing', 'blog', '')
+- `robots` : valeur meta robots (ex: 'noindex' pour les pages admin)
+- `alternates` : tableau `[{href, hreflang}]` pour les balises hreflang
+
+## Composants disponibles
+- `<Nav active="pricing" />` — automatique via BaseLayout
+- `<Footer />` — automatique via BaseLayout
+- `<PageBackground />` — fond décoratif avec blobs colorés
+
+## Classes CSS clés du design system
+
+### Boutons
+```html
+<!-- CTA principal animé -->
+<a href="..." class="btn btn-cta hero-cta">Commencer gratuitement</a>
+
+<!-- Bouton primaire -->
+<a href="..." class="btn-primary px-6 py-3 rounded-full">Action</a>
+
+<!-- Bouton secondaire -->
+<a href="..." class="btn bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 font-semibold px-6 py-3 rounded-xl">Action</a>
+```
+
+### Cards
+```html
+<!-- Carte glassmorphism -->
+<div class="bento-card p-6 md:p-8">...</div>
+
+<!-- Section avec fond dégradé -->
+<section class="py-20 relative overflow-hidden">
+  <div class="absolute inset-0 bg-gradient-to-b from-slate-50/60 via-white to-blue-50/30 pointer-events-none"></div>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    ...
+  </div>
+</section>
+```
+
+### Typographie
+```html
+<!-- Hero H1 -->
+<h1 class="font-display font-extrabold text-3xl sm:text-4xl md:text-5xl xl:text-6xl leading-[1.05] tracking-tight text-gray-900">
+  Titre
+</h1>
+
+<!-- Sous-titre -->
+<p class="text-lg sm:text-xl text-gray-600 font-medium leading-relaxed max-w-2xl">
+  Description
+</p>
+
+<!-- H2 section -->
+<h2 class="text-3xl md:text-4xl font-display font-extrabold text-gray-900">
+  Section <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-600">titre</span>.
+</h2>
+```
+
+## Template type : Feature page
+
+```mdx
+---
+layout: ../../layouts/BaseLayout.astro
+title: 'Email Finder — Verified B2B Emails | Datagma'
+description: 'Find verified professional emails in real time. 70-80% match rate on US and European contacts. HubSpot, Pipedrive, API, Clay integration.'
+canonical: 'https://datagma.com/en/email-finder'
+activeNav: ''
+---
+
+<main class="pt-28 pb-20 relative overflow-hidden">
+
+  {/* Hero */}
+  <section class="max-w-7xl mx-auto mb-20 px-4 sm:px-6 lg:px-8">
+    <div class="text-center fade-up">
+      <h1 class="font-display font-extrabold text-4xl md:text-6xl leading-[1.05] tracking-tight mb-6 text-gray-900">
+        Find verified emails<br/><span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-600">in seconds</span>
+      </h1>
+      <p class="text-xl text-gray-600 font-medium max-w-2xl mx-auto mb-8">
+        70-80% match rate on US and European contacts. Real-time lookups, no stale database.
+      </p>
+      <a href="https://app.datagma.com/register" class="btn btn-cta hero-cta">
+        <span class="hero-cta__shine" aria-hidden="true"></span>
+        <span class="hero-cta__content">Start free — 90 emails/month</span>
+      </a>
+    </div>
+  </section>
+
+  {/* Features grid */}
+  <section class="py-20 bg-gray-50/60">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bento-card p-6">
+          <h3 class="font-extrabold text-gray-900 mb-2">Real-time verification</h3>
+          <p class="text-gray-600 text-sm">Every email is verified at the moment of request, not from a stale database.</p>
+        </div>
+        {/* ... */}
+      </div>
+    </div>
+  </section>
+
+</main>
+```
+
+## Traductions multilingues
+
+Pour chaque page EN créée, créer les équivalentes dans les 6 autres langues :
+- Changer `canonical` : `/en/page` → `/fr/page`
+- Changer `layout` : `../../layouts/BaseLayout.astro` (même chemin)
+- Traduire tout le contenu textuel
+- Garder les noms de marque (Datagma, HubSpot, Pipedrive, etc.)
+- Garder les URLs d'intégration (https://app.datagma.com/register)
+- Adapter les métadonnées SEO pour la langue cible
+
+### Script de traduction
+Voir `/Users/sylvain/Documents/enrich-crm/scripts/_translate_pricing.py` pour un exemple de script GPT-4o.
+Adapter en changeant :
+- `MDX_PATH` → chemin de la page source
+- `site` → `https://datagma.com`
+- Langues et hints dans le dict `LANGUAGES`

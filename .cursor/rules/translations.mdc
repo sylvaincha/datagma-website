@@ -1,0 +1,114 @@
+---
+description: "Règles pour les traductions multilingues du projet Datagma"
+globs: ["public/i18n/**/*", "src/pages/**/*"]
+alwaysApply: false
+---
+
+# Traductions Datagma — 7 langues
+
+## Langues supportées
+| Code | Langue | Forme de politesse |
+|------|--------|-------------------|
+| `en` | English | you |
+| `fr` | Français | vous (vouvoiement) |
+| `de` | Deutsch | Sie |
+| `nl` | Nederlands | u |
+| `it` | Italiano | Lei |
+| `es` | Español | usted |
+| `pt` | Português | você (portugais européen) |
+
+## Règles de traduction par langue
+
+### Français (fr)
+- Vouvoiement systématique
+- Typographie française : espace insécable avant `:`, `;`, `!`, `?`
+- "emails" → "e-mails" (tiret), sauf dans les boutons CTA
+- Virgule décimale : "70-80%" reste en chiffres arabes
+- Monnaie : "$39" reste "$39" (prix US)
+
+### Allemand (de)
+- Sie (Sie/Ihnen/Ihr — majuscule)
+- Noms composés : "E-Mail-Finder", "Telefonnummer-Finder"
+- CTA : "Kostenlos starten" (pas "Gratis")
+
+### Néerlandais (nl)
+- u (minuscule)
+- "E-mailfinder" sans tiret
+- CTA : "Gratis starten"
+
+### Italien (it)
+- Lei (formel, majuscule L)
+- CTA : "Inizia gratis" ou "Prova gratis"
+
+### Espagnol (es)
+- usted (minuscule)
+- Signes d'exclamation/interrogation doubles : ¡Hola! / ¿Tienes?
+- CTA : "Empieza gratis" ou "Comienza gratis"
+
+### Portugais (pt)
+- Portugais EUROPÉEN (pas brésilien)
+- você (minuscule)
+- CTA : "Começar grátis"
+
+## Termes à NE PAS traduire (toujours en anglais)
+- Datagma
+- HubSpot, Pipedrive, Zapier, Make, n8n, Clay
+- API, CSV, GDPR, CCPA, CRM
+- SDR, BDR, AE, RevOps
+- Email, LinkedIn, Chrome
+- $0, $39, $79, $209 (prix)
+- WhatsApp
+
+## Structure des fichiers de traduction
+
+```
+public/i18n/
+  {lang}/
+    common.json     → Nav, footer, CTAs communs
+    home.json       → Page d'accueil
+    pricing.json    → Page pricing
+    email-finder.json
+    phone-finder.json
+    job-change-detection.json
+    api.json
+    ...
+```
+
+## Exemple de fichier de traduction (public/i18n/fr/pricing.json)
+```json
+{
+  "title": "Tarifs Datagma — Email Finder, Phone Finder & Job Changes",
+  "description": "Commencez gratuitement avec 90 emails par mois. Passez au plan Regular, Popular ou Expert selon votre volume.",
+  "hero": {
+    "badge": "Tarifs simples et transparents",
+    "title": "Commencez gratuitement.",
+    "subtitle": "Passez à l'échelle quand vous êtes prêt.",
+    "free_cta": "Créer un compte gratuit",
+    "billing_monthly": "Mensuel",
+    "billing_annual": "Annuel"
+  }
+}
+```
+
+## Script de traduction GPT-4o
+
+Pour traduire une page MDX, utiliser le pattern du script de référence :
+```
+/Users/sylvain/Documents/enrich-crm/scripts/_translate_pricing.py
+```
+
+Prompt système recommandé pour GPT-4o :
+```
+You are a senior B2B SaaS translator specialising in CRM, sales intelligence, and data enrichment tools.
+Client: Datagma — a real-time B2B data enrichment platform for Sales, Marketing and RevOps teams.
+Target language: {lang_name}.
+
+CRITICAL RULES:
+1. Translate ALL user-visible text into {lang_name} with native, professional quality.
+2. PRESERVE EXACTLY: all HTML tags, CSS classes, data attributes, IDs, href values.
+3. NEVER translate: Datagma, HubSpot, Pipedrive, Zapier, Make, n8n, Clay, API, CSV, GDPR, CCPA, CRM.
+4. UPDATE: /en/ paths → /{lang}/ in internal links.
+5. UTM parameters: utm_campaign=*_en → utm_campaign=*_{lang}
+6. {lang_hint}
+7. Return ONLY the translated HTML fragment — no markdown, no explanations.
+```

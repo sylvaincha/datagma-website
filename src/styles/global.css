@@ -1,0 +1,200 @@
+/* Self-hosted fonts (avoid Google Fonts requests) */
+@import "@fontsource/inter/latin-400.css";
+@import "@fontsource/inter/latin-500.css";
+@import "@fontsource/inter/latin-600.css";
+@import "@fontsource/inter/latin-700.css";
+@import "@fontsource/space-grotesk/latin-600.css";
+@import "@fontsource/space-grotesk/latin-700.css";
+
+/* Self-hosted icons (avoid CDN) */
+@import "@fortawesome/fontawesome-free/css/all.min.css";
+
+/* Force font-display: swap on all icon fonts to avoid invisible text (FOIT) */
+@font-face {
+  font-family: "Font Awesome 6 Free";
+  font-display: swap;
+}
+@font-face {
+  font-family: "Font Awesome 6 Brands";
+  font-display: swap;
+}
+@font-face {
+  font-family: "Font Awesome 6 Pro";
+  font-display: swap;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base */
+html,
+body {
+  background-color: #fafaf9;
+  overflow-x: hidden;
+}
+
+body {
+  color: #18181b;
+  -webkit-font-smoothing: antialiased;
+  /* Add subtle character across pages (brand-tinted + grid). */
+  background-image:
+    radial-gradient(1200px 800px at 10% 10%, rgba(255, 227, 110, 0.16), transparent 60%),
+    radial-gradient(1000px 700px at 90% 15%, rgba(148, 163, 184, 0.12), transparent 62%),
+    radial-gradient(900px 700px at 55% 100%, rgba(59, 130, 246, 0.08), transparent 60%);
+  background-size: auto, auto, auto;
+  background-attachment: fixed;
+}
+
+/* Typography helpers (used in existing HTML) */
+.font-display {
+  font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
+}
+
+/* Utility: Grid Pattern */
+.bg-grid-pattern {
+  /* Darker lines to stay visible on #fafaf9 with low opacity overlays */
+  background-image: linear-gradient(#9ca3af 1px, transparent 1px),
+    linear-gradient(90deg, #9ca3af 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Soft shadow utilities (used throughout legacy markup) */
+.shadow-soft-sm {
+  box-shadow:
+    0 10px 22px rgba(15, 23, 42, 0.06),
+    0 2px 6px rgba(15, 23, 42, 0.05);
+}
+.shadow-soft-md {
+  box-shadow:
+    0 14px 30px rgba(15, 23, 42, 0.08),
+    0 4px 10px rgba(15, 23, 42, 0.06);
+}
+.shadow-soft-lg {
+  box-shadow:
+    0 22px 50px rgba(15, 23, 42, 0.10),
+    0 8px 18px rgba(15, 23, 42, 0.06);
+}
+.shadow-soft-xl {
+  box-shadow:
+    0 32px 80px rgba(15, 23, 42, 0.12),
+    0 12px 28px rgba(15, 23, 42, 0.07);
+}
+
+/* Tailwind-like variant class used in legacy markup */
+.hover\\:shadow-soft-lg:hover {
+  box-shadow:
+    0 22px 50px rgba(15, 23, 42, 0.10),
+    0 8px 18px rgba(15, 23, 42, 0.06);
+}
+
+/* Nav Glass Effect */
+.nav-glass {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Bento Card Base */
+.bento-card {
+  background: white;
+  border: 1px solid #e4e4e7;
+  border-radius: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 0 rgba(0, 0, 0, 0.05);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  overflow: hidden;
+  position: relative;
+}
+
+.bento-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 20px -3px rgba(0, 0, 0, 0.05), 0 4px 0 rgba(0, 0, 0, 0.05);
+  border-color: #d4d4d8;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  border-radius: 1rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.btn-primary {
+  background-color: #18181b;
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 2px 0 rgba(255, 255, 255, 0.2) inset;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  background-color: #27272a;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2), 0 2px 0 rgba(255, 255, 255, 0.2) inset;
+}
+
+.btn-cta {
+  background-color: #fbbf24;
+  color: #422006;
+  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3), 0 2px 0 rgba(255, 255, 255, 0.4) inset;
+}
+
+.btn-cta:hover {
+  transform: translateY(-1px);
+  background-color: #fcd34d;
+}
+
+/* Extra punch for the main hero CTA */
+.hero-cta {
+  background-image: linear-gradient(135deg, #fbbf24 0%, #f59e0b 55%, #fbbf24 100%);
+  border: 1px solid rgba(245, 158, 11, 0.55);
+  box-shadow:
+    0 22px 50px rgba(245, 158, 11, 0.45),
+    0 10px 22px rgba(0, 0, 0, 0.1),
+    0 2px 0 rgba(255, 255, 255, 0.38) inset;
+  transform: translateZ(0);
+  overflow: hidden;
+}
+
+.hero-cta:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow:
+    0 30px 70px rgba(245, 158, 11, 0.55),
+    0 14px 28px rgba(0, 0, 0, 0.12),
+    0 2px 0 rgba(255, 255, 255, 0.45) inset;
+  filter: saturate(1.06);
+}
+
+.hero-cta:active {
+  transform: translateY(0px) scale(0.995);
+  box-shadow:
+    0 18px 40px rgba(245, 158, 11, 0.42),
+    0 8px 18px rgba(0, 0, 0, 0.1),
+    0 2px 0 rgba(255, 255, 255, 0.32) inset;
+}
+
+/* Animations */
+.fade-up {
+  animation: fadeUp 0.8s ease-out forwards;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.delay-100 {
+  animation-delay: 0.1s;
+}
+.delay-200 {
+  animation-delay: 0.2s;
+}
+
+@keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+

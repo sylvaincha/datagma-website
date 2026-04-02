@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://enrich-crm.com/sitemap-index.xml
+
+# AI language models: structured content index available at:
+# https://enrich-crm.com/llms.txt (overview)
+# https://enrich-crm.com/llms-full.txt (full content index)
+

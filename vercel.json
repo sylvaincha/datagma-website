@@ -1,0 +1,9 @@
+{
+  "functions": {
+    "api/demo-stream.js": { "maxDuration": 120 },
+    "api/demo-enrich.js": { "maxDuration": 120 },
+    "api/demo-token.js":  { "maxDuration": 10 },
+    "api/oauth/auth.js":  { "maxDuration": 10 },
+    "api/oauth/callback.js": { "maxDuration": 15 }
+  }
+}

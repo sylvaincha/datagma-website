@@ -1,0 +1,15 @@
+---
+/**
+ * Shared background used across pages.
+ * Wrap this inside a `relative overflow-hidden` container.
+ */
+const { gridOpacityClass = "opacity-25" } = Astro.props;
+---
+
+<div class="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
+  <div class={`absolute inset-0 bg-grid-pattern ${gridOpacityClass}`}></div>
+  <div class="absolute -top-32 -left-32 w-[520px] h-[520px] bg-sky-200 rounded-full mix-blend-multiply filter blur-3xl opacity-15"></div>
+  <div class="absolute top-20 -right-32 w-[520px] h-[520px] bg-slate-200 rounded-full mix-blend-multiply filter blur-3xl opacity-10"></div>
+  <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[520px] h-[520px] bg-amber-200 rounded-full mix-blend-multiply filter blur-3xl opacity-10"></div>
+</div>
+
