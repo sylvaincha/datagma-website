@@ -31,9 +31,11 @@ function verifyToken(token, secret) {
   );
 }
 
-// ── Rate limits ───────────────────────────────────────────────────────────────
-const phoneRateMap = new Map();
-const emailRateMap = new Map();
+// ── Rate limits — per IP and per browser fingerprint (visitorId) ─────────────
+const phoneRateMap    = new Map();
+const emailRateMap    = new Map();
+const fidPhoneRateMap = new Map(); // same limits applied to FingerprintJS visitorId
+const fidEmailRateMap = new Map();
 
 function getEntry(map, ip, windowMs) {
   const now = Date.now();
@@ -96,6 +98,33 @@ async function callAPI(baseUrl, params, apiKey) {
   }
 }
 function safeJson(text) { try { return JSON.parse(text); } catch { return null; } }
+
+// ── ipinfo.io — datacenter/proxy IP detection ─────────────────────────────────
+// Returns { ok: false, reason } if the IP is a known datacenter/hosting IP.
+// Fails OPEN if ipinfo is unreachable or token not set (never blocks real users).
+const ipinfoCache = new Map(); // simple in-memory cache per function instance
+
+async function checkIpReputation(ip, token) {
+  if (!token || !ip || ip === "unknown") return { ok: true };
+  // Avoid hitting ipinfo twice for the same IP in the same warm instance
+  if (ipinfoCache.has(ip)) return ipinfoCache.get(ip);
+  try {
+    const r = await fetch(`https://ipinfo.io/${encodeURIComponent(ip)}/json?token=${token}`, {
+      headers: { accept: "application/json" },
+      signal:  AbortSignal.timeout(3_000),
+    });
+    const d = await r.json();
+    const result = d.hosting === true
+      ? { ok: false, reason: "datacenter_ip", org: d.org ?? "" }
+      : { ok: true };
+    ipinfoCache.set(ip, result);
+    // Evict cache if it grows too large (shouldn't happen in short-lived functions)
+    if (ipinfoCache.size > 500) ipinfoCache.clear();
+    return result;
+  } catch {
+    return { ok: true }; // fail open — never block on ipinfo outage
+  }
+}
 
 // ── Cloudflare Turnstile verification ─────────────────────────────────────────
 // Returns true if valid, or true if no secret configured (dev mode).
@@ -210,6 +239,7 @@ export default async function handler(req, res) {
   const apiKey           = (process.env.DATAGMA_API_KEY    ?? "").trim();
   const secret           = (process.env.DEMO_SECRET        ?? "").trim();
   const turnstileSecret  = (process.env.TURNSTILE_SECRET   ?? "").trim();
+  const ipinfoToken      = (process.env.IPINFO_TOKEN       ?? "").trim();
 
   if (!apiKey || !secret) return res.status(501).json({ error: "not_configured" });
 
@@ -224,20 +254,36 @@ export default async function handler(req, res) {
   const token = clean(req.query?.t ?? "", 32);
   if (!verifyToken(token, secret)) return res.status(401).json({ error: "invalid_token" });
 
-  const ip = (req.headers["x-forwarded-for"] ?? "unknown").split(",")[0].trim();
+  const ip  = (req.headers["x-forwarded-for"] ?? "unknown").split(",")[0].trim();
+  const fid = clean(req.query?.fid ?? "", 64); // FingerprintJS visitorId (optional)
 
-  // ── Cloudflare Turnstile — bot & datacenter IP protection ─────────────────
-  // If TURNSTILE_SECRET is set, enforce. If not set (dev), pass through.
+  // ── Layer 1 — Cloudflare Turnstile (bot + datacenter browser check) ────────
   const cfToken = clean(req.query?.cf ?? "", 2048);
   const cfOk    = await verifyTurnstile(cfToken, ip, turnstileSecret);
   if (!cfOk) return res.status(403).json({ error: "bot_detected" });
+
+  // ── Layer 2 — ipinfo.io (datacenter/hosting IP block) ─────────────────────
+  // Runs in parallel with nothing to wait for — fast path if token not set.
+  if (ipinfoToken) {
+    const ipRep = await checkIpReputation(ip, ipinfoToken);
+    if (!ipRep.ok) return res.status(403).json({ error: "datacenter_ip" });
+  }
   const mode = clean(req.query?.mode ?? "linkedin", 20);
 
   const PHONE_LIMIT = process.env.DEMO_PHONE_LIMIT ? parseInt(process.env.DEMO_PHONE_LIMIT) : 3;
   const EMAIL_LIMIT = process.env.DEMO_EMAIL_LIMIT ? parseInt(process.env.DEMO_EMAIL_LIMIT) : 10;
 
+  // Rate check by IP
   const phoneLimits = checkLimit(phoneRateMap, ip, PHONE_LIMIT);
   const emailLimits = checkLimit(emailRateMap, ip, EMAIL_LIMIT);
+
+  // Rate check by browser fingerprint (catches proxy rotation)
+  const fidPhoneLimits = fid ? checkLimit(fidPhoneRateMap, fid, PHONE_LIMIT) : { exceeded: false };
+  const fidEmailLimits = fid ? checkLimit(fidEmailRateMap, fid, EMAIL_LIMIT) : { exceeded: false };
+
+  // Exceeded if EITHER the IP or the fingerprint is over limit
+  const phoneExceeded = phoneLimits.exceeded || fidPhoneLimits.exceeded;
+  const emailExceeded = emailLimits.exceeded || fidEmailLimits.exceeded;
 
   // Read inputs
   const linkedin    = cleanLinkedin(req.query?.linkedin    ?? "");
@@ -256,7 +302,7 @@ export default async function handler(req, res) {
   // ── PHONE MODES ─────────────────────────────────────────────────────────────
   if (mode === "linkedin" || mode === "nameDomain" || mode === "nameCompany") {
 
-    if (phoneLimits.exceeded) {
+    if (phoneExceeded) {
       return res.status(429).json({
         error: "rate_limited",
         credits: { phonesRemaining: 0, resetsAt: phoneLimits.resetAt },
@@ -300,6 +346,7 @@ export default async function handler(req, res) {
     let phoneResult = null;
     if (hasPhone) {
       consumeCredit(phoneRateMap, ip, PHONE_LIMIT);
+      if (fid) consumeCredit(fidPhoneRateMap, fid, PHONE_LIMIT);
       phoneResult = {
         masked:   maskPhone(phones[0].number),
         whatsapp: phones[0].whatsapp,
@@ -320,7 +367,7 @@ export default async function handler(req, res) {
   // ── EMAIL MODE (/v6/findEmail) ───────────────────────────────────────────────
   if (mode === "findEmail") {
 
-    if (emailLimits.exceeded) {
+    if (emailExceeded) {
       return res.status(429).json({
         error: "rate_limited",
         credits: { emailsRemaining: 0, resetsAt: emailLimits.resetAt },
@@ -361,7 +408,10 @@ export default async function handler(req, res) {
     }
 
     // Only consume credit for verified emails (Datagma doesn't bill for probable)
-    if (verifiedEmail) consumeCredit(emailRateMap, ip, EMAIL_LIMIT);
+    if (verifiedEmail) {
+      consumeCredit(emailRateMap, ip, EMAIL_LIMIT);
+      if (fid) consumeCredit(fidEmailRateMap, fid, EMAIL_LIMIT);
+    }
 
     const emailLimitsAfter = checkLimit(emailRateMap, ip, EMAIL_LIMIT);
 

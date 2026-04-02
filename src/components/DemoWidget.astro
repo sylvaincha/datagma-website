@@ -304,6 +304,20 @@ const TURNSTILE_SITE_KEY = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "1x00000
   var cfToken        = null;   // current Turnstile token (single-use)
   var cfWidgetId     = null;   // Turnstile widget handle for reset
   var cfReady        = false;  // true once Turnstile has verified once
+  var visitorId      = null;   // FingerprintJS stable browser ID
+
+  // ── FingerprintJS — load async, fail silently ────────────────────────────
+  // Uses the free open-source build from CDN (no API key needed).
+  // visitorId is stable across sessions for the same browser — lets us
+  // rate-limit per device even when proxies rotate IPs.
+  var _fpPromise = import("https://openfpcdn.io/fingerprintjs/v4/esm/index.js")
+    .then(function (FingerprintJS) { return FingerprintJS.load(); })
+    .catch(function () { return null; });
+
+  _fpPromise.then(function (fp) {
+    if (!fp) return;
+    fp.get().then(function (result) { visitorId = result.visitorId; });
+  });
 
   // ── Turnstile init — called when CF script loads ─────────────────────────
   // We expose this on window so the CF script's onload can call it.
@@ -493,6 +507,7 @@ const TURNSTILE_SITE_KEY = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "1x00000
       }
 
       if (cf) params.set("cf", cf);
+      if (visitorId) params.set("fid", visitorId);
 
       try {
         var resp = await fetch(ENRICH_URL + "?" + params.toString());
@@ -569,6 +584,7 @@ const TURNSTILE_SITE_KEY = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "1x00000
       var cf = await getCfToken();
       var params = new URLSearchParams({ t: token, mode: "findEmail", fullName: fn, domain: co });
       if (cf) params.set("cf", cf);
+      if (visitorId) params.set("fid", visitorId);
 
       try {
         var resp = await fetch(ENRICH_URL + "?" + params.toString());
