@@ -6,6 +6,8 @@ canonical: 'https://datagma.com/en/home'
 activeNav: ''
 ---
 
+import LiveCounter from '../../components/LiveCounter.astro';
+
 <script type="application/ld+json" set:html={JSON.stringify([
   {
     "@context": "https://schema.org",
@@ -859,19 +861,4 @@ activeNav: ''
   </div>
 </section>
 
-<script>
-  (function () {
-    var count = 14203;
-    var els = [
-      document.getElementById('live-phones-count'),
-      document.getElementById('testimonial-counter'),
-    ];
-    function tick() {
-      count += Math.floor(Math.random() * 3) + 1;
-      var formatted = count.toLocaleString('en-US');
-      els.forEach(function(el) { if (el) el.textContent = formatted; });
-      setTimeout(tick, Math.floor(Math.random() * 8000) + 4000);
-    }
-    setTimeout(tick, 5000);
-  })();
-</script>
+<LiveCounter />
