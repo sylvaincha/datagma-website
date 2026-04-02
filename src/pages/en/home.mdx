@@ -69,17 +69,18 @@ activeNav: ''
           We add the <strong class="text-gray-900 font-semibold">direct mobile phones your current stack is missing</strong> — so your team reaches decision-makers, not gatekeepers.
         </p>
 
-        {/* Scenario pain widget */}
+        {/* Scenario pain widget — all personas */}
         <div class="rounded-2xl border border-gray-200/80 bg-white/80 backdrop-blur-sm px-5 py-4 mb-6 shadow-sm">
           <p class="text-xs font-extrabold uppercase tracking-wider text-gray-400 mb-3">Sound familiar?</p>
           <div class="space-y-3">
             {[
-              { who: "SDR", pain: '"I spent 4 hours calling numbers today. 2 answered. Both were assistants."' },
-              { who: "Clay user", pain: '"My primary provider returns a phone on 40% of contacts. The other 60% are dead ends."' },
-              { who: "RevOps", pain: '"Our CRM has 12k contacts. We have mobile phones for 800 of them."' },
+              { who: "Sales rep", color: "bg-blue-100 text-blue-700",   pain: '"I\'ve been trying to reach this prospect for 3 weeks. I only have the main switchboard."' },
+              { who: "Recruiter",  color: "bg-violet-100 text-violet-700", pain: '"The candidate applied 4 days ago. Another agency already placed them. I never had their mobile."' },
+              { who: "Real estate", color: "bg-amber-100 text-amber-700", pain: '"I found the perfect property match. I can\'t reach the decision-maker — only a generic inbox."' },
+              { who: "BizDev",    color: "bg-green-100 text-green-700",  pain: '"I know the VP is interested. His EA filters every call. I need his direct line."' },
             ].map((s) => (
               <div class="flex items-start gap-3 text-sm">
-                <span class="shrink-0 bg-blue-100 text-blue-700 font-extrabold text-[10px] px-2 py-0.5 rounded-full mt-0.5">{s.who}</span>
+                <span class={`shrink-0 ${s.color} font-extrabold text-[10px] px-2 py-0.5 rounded-full mt-0.5 whitespace-nowrap`}>{s.who}</span>
                 <span class="text-gray-600 italic leading-snug">{s.pain}</span>
               </div>
             ))}
@@ -181,6 +182,129 @@ activeNav: ''
       <img src="/assets/scraped/ramp-1.png" alt="Ramp" class="h-8 object-contain" />
       <img src="/assets/scraped/LOGO-HYPERLEX.png" alt="Hyperlex" class="h-7 object-contain" />
       <img src="/assets/scraped/IHS_Markit_logo.svg" alt="IHS Markit" class="h-7 object-contain" />
+    </div>
+  </div>
+</section>
+
+{/* ─── WHO USES DATAGMA ────────────────────────────────── */}
+<section class="py-24">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-14">
+      <h2 class="font-display font-extrabold text-4xl sm:text-5xl text-gray-900 mb-4 tracking-tight">
+        One tool. Every profession<br/>
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-sky-500">that lives by the phone.</span>
+      </h2>
+      <p class="text-gray-500 text-lg max-w-xl mx-auto">
+        Whether you use Clay or a paper notebook — if reaching people by phone is how you work,
+        Datagma gets you the number that makes the difference.
+      </p>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+
+      {/* Sales rep / account exec */}
+      <div class="bento-card p-6 relative overflow-hidden group">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full blur-2xl opacity-80 -translate-y-1/2 translate-x-1/2 group-hover:opacity-100 transition-opacity"></div>
+        <div class="relative z-10">
+          <div class="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center mb-4 text-2xl">🧑‍💼</div>
+          <h3 class="font-display font-bold text-xl text-gray-900 mb-1">Sales rep & AE</h3>
+          <div class="text-xs font-bold text-blue-600 bg-blue-50 border border-blue-200 px-2.5 py-0.5 rounded-full inline-block mb-3">B2B field & inside sales</div>
+          <p class="text-gray-500 text-sm leading-relaxed mb-3">
+            You've done the research. The prospect is qualified. The only thing standing between you and a conversation is a phone number that actually reaches them — not their assistant.
+          </p>
+          <div class="text-xs text-gray-700 font-semibold bg-gray-50 border border-gray-200 rounded-xl px-3 py-2">
+            <span class="text-green-600">✓</span> Direct mobile, no switchboard. Search by name + company or LinkedIn.
+          </div>
+        </div>
+      </div>
+
+      {/* Recruiter */}
+      <div class="bento-card p-6 relative overflow-hidden group">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-violet-50 rounded-full blur-2xl opacity-80 -translate-y-1/2 translate-x-1/2 group-hover:opacity-100 transition-opacity"></div>
+        <div class="relative z-10">
+          <div class="w-12 h-12 bg-violet-100 rounded-2xl flex items-center justify-center mb-4 text-2xl">🧑‍🔬</div>
+          <h3 class="font-display font-bold text-xl text-gray-900 mb-1">Recruiter</h3>
+          <div class="text-xs font-bold text-violet-600 bg-violet-50 border border-violet-200 px-2.5 py-0.5 rounded-full inline-block mb-3">Agency & in-house</div>
+          <p class="text-gray-500 text-sm leading-relaxed mb-3">
+            Candidates don't reply to LinkedIn messages anymore. The ones who do have 12 other offers in their inbox. A direct call to their mobile in the first 24 hours changes everything.
+          </p>
+          <div class="text-xs text-gray-700 font-semibold bg-gray-50 border border-gray-200 rounded-xl px-3 py-2">
+            <span class="text-green-600">✓</span> Reach passive candidates before a competitor agency does.
+          </div>
+        </div>
+      </div>
+
+      {/* Real estate */}
+      <div class="bento-card p-6 relative overflow-hidden group">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-amber-50 rounded-full blur-2xl opacity-80 -translate-y-1/2 translate-x-1/2 group-hover:opacity-100 transition-opacity"></div>
+        <div class="relative z-10">
+          <div class="w-12 h-12 bg-amber-100 rounded-2xl flex items-center justify-center mb-4 text-2xl">🏢</div>
+          <h3 class="font-display font-bold text-xl text-gray-900 mb-1">Real estate agent</h3>
+          <div class="text-xs font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full inline-block mb-3">Commercial & residential</div>
+          <p class="text-gray-500 text-sm leading-relaxed mb-3">
+            The decision to buy, rent or invest is made by a person — not an inbox. Reaching the property owner or the CFO who signs off on office leases requires their direct mobile.
+          </p>
+          <div class="text-xs text-gray-700 font-semibold bg-gray-50 border border-gray-200 rounded-xl px-3 py-2">
+            <span class="text-green-600">✓</span> Find the right person by name + company, no LinkedIn URL needed.
+          </div>
+        </div>
+      </div>
+
+      {/* Business developer */}
+      <div class="bento-card p-6 relative overflow-hidden group">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-green-50 rounded-full blur-2xl opacity-80 -translate-y-1/2 translate-x-1/2 group-hover:opacity-100 transition-opacity"></div>
+        <div class="relative z-10">
+          <div class="w-12 h-12 bg-green-100 rounded-2xl flex items-center justify-center mb-4 text-2xl">🤝</div>
+          <h3 class="font-display font-bold text-xl text-gray-900 mb-1">Business developer</h3>
+          <div class="text-xs font-bold text-green-700 bg-green-50 border border-green-200 px-2.5 py-0.5 rounded-full inline-block mb-3">Partnerships & BD</div>
+          <p class="text-gray-500 text-sm leading-relaxed mb-3">
+            A partnership discussion doesn't happen in an email thread. It happens on a call with the right VP. You know who they are — you just can't get past their EA or the main line.
+          </p>
+          <div class="text-xs text-gray-700 font-semibold bg-gray-50 border border-gray-200 rounded-xl px-3 py-2">
+            <span class="text-green-600">✓</span> Direct line to VP-level decision-makers, not the switchboard.
+          </div>
+        </div>
+      </div>
+
+      {/* SDR / Growth */}
+      <div class="bento-card p-6 relative overflow-hidden group">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-sky-50 rounded-full blur-2xl opacity-80 -translate-y-1/2 translate-x-1/2 group-hover:opacity-100 transition-opacity"></div>
+        <div class="relative z-10">
+          <div class="w-12 h-12 bg-sky-100 rounded-2xl flex items-center justify-center mb-4 text-2xl">📊</div>
+          <h3 class="font-display font-bold text-xl text-gray-900 mb-1">SDR & Growth</h3>
+          <div class="text-xs font-bold text-sky-700 bg-sky-50 border border-sky-200 px-2.5 py-0.5 rounded-full inline-block mb-3">Outbound & Clay workflows</div>
+          <p class="text-gray-500 text-sm leading-relaxed mb-3">
+            Your sequences are solid. Your targeting is right. Your connect rate is 3%. The gap is in the phone data — one more provider in your waterfall changes the math.
+          </p>
+          <div class="text-xs text-gray-700 font-semibold bg-gray-50 border border-gray-200 rounded-xl px-3 py-2">
+            <span class="text-green-600">✓</span> Native Clay provider. BYOK on Fullenrich, BetterContact, GetCargo.
+          </div>
+        </div>
+      </div>
+
+      {/* RevOps / CRM */}
+      <div class="bento-card p-6 relative overflow-hidden group">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-rose-50 rounded-full blur-2xl opacity-80 -translate-y-1/2 translate-x-1/2 group-hover:opacity-100 transition-opacity"></div>
+        <div class="relative z-10">
+          <div class="w-12 h-12 bg-rose-100 rounded-2xl flex items-center justify-center mb-4 text-2xl">⚙️</div>
+          <h3 class="font-display font-bold text-xl text-gray-900 mb-1">RevOps & CRM teams</h3>
+          <div class="text-xs font-bold text-rose-700 bg-rose-50 border border-rose-200 px-2.5 py-0.5 rounded-full inline-block mb-3">HubSpot & Pipedrive</div>
+          <p class="text-gray-500 text-sm leading-relaxed mb-3">
+            Your reps complain that CRM data is stale. You have 15,000 contacts with 1,200 mobile phones. Enriching the rest automatically is one integration away.
+          </p>
+          <div class="text-xs text-gray-700 font-semibold bg-gray-50 border border-gray-200 rounded-xl px-3 py-2">
+            <span class="text-green-600">✓</span> 2-way HubSpot & Pipedrive sync. Auto-enrich on contact creation.
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="text-center mt-10">
+      <a href="https://app.datagma.com/register" class="inline-flex items-center gap-2 bg-blue-600 text-white px-7 py-3.5 rounded-xl font-bold text-sm hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200">
+        Start free — 3 phones included, no card needed
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+      </a>
     </div>
   </div>
 </section>
