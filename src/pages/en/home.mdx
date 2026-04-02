@@ -42,9 +42,13 @@ import DemoWidget from '../../components/DemoWidget.astro';
 <section class="relative pt-20 pb-16 overflow-hidden">
 
   <div class="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
-    <div class="absolute inset-0 bg-grid-pattern opacity-60"></div>
-    <div class="absolute -top-40 -left-40 w-[700px] h-[700px] bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-[0.15]"></div>
-    <div class="absolute top-0 -right-32 w-[600px] h-[600px] bg-sky-200 rounded-full mix-blend-multiply filter blur-3xl opacity-[0.12]"></div>
+    {/* Gradient de fond */}
+    <div class="absolute inset-0" style="background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 35%, #ffffff 65%, #f8fafc 100%);"></div>
+    <div class="absolute inset-0 bg-grid-pattern opacity-40"></div>
+    {/* Blobs */}
+    <div class="absolute -top-32 -left-32 w-[600px] h-[600px] bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-[0.12]"></div>
+    <div class="absolute top-0 -right-24 w-[500px] h-[500px] bg-sky-300 rounded-full mix-blend-multiply filter blur-3xl opacity-[0.10]"></div>
+    <div class="absolute bottom-0 left-1/2 w-[400px] h-[400px] bg-indigo-100 rounded-full mix-blend-multiply filter blur-3xl opacity-[0.15]"></div>
   </div>
 
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
