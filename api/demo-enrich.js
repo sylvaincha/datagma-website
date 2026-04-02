@@ -100,13 +100,45 @@ async function callAPI(baseUrl, params, apiKey) {
 function safeJson(text) { try { return JSON.parse(text); } catch { return null; } }
 
 // ── ipinfo.io — datacenter/proxy IP detection ─────────────────────────────────
-// Returns { ok: false, reason } if the IP is a known datacenter/hosting IP.
-// Fails OPEN if ipinfo is unreachable or token not set (never blocks real users).
-const ipinfoCache = new Map(); // simple in-memory cache per function instance
+// The free plan doesn't include the `hosting` field.
+// We parse the ASN from the `org` field ("AS16509 Amazon.com, Inc.")
+// and match against a curated list of datacenter/proxy ASNs.
+// Fails OPEN on any error (never blocks real users due to ipinfo outage).
+
+const DATACENTER_ASNS = new Set([
+  "AS16509",  // Amazon AWS
+  "AS14618",  // Amazon AWS (us-east)
+  "AS15169",  // Google Cloud
+  "AS8075",   // Microsoft Azure
+  "AS8069",   // Microsoft
+  "AS14061",  // DigitalOcean
+  "AS20473",  // Vultr / Choopa
+  "AS24940",  // Hetzner Online
+  "AS16276",  // OVH SAS
+  "AS12876",  // Scaleway / Iliad
+  "AS36351",  // SoftLayer / IBM Cloud
+  "AS60781",  // LeaseWeb
+  "AS197540", // NetCup
+  "AS51167",  // Contabo
+  "AS63949",  // Linode / Akamai Cloud
+  "AS6939",   // Hurricane Electric (transit/hosting)
+  "AS9009",   // M247 (large proxy network)
+  "AS53667",  // FranTech / BuyVM
+  "AS3842",   // RamNode
+  "AS46562",  // Performive
+  "AS40676",  // Psychz Networks
+  "AS32475",  // SingleHop
+  "AS26347",  // DreamHost
+  "AS7203",   // Namecheap
+  "AS55286",  // B2 Net Solutions
+  "AS4224",   // 1&1 / IONOS
+  "AS47583",  // Hostinger
+]);
+
+const ipinfoCache = new Map(); // in-memory cache per warm function instance
 
 async function checkIpReputation(ip, token) {
   if (!token || !ip || ip === "unknown") return { ok: true };
-  // Avoid hitting ipinfo twice for the same IP in the same warm instance
   if (ipinfoCache.has(ip)) return ipinfoCache.get(ip);
   try {
     const r = await fetch(`https://ipinfo.io/${encodeURIComponent(ip)}/json?token=${token}`, {
@@ -114,11 +146,24 @@ async function checkIpReputation(ip, token) {
       signal:  AbortSignal.timeout(3_000),
     });
     const d = await r.json();
-    const result = d.hosting === true
-      ? { ok: false, reason: "datacenter_ip", org: d.org ?? "" }
-      : { ok: true };
+
+    // Plan payant: hosting field present
+    if (d.hosting === true) {
+      const result = { ok: false, reason: "datacenter_ip", org: d.org ?? "" };
+      ipinfoCache.set(ip, result);
+      return result;
+    }
+
+    // Plan gratuit: parse ASN from org field ("AS16509 Amazon.com, Inc.")
+    const asn = (d.org ?? "").match(/^(AS\d+)/i)?.[1]?.toUpperCase() ?? "";
+    if (asn && DATACENTER_ASNS.has(asn)) {
+      const result = { ok: false, reason: "datacenter_ip", org: d.org ?? "" };
+      ipinfoCache.set(ip, result);
+      return result;
+    }
+
+    const result = { ok: true };
     ipinfoCache.set(ip, result);
-    // Evict cache if it grows too large (shouldn't happen in short-lived functions)
     if (ipinfoCache.size > 500) ipinfoCache.clear();
     return result;
   } catch {
