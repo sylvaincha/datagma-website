@@ -8,3 +8,4 @@ scripts/
 *.zip
 *.py
 .astro/
+.vercel
