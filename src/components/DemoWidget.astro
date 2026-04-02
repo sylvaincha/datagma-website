@@ -214,25 +214,62 @@
 
 <script>
 (function () {
-  var TOKEN_URL  = "/api/demo-token";
-  var ENRICH_URL = "/api/demo-enrich";
+  var TOKEN_URL   = "/api/demo-token";
+  var ENRICH_URL  = "/api/demo-enrich";
   var currentMode = "linkedin";
   var cachedToken = null;
   var tokenExpiry = 0;
 
-  // ── Tab switching ───────────────────────────────────────────────────────────
-  var tabs = document.querySelectorAll(".demo-tab");
-  var inputGroups = document.querySelectorAll(".demo-inputs");
+  // ── DOM refs — all declared first ───────────────────────────────────────────
+  var tabs       = document.querySelectorAll(".demo-tab");
+  var inputGroups= document.querySelectorAll(".demo-inputs");
+  var form       = document.getElementById("demo-form");
+  var btnText    = document.getElementById("demo-btn-text");
+  var submitBtn  = document.getElementById("demo-submit");
+  var resultEl   = document.getElementById("demo-result");
+  var errorEl    = document.getElementById("demo-error");
+  var errorMsg   = document.getElementById("demo-error-msg");
 
+  if (!form) return; // safety guard
+
+  // ── UI helpers ──────────────────────────────────────────────────────────────
+  function hideError()  { if (errorEl)  errorEl.classList.add("hidden"); }
+  function hideResult() { if (resultEl) resultEl.classList.add("hidden"); }
+
+  function setLoading(on) {
+    if (!submitBtn || !btnText) return;
+    submitBtn.disabled = on;
+    btnText.textContent = on ? "Searching…" : "Find direct mobile";
+    submitBtn.classList.toggle("opacity-60", on);
+    submitBtn.classList.toggle("cursor-not-allowed", on);
+  }
+
+  function showError(msg) {
+    if (!errorEl || !errorMsg) return;
+    errorEl.classList.remove("hidden");
+    errorMsg.textContent = msg;
+    hideResult();
+  }
+
+  function updateCredits(credits) {
+    if (!credits) return;
+    var pr = document.getElementById("phones-remaining");
+    var er = document.getElementById("emails-remaining");
+    if (pr) pr.textContent = credits.phonesRemaining;
+    if (er) er.textContent = credits.emailsRemaining;
+  }
+
+  // ── Tab switching ───────────────────────────────────────────────────────────
   function setActiveTab(mode) {
     currentMode = mode;
     tabs.forEach(function (t) {
       var active = t.dataset.mode === mode;
-      t.className = t.className.replace(/bg-\S+|text-\S+|shadow-\S+/g, "").trim();
+      // Reset classes safely
+      t.classList.remove("bg-white", "text-blue-600", "shadow-sm", "text-gray-500", "hover:text-gray-700");
       if (active) {
         t.classList.add("bg-white", "text-blue-600", "shadow-sm");
       } else {
-        t.classList.add("text-gray-500", "hover:text-gray-700");
+        t.classList.add("text-gray-500");
       }
     });
     inputGroups.forEach(function (g) {
@@ -247,7 +284,7 @@
   });
   setActiveTab("linkedin");
 
-  // ── Token fetch (cached, refreshed before expiry) ───────────────────────────
+  // ── Token fetch ─────────────────────────────────────────────────────────────
   async function getToken() {
     if (cachedToken && Date.now() < tokenExpiry - 5000) return cachedToken;
     try {
@@ -257,60 +294,30 @@
       cachedToken = d.token;
       tokenExpiry = Date.now() + (d.expiresIn || 300) * 1000;
       return cachedToken;
-    } catch {
+    } catch (_) {
       return null;
     }
-  }
-
-  // ── UI helpers ──────────────────────────────────────────────────────────────
-  var btnText = document.getElementById("demo-btn-text");
-  var submitBtn = document.getElementById("demo-submit");
-  var resultEl = document.getElementById("demo-result");
-  var errorEl  = document.getElementById("demo-error");
-  var errorMsg = document.getElementById("demo-error-msg");
-
-  function setLoading(on) {
-    submitBtn.disabled = on;
-    btnText.textContent = on ? "Searching…" : "Find direct mobile";
-    submitBtn.classList.toggle("opacity-60", on);
-    submitBtn.classList.toggle("cursor-not-allowed", on);
-  }
-
-  function showError(msg) {
-    errorEl.classList.remove("hidden");
-    errorMsg.textContent = msg;
-    resultEl.classList.add("hidden");
-  }
-
-  function hideError() { errorEl.classList.add("hidden"); }
-  function hideResult() { resultEl.classList.add("hidden"); }
-
-  function updateCredits(credits) {
-    if (!credits) return;
-    var pr = document.getElementById("phones-remaining");
-    var er = document.getElementById("emails-remaining");
-    if (pr) pr.textContent = credits.phonesRemaining;
-    if (er) er.textContent = credits.emailsRemaining;
   }
 
   // ── Display result ──────────────────────────────────────────────────────────
   function showResult(data) {
     if (!data.found && !data.phone && !data.email) {
-      showError("No contact found for this search. Try a LinkedIn URL or double-check the inputs.");
+      showError("No contact found. Try a different search or check the inputs.");
       return;
     }
 
-    resultEl.classList.remove("hidden");
+    if (resultEl) resultEl.classList.remove("hidden");
     hideError();
 
-    var contact = data.contact || {};
-    var name = contact.fullName || "—";
-    var initials = name.split(" ").map(function (p) { return p[0]; }).join("").slice(0, 2).toUpperCase() || "?";
-    var role = [contact.jobTitle, contact.company].filter(Boolean).join(" · ");
+    var contact  = data.contact || {};
+    var name     = contact.fullName || "—";
+    var initials = name.split(" ").map(function (p) { return p[0] || ""; }).join("").slice(0, 2).toUpperCase() || "?";
+    var role     = [contact.jobTitle, contact.company].filter(Boolean).join(" · ");
 
-    document.getElementById("result-avatar").textContent = initials;
-    document.getElementById("result-name").textContent   = name;
-    document.getElementById("result-role").textContent   = role;
+    var el;
+    el = document.getElementById("result-avatar"); if (el) el.textContent = initials;
+    el = document.getElementById("result-name");   if (el) el.textContent = name;
+    el = document.getElementById("result-role");   if (el) el.textContent = role;
 
     // Phone
     var phoneRow   = document.getElementById("phone-row");
@@ -319,21 +326,17 @@
     var phoneVal   = document.getElementById("phone-value");
     var waBadge    = document.getElementById("whatsapp-badge");
 
-    phoneRow.classList.add("hidden");
-    phoneLimit.classList.add("hidden");
-    phoneNone.classList.add("hidden");
+    if (phoneRow)   phoneRow.classList.add("hidden");
+    if (phoneLimit) phoneLimit.classList.add("hidden");
+    if (phoneNone)  phoneNone.classList.add("hidden");
 
-    if (data.phone) {
+    if (data.phone && phoneRow && phoneVal) {
       phoneRow.classList.remove("hidden");
       phoneVal.textContent = data.phone.masked;
-      if (data.phone.whatsapp) {
-        waBadge.classList.remove("hidden");
-      } else {
-        waBadge.classList.add("hidden");
-      }
-    } else if (data.phoneLimitReached) {
+      if (waBadge) waBadge.classList.toggle("hidden", !data.phone.whatsapp);
+    } else if (data.phoneLimitReached && phoneLimit) {
       phoneLimit.classList.remove("hidden");
-    } else {
+    } else if (phoneNone) {
       phoneNone.classList.remove("hidden");
     }
 
@@ -342,22 +345,20 @@
     var emailLimit = document.getElementById("email-limit");
     var emailVal   = document.getElementById("email-value");
 
-    emailRow.classList.add("hidden");
-    emailLimit.classList.add("hidden");
+    if (emailRow)   emailRow.classList.add("hidden");
+    if (emailLimit) emailLimit.classList.add("hidden");
 
-    if (data.email) {
+    if (data.email && emailRow && emailVal) {
       emailRow.classList.remove("hidden");
       emailVal.textContent = data.email;
-    } else if (data.emailLimitReached) {
+    } else if (data.emailLimitReached && emailLimit) {
       emailLimit.classList.remove("hidden");
     }
 
-    // Credits
     updateCredits(data.credits);
   }
 
   // ── Form submit ─────────────────────────────────────────────────────────────
-  var form = document.getElementById("demo-form");
   form.addEventListener("submit", async function (e) {
     e.preventDefault();
     hideError();
@@ -373,24 +374,25 @@
     var params = new URLSearchParams({ t: token, mode: currentMode });
 
     if (currentMode === "linkedin") {
-      var li = form.querySelector("[name=linkedin]").value.trim();
+      var li = (form.querySelector("[name=linkedin]") || {}).value || "";
+      li = li.trim();
       if (!li) { showError("Please enter a LinkedIn URL."); setLoading(false); return; }
       params.set("linkedin", li);
     } else if (currentMode === "nameCompany") {
-      var fn = form.querySelector("[name=fullName]").value.trim();
-      var cn = form.querySelector("[name=companyName]").value.trim();
+      var fn = ((form.querySelector("[name=fullName]") || {}).value || "").trim();
+      var cn = ((form.querySelector("[name=companyName]") || {}).value || "").trim();
       if (!fn || !cn) { showError("Please enter both full name and company name."); setLoading(false); return; }
       params.set("fullName", fn);
       params.set("companyName", cn);
     } else if (currentMode === "nameDomain") {
-      var fn2 = form.querySelector("[name=fullName2]").value.trim();
-      var dom = form.querySelector("[name=domain]").value.trim();
+      var fn2 = ((form.querySelector("[name=fullName2]") || {}).value || "").trim();
+      var dom = ((form.querySelector("[name=domain]") || {}).value || "").trim();
       if (!fn2 || !dom) { showError("Please enter both full name and domain."); setLoading(false); return; }
       params.set("fullName", fn2);
       params.set("domain", dom);
     } else if (currentMode === "nameEmail") {
-      var fn3 = form.querySelector("[name=fullName3]").value.trim();
-      var em  = form.querySelector("[name=emailInput]").value.trim();
+      var fn3 = ((form.querySelector("[name=fullName3]") || {}).value || "").trim();
+      var em  = ((form.querySelector("[name=emailInput]") || {}).value || "").trim();
       if (!fn3 || !em) { showError("Please enter both full name and email."); setLoading(false); return; }
       params.set("fullName", fn3);
       params.set("email", em);
@@ -406,20 +408,22 @@
         cachedToken = null;
         showError("Session expired. Please try again.");
       } else if (resp.status === 404 || (json && !json.found)) {
-        showResult({ found: false });
+        showResult({ found: false, phone: null, email: null });
       } else if (!resp.ok) {
-        showError(json.error === "api_unreachable" ? "Datagma API is temporarily unavailable." : "Search failed. Please try again.");
+        showError(json && json.error === "api_unreachable"
+          ? "Datagma API is temporarily unavailable."
+          : "Search failed. Please try again.");
       } else {
         showResult(json);
       }
-    } catch {
+    } catch (_) {
       showError("Network error. Please check your connection and try again.");
     }
 
     setLoading(false);
   });
 
-  // Prefetch token on load
+  // Prefetch token silently
   getToken();
 })();
 </script>
