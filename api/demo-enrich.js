@@ -243,9 +243,12 @@ export default async function handler(req, res) {
 
   if (!valid) return res.status(400).json({ error: "missing_inputs", mode });
 
-  // Phone is expensive (30 credits). Skip if user's phone limit is already exceeded.
-  const phoneLimits = checkLimit(phoneRateMap, ip, 3);
-  const emailLimits = checkLimit(emailRateMap, ip, 3);
+  // Rate limits — generous during testing, tighten for prod
+  const PHONE_LIMIT = process.env.DEMO_PHONE_LIMIT ? parseInt(process.env.DEMO_PHONE_LIMIT) : 100;
+  const EMAIL_LIMIT = process.env.DEMO_EMAIL_LIMIT ? parseInt(process.env.DEMO_EMAIL_LIMIT) : 100;
+
+  const phoneLimits = checkLimit(phoneRateMap, ip, PHONE_LIMIT);
+  const emailLimits = checkLimit(emailRateMap, ip, EMAIL_LIMIT);
 
   const wantPhone = mode !== "emailOnly" && !phoneLimits.exceeded;
 
@@ -304,7 +307,7 @@ export default async function handler(req, res) {
   let emailResult = null;
 
   if (hasPhone && !phoneLimits.exceeded) {
-    consumeCredit(phoneRateMap, ip, 3);
+    consumeCredit(phoneRateMap, ip, PHONE_LIMIT);
     phoneResult = {
       masked:   maskPhone(phones[0].number),
       whatsapp: phones[0].whatsapp,
@@ -313,12 +316,12 @@ export default async function handler(req, res) {
   }
 
   if (hasEmail && !emailLimits.exceeded) {
-    consumeCredit(emailRateMap, ip, 3);
+    consumeCredit(emailRateMap, ip, EMAIL_LIMIT);
     emailResult = rawEmail;
   }
 
-  const phoneLimitsAfter = checkLimit(phoneRateMap, ip, 3);
-  const emailLimitsAfter = checkLimit(emailRateMap, ip, 3);
+  const phoneLimitsAfter = checkLimit(phoneRateMap, ip, PHONE_LIMIT);
+  const emailLimitsAfter = checkLimit(emailRateMap, ip, EMAIL_LIMIT);
 
   return res.status(200).json({
     contact,
