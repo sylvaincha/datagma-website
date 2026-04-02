@@ -3,7 +3,7 @@
 // Cloudflare Turnstile (invisible mode) protects against bots & datacenter IPs.
 // PUBLIC_TURNSTILE_SITE_KEY must be set in Vercel env (public).
 // Falls back to CF test key (always-passes) if not set.
-const TURNSTILE_SITE_KEY = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "1x00000000000000000000AA";
+const TURNSTILE_SITE_KEY = (import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "1x00000000000000000000AA").trim();
 ---
 
 <section class="py-20 relative overflow-hidden">
@@ -330,7 +330,7 @@ const TURNSTILE_SITE_KEY = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "1x00000
     var script    = document.getElementById("cf-turnstile-script");
     if (!container || !script || typeof window.turnstile === "undefined") return;
 
-    var siteKey = script.dataset.sitekey || "1x00000000000000000000AA";
+    var siteKey = (script.dataset.sitekey || "1x00000000000000000000AA").trim();
 
     cfWidgetId = window.turnstile.render(container, {
       sitekey:   siteKey,
