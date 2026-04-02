@@ -304,6 +304,7 @@ const TURNSTILE_SITE_KEY = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "1x00000
   var cachedToken    = null;
   var tokenExpiry    = 0;
   var cfToken        = null;   // current Turnstile token (single-use)
+  var cfError        = null;   // last Turnstile error code (for debug)
   var cfWidgetId     = null;   // Turnstile widget handle for reset
   var cfReady        = false;  // true once Turnstile has verified once
   var visitorId      = null;   // FingerprintJS stable browser ID
@@ -332,27 +333,34 @@ const TURNSTILE_SITE_KEY = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "1x00000
     var siteKey = script.dataset.sitekey || "1x00000000000000000000AA";
 
     cfWidgetId = window.turnstile.render(container, {
-      sitekey: siteKey,
-      theme:   "light",
-      // No size:"invisible" — use Managed mode as configured in CF dashboard.
-      // execute() is called explicitly below so the challenge runs immediately.
+      sitekey:   siteKey,
+      theme:     "light",
       execution: "execute",
       callback: function (token) {
+        console.log("[Turnstile] token received ✓");
         cfToken = token;
         cfReady = true;
       },
       "expired-callback": function () {
+        console.log("[Turnstile] token expired — resetting");
         cfToken = null;
         cfReady = false;
         if (cfWidgetId !== null) window.turnstile.reset(cfWidgetId);
       },
-      "error-callback": function () {
+      "error-callback": function (code) {
+        console.warn("[Turnstile] error code:", code,
+          "— hostname not allowed? Check CF widget settings.");
         cfToken = null;
         cfReady = false;
+        cfError = code || "unknown";
+      },
+      "before-interactive-callback": function () {
+        console.log("[Turnstile] showing interactive challenge");
       },
     });
 
-    // Trigger the challenge immediately after render
+    console.log("[Turnstile] rendered, widgetId:", cfWidgetId, "sitekey:", siteKey.slice(0,10) + "…");
+    // Trigger the challenge immediately
     if (cfWidgetId !== null) window.turnstile.execute(cfWidgetId);
   }
 
