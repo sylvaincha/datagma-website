@@ -36,10 +36,10 @@
         <!-- Mode tabs -->
         <div class="flex flex-wrap gap-1.5 mb-6 bg-gray-50 rounded-2xl p-1.5">
           {[
-            { id: "linkedin",    label: "LinkedIn URL",        icon: "fab fa-linkedin" },
-            { id: "nameCompany", label: "Name + Company",      icon: "fas fa-building" },
-            { id: "nameDomain",  label: "Name + Domain",       icon: "fas fa-globe" },
-            { id: "nameEmail",   label: "Name + Email",        icon: "fas fa-envelope" },
+            { id: "linkedin",    label: "LinkedIn URL",   icon: "fab fa-linkedin" },
+            { id: "nameCompany", label: "Name + Company", icon: "fas fa-building" },
+            { id: "nameDomain",  label: "Name + Domain",  icon: "fas fa-globe" },
+            { id: "emailOnly",   label: "Find Email",     icon: "fas fa-envelope" },
           ].map((tab) => (
             <button
               class="demo-tab flex-1 min-w-[120px] flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-xs font-bold transition-all"
@@ -80,12 +80,12 @@
             </div>
           </div>
 
-          <!-- Name + Email mode -->
-          <div class="demo-inputs hidden" data-for="nameEmail">
+          <!-- Email Only mode — name + domain to find email -->
+          <div class="demo-inputs hidden" data-for="emailOnly">
             <div class="grid sm:grid-cols-2 gap-3">
-              <input type="text" name="fullName3" placeholder="Full name (e.g. John Smith)"
+              <input type="text" name="fullName4" placeholder="Full name (e.g. John Smith)"
                 class="demo-input w-full px-4 py-3 rounded-xl border border-gray-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent bg-white placeholder-gray-400" />
-              <input type="email" name="emailInput" placeholder="Work email (e.g. john@stripe.com)"
+              <input type="text" name="domain2" placeholder="Domain (e.g. stripe.com)"
                 class="demo-input w-full px-4 py-3 rounded-xl border border-gray-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent bg-white placeholder-gray-400" />
             </div>
           </div>
@@ -93,7 +93,7 @@
           <button id="demo-submit" type="submit"
             class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-md shadow-blue-200 flex items-center justify-center gap-2 text-sm">
             <i class="fas fa-search text-xs"></i>
-            <span id="demo-btn-text">Find direct mobile</span>
+            <span id="demo-btn-text">Search</span>
           </button>
 
         </form>
@@ -239,9 +239,12 @@
   function setLoading(on) {
     if (!submitBtn || !btnText) return;
     submitBtn.disabled = on;
-    btnText.textContent = on ? "Searching…" : "Find direct mobile";
-    submitBtn.classList.toggle("opacity-60", on);
-    submitBtn.classList.toggle("cursor-not-allowed", on);
+    if (btnText) btnText.textContent = on ? "Searching…" : (BTN_LABELS[currentMode] || "Search");
+    if (on) {
+      submitBtn.classList.add("opacity-60", "cursor-not-allowed");
+    } else {
+      submitBtn.classList.remove("opacity-60", "cursor-not-allowed");
+    }
   }
 
   function showError(msg) {
@@ -260,11 +263,17 @@
   }
 
   // ── Tab switching ───────────────────────────────────────────────────────────
+  var BTN_LABELS = {
+    linkedin:    "Find direct mobile",
+    nameCompany: "Find direct mobile",
+    nameDomain:  "Find direct mobile",
+    emailOnly:   "Find professional email",
+  };
+
   function setActiveTab(mode) {
     currentMode = mode;
     tabs.forEach(function (t) {
       var active = t.dataset.mode === mode;
-      // Reset classes safely
       t.classList.remove("bg-white", "text-blue-600", "shadow-sm", "text-gray-500", "hover:text-gray-700");
       if (active) {
         t.classList.add("bg-white", "text-blue-600", "shadow-sm");
@@ -275,6 +284,7 @@
     inputGroups.forEach(function (g) {
       g.classList.toggle("hidden", g.dataset.for !== mode);
     });
+    if (btnText) btnText.textContent = BTN_LABELS[mode] || "Search";
     hideResult();
     hideError();
   }
@@ -390,12 +400,12 @@
       if (!fn2 || !dom) { showError("Please enter both full name and domain."); setLoading(false); return; }
       params.set("fullName", fn2);
       params.set("domain", dom);
-    } else if (currentMode === "nameEmail") {
-      var fn3 = ((form.querySelector("[name=fullName3]") || {}).value || "").trim();
-      var em  = ((form.querySelector("[name=emailInput]") || {}).value || "").trim();
-      if (!fn3 || !em) { showError("Please enter both full name and email."); setLoading(false); return; }
-      params.set("fullName", fn3);
-      params.set("email", em);
+    } else if (currentMode === "emailOnly") {
+      var fn4 = ((form.querySelector("[name=fullName4]") || {}).value || "").trim();
+      var dom2 = ((form.querySelector("[name=domain2]") || {}).value || "").trim();
+      if (!fn4 || !dom2) { showError("Please enter both full name and domain."); setLoading(false); return; }
+      params.set("fullName", fn4);
+      params.set("domain", dom2);
     }
 
     try {
@@ -404,11 +414,13 @@
 
       if (resp.status === 429) {
         showError("Daily search limit reached. Create a free account to continue.");
+      } else if (resp.status === 402) {
+        showError("Demo credits exhausted for today. Try again tomorrow or create a free account.");
       } else if (resp.status === 401) {
         cachedToken = null;
         showError("Session expired. Please try again.");
-      } else if (resp.status === 404 || (json && !json.found)) {
-        showResult({ found: false, phone: null, email: null });
+      } else if (resp.status === 404 || (json && json.found === false && !json.contact?.fullName)) {
+        showResult({ found: false, phone: null, email: null, contact: json?.contact || {} });
       } else if (!resp.ok) {
         showError(json && json.error === "api_unreachable"
           ? "Datagma API is temporarily unavailable."

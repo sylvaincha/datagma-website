@@ -1,15 +1,14 @@
 /**
- * GET /api/demo-enrich?t=TOKEN&mode=linkedin&linkedin=URL
+ * GET /api/demo-enrich?t=TOKEN&mode=...
  *
- * Proxies the Datagma API for the homepage demo widget.
- * 4 search modes: linkedin | nameEmail | nameDomain | nameCompany
+ * 5 modes:
+ *   linkedin    → /v1/search by LinkedIn URL      (phone + email, ~30 credits)
+ *   nameCompany → /v2/full name+company           (phone + email, ~31 credits)
+ *   nameDomain  → /v2/full name+domain            (phone + email, ~31 credits)
+ *   nameEmail   → /v1/search by email+name        (phone + email, ~30 credits)
+ *   emailOnly   → /v2/full name+domain, email only (email only,   ~1 credit)
  *
- * Security:
- *   1. HMAC token  — must come from /api/demo-token (5-min rotating window)
- *   2. Phone rate  — 3 phone results / IP / 24h (always shown masked: +33665****47)
- *   3. Email rate  — 3 email results / IP / 24h (shown in full)
- *   4. Origin check — datagma.com only in production
- *   5. API key    — server-side only, never reaches the browser
+ * Security: HMAC token + Origin check + per-IP rate limits
  */
 
 import { createHmac } from "node:crypto";
@@ -31,7 +30,7 @@ function verifyToken(token, secret) {
   );
 }
 
-// ── Rate limits — separate counters per resource (24h windows) ────────────────
+// ── Rate limits ───────────────────────────────────────────────────────────────
 const phoneRateMap = new Map();
 const emailRateMap = new Map();
 
@@ -41,28 +40,17 @@ function getEntry(map, ip, windowMs) {
   if (now > e.resetAt) { e.count = 0; e.resetAt = now + windowMs; }
   return e;
 }
-
 function checkLimit(map, ip, max, windowMs = 86_400_000) {
   const e = getEntry(map, ip, windowMs);
-  return {
-    remaining: Math.max(0, max - e.count),
-    resetAt:   e.resetAt,
-    exceeded:  e.count >= max,
-  };
+  return { remaining: Math.max(0, max - e.count), resetAt: e.resetAt, exceeded: e.count >= max };
 }
-
 function consumeCredit(map, ip, max, windowMs = 86_400_000) {
   const e = getEntry(map, ip, windowMs);
-  if (e.count < max) {
-    e.count++;
-    map.set(ip, e);
-    return true;
-  }
-  map.set(ip, e);
-  return false;
+  if (e.count < max) { e.count++; map.set(ip, e); return true; }
+  map.set(ip, e); return false;
 }
 
-// ── Input sanitisers ──────────────────────────────────────────────────────────
+// ── Sanitisers ────────────────────────────────────────────────────────────────
 function clean(raw, max = 100) {
   return String(raw ?? "").trim().replace(/[<>"'&]/g, "").slice(0, max);
 }
@@ -81,7 +69,7 @@ function cleanDomain(raw) {
   return /[\s@/?#]/.test(s) ? "" : s.toLowerCase();
 }
 
-// ── Phone masking  (+33665409047 → +33665****47) ──────────────────────────────
+// ── Phone masking (+33 6 65 40 90 47 → +33 6 65 ••••47) ─────────────────────
 function maskPhone(phone) {
   const s = String(phone).replace(/[\s\-\.()\u00a0]/g, "");
   if (s.length < 6) return s;
@@ -92,7 +80,7 @@ function maskPhone(phone) {
   return s.slice(0, showStart) + "•".repeat(maskLen) + s.slice(-showEnd);
 }
 
-// ── Call Datagma (non-throwing) ───────────────────────────────────────────────
+// ── HTTP helper ───────────────────────────────────────────────────────────────
 async function callAPI(baseUrl, params, apiKey) {
   try {
     const url = new URL(baseUrl);
@@ -100,99 +88,117 @@ async function callAPI(baseUrl, params, apiKey) {
     for (const [k, v] of Object.entries(params)) {
       if (v !== undefined && v !== null && v !== "") url.searchParams.set(k, String(v));
     }
-    const res  = await fetch(url.toString(), {
+    const r    = await fetch(url.toString(), {
       headers: { accept: "application/json" },
       signal:  AbortSignal.timeout(25_000),
     });
-    const text = await res.text();
-    return { ok: res.ok, status: res.status, data: safeJson(text) };
+    const text = await r.text();
+    return { ok: r.ok, status: r.status, data: safeJson(text) };
   } catch (e) {
     return { ok: false, status: 0, data: null, error: e.message };
   }
 }
+function safeJson(text) { try { return JSON.parse(text); } catch { return null; } }
 
-function safeJson(text) {
-  try { return JSON.parse(text); } catch { return null; }
+// ── Detect Datagma API-level errors ──────────────────────────────────────────
+function apiError(data) {
+  if (!data || typeof data !== "object") return null;
+  if (data.code === 13 || data.message === "can't get credit") return "no_credits";
+  if (data.code === 5  && data.message === "Not found") return "not_found";
+  if (data.code === 3) return "bad_request";
+  return null;
 }
 
-// ── Extract phones — handles /v1/search response shape ───────────────────────
-// Response: { person: { phones: [{ displayInternational, countryCode, number, linkedWhatsapp, whatsapp }] } }
+// ── Extract phones ────────────────────────────────────────────────────────────
+// /v1/search:  data.person.phones[].{ displayInternational, linkedWhatsapp, whatsapp.isIn }
+// /v2/full:    data.phoneFull.phones[].{ displayInternational, linkedWhatsapp }
 function extractPhones(data) {
   if (!data) return [];
 
   // /v1/search shape
-  const person = data.person ?? null;
-  if (person && Array.isArray(person.phones) && person.phones.length > 0) {
-    return person.phones.map((p) => ({
+  const searchPerson = data.person;
+  if (searchPerson && Array.isArray(searchPerson.phones) && searchPerson.phones.length > 0) {
+    return searchPerson.phones.map((p) => ({
       number:   p.displayInternational ?? (p.countryCode ? `+${p.countryCode}${p.number}` : p.number) ?? "",
       whatsapp: !!(p.linkedWhatsapp ?? p.whatsapp?.isIn ?? false),
     })).filter((p) => p.number && p.number.length > 4);
   }
 
-  // /v2/full shape — phoneFull is a string or array
-  if (data.phoneFull) {
-    const pf = data.phoneFull;
-    if (typeof pf === "string" && pf.length > 4) return [{ number: pf, whatsapp: false }];
-    if (Array.isArray(pf)) return pf.filter(Boolean).map((n) => ({ number: String(n), whatsapp: false }));
+  // /v2/full shape — phoneFull is an OBJECT { phones: [...], emails: [...] }
+  const pf = data.phoneFull;
+  if (pf && typeof pf === "object" && Array.isArray(pf.phones)) {
+    return pf.phones.map((p) => ({
+      number:   p.displayInternational ?? (p.countryCode ? `+${p.countryCode}${p.number}` : p.number) ?? "",
+      whatsapp: !!(p.linkedWhatsapp ?? false),
+    })).filter((p) => p.number && p.number.length > 4);
   }
 
   return [];
 }
 
 // ── Extract email ─────────────────────────────────────────────────────────────
+// /v1/search:  data.person.emails[].address
+// /v2/full:    data.email  OR  data.emailV2  OR  data.person.basic.legacyEmail
 function extractEmail(data) {
   if (!data) return null;
+  const isValid = (s) => typeof s === "string" && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.trim());
 
-  // /v1/search shape: person.emails[].address
-  const person = data.person ?? null;
-  if (person && Array.isArray(person.emails) && person.emails.length > 0) {
-    const addr = person.emails[0].address ?? null;
-    if (addr && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(addr)) return addr.toLowerCase();
+  // /v1/search shape
+  const searchPerson = data.person;
+  if (searchPerson && Array.isArray(searchPerson.emails)) {
+    for (const e of searchPerson.emails) {
+      if (isValid(e.address)) return e.address.trim().toLowerCase();
+    }
   }
 
-  // /v2/full shape
-  const e = data.email ?? data.emailV2 ?? null;
-  if (e && typeof e === "string" && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.trim())) {
-    return e.trim().toLowerCase();
+  // /v2/full top-level fields
+  for (const field of [data.email, data.emailV2]) {
+    if (isValid(field)) return field.trim().toLowerCase();
   }
+
+  // /v2/full person.basic.legacyEmail
+  const basic = data.person?.basic ?? null;
+  if (basic && isValid(basic.legacyEmail)) return basic.legacyEmail.trim().toLowerCase();
 
   return null;
 }
 
 // ── Extract contact info ──────────────────────────────────────────────────────
+// /v1/search:  data.person.{ names[], jobs[], addresses[], urls[], images[] }
+// /v2/full:    data.person.basic.{ name, firstName, lastName, linkedInUrl, ... }
 function extractContact(data) {
   if (!data) return {};
 
-  // /v1/search shape
   const person = data.person ?? null;
-  if (person) {
-    const nameObj  = (person.names ?? [])[0] ?? null;
-    const fullName = nameObj
-      ? `${nameObj.first ?? ""} ${nameObj.last ?? ""}`.trim()
-      : null;
-    const jobs     = person.jobs ?? [];
-    const job      = jobs[0] ?? null;
-    const location = (person.addresses ?? [])[0]?.display ?? null;
-    const linkedin = (person.urls ?? []).find((u) => u.domain === "linkedin.com")?.url ?? null;
+  if (!person) return {};
+
+  // /v2/full shape has person.basic
+  if (person.basic) {
+    const b = person.basic;
     return {
-      fullName,
-      jobTitle:    job?.title    ?? null,
-      company:     job?.company  ?? null,
-      linkedinUrl: linkedin,
-      location,
-      photo:       (person.images ?? [])[0]?.url ?? null,
+      fullName:    b.name ?? `${b.firstName ?? ""} ${b.lastName ?? ""}`.trim() || null,
+      jobTitle:    b.jobTitle   || null,
+      company:     b.company    || null,
+      linkedinUrl: b.linkedInUrl || null,
+      location:    [b.city, b.region, b.country].filter(Boolean).join(", ") || null,
+      photo:       null,
     };
   }
 
-  // /v2/full shape
-  const d = data.data ?? data;
+  // /v1/search shape
+  const nameObj  = (person.names ?? [])[0] ?? null;
+  const fullName = nameObj ? `${nameObj.first ?? ""} ${nameObj.last ?? ""}`.trim() : null;
+  const job      = (person.jobs ?? [])[0] ?? null;
+  const location = (person.addresses ?? [])[0]?.display ?? null;
+  const linkedin = (person.urls ?? []).find((u) => u.domain === "linkedin.com")?.url ?? null;
+
   return {
-    fullName:    d.fullName    ?? d.name       ?? null,
-    jobTitle:    d.jobTitle    ?? d.title      ?? null,
-    company:     d.companyName ?? d.company    ?? null,
-    linkedinUrl: d.linkedinUrl ?? null,
-    location:    d.location    ?? null,
-    photo:       d.photo       ?? null,
+    fullName,
+    jobTitle:    job?.title   ?? null,
+    company:     job?.company ?? null,
+    linkedinUrl: linkedin,
+    location,
+    photo:       (person.images ?? [])[0]?.url ?? null,
   };
 }
 
@@ -208,7 +214,6 @@ export default async function handler(req, res) {
 
   if (!apiKey || !secret) return res.status(501).json({ error: "not_configured" });
 
-  // Origin check in production
   if (isProd) {
     const origin  = req.headers["origin"]  ?? "";
     const referer = req.headers["referer"] ?? "";
@@ -217,125 +222,99 @@ export default async function handler(req, res) {
     }
   }
 
-  // Token verification
   const token = clean(req.query?.t ?? "", 32);
-  if (!verifyToken(token, secret)) {
-    return res.status(401).json({ error: "invalid_token" });
-  }
+  if (!verifyToken(token, secret)) return res.status(401).json({ error: "invalid_token" });
 
   const ip   = (req.headers["x-forwarded-for"] ?? "unknown").split(",")[0].trim();
   const mode = clean(req.query?.mode ?? "linkedin", 20);
 
-  // Read inputs
   const linkedin    = cleanLinkedin(req.query?.linkedin    ?? "");
   const email       = cleanEmail(   req.query?.email       ?? "");
   const fullName    = clean(        req.query?.fullName    ?? "");
   const domain      = cleanDomain(  req.query?.domain      ?? "");
   const companyName = clean(        req.query?.companyName ?? "");
 
-  // Validate required inputs per mode
-  const valid = (mode === "linkedin"    && linkedin) ||
-                (mode === "nameEmail"   && fullName && email) ||
-                (mode === "nameDomain"  && fullName && domain) ||
-                (mode === "nameCompany" && fullName && companyName);
+  const valid =
+    (mode === "linkedin"    && linkedin) ||
+    (mode === "nameEmail"   && fullName && email) ||
+    (mode === "nameDomain"  && fullName && domain) ||
+    (mode === "nameCompany" && fullName && companyName) ||
+    (mode === "emailOnly"   && fullName && (domain || companyName));
 
-  if (!valid) {
-    return res.status(400).json({ error: "missing_inputs", mode });
-  }
+  if (!valid) return res.status(400).json({ error: "missing_inputs", mode });
 
-  // Check limits before calling API
+  // Phone is expensive (30 credits). Skip if user's phone limit is already exceeded.
   const phoneLimits = checkLimit(phoneRateMap, ip, 3);
   const emailLimits = checkLimit(emailRateMap, ip, 3);
 
-  // Call Datagma API based on mode
+  const wantPhone = mode !== "emailOnly" && !phoneLimits.exceeded;
+
+  // ── Call Datagma ────────────────────────────────────────────────────────────
   let apiData = null;
-  let apiErr  = null;
 
   try {
     if (mode === "linkedin") {
-      // /v1/search by LinkedIn URL
       const r = await callAPI(DATAGMA_SEARCH, {
-        username:      linkedin,
-        minimumMatch:  1,
-        whatsappCheck: true,
+        username: linkedin, minimumMatch: 1, whatsappCheck: true,
       }, apiKey);
       if (r.status === 0) return res.status(503).json({ error: "api_unreachable" });
       apiData = r.data;
+
     } else if (mode === "nameEmail") {
-      // /v1/search by email + fullName waterfall
       const r = await callAPI(DATAGMA_SEARCH, {
-        email,
-        fullName,
-        minimumMatch:  1,
-        whatsappCheck: true,
+        email, fullName, minimumMatch: 1, whatsappCheck: true,
       }, apiKey);
       if (r.status === 0) return res.status(503).json({ error: "api_unreachable" });
       apiData = r.data;
-    } else if (mode === "nameDomain") {
-      // /v2/full by name + domain
-      const r = await callAPI(DATAGMA_FULL, {
-        fullName,
-        domain,
-        data:          "MAYD",
-        phoneFull:     true,
-        whatsappCheck: true,
-      }, apiKey);
+
+    } else if (mode === "nameDomain" || mode === "emailOnly") {
+      const params = { fullName, domain, data: "EMAIL" };
+      if (wantPhone) params.phoneFull = true;
+      const r = await callAPI(DATAGMA_FULL, params, apiKey);
       if (r.status === 0) return res.status(503).json({ error: "api_unreachable" });
       apiData = r.data;
+
     } else if (mode === "nameCompany") {
-      // /v2/full by name + company
-      const r = await callAPI(DATAGMA_FULL, {
-        fullName,
-        companyName,
-        data:          "MAYD",
-        phoneFull:     true,
-        whatsappCheck: true,
-      }, apiKey);
+      const params = { fullName, companyName, data: "EMAIL" };
+      if (wantPhone) params.phoneFull = true;
+      const r = await callAPI(DATAGMA_FULL, params, apiKey);
       if (r.status === 0) return res.status(503).json({ error: "api_unreachable" });
       apiData = r.data;
     }
-  } catch (e) {
+  } catch {
     return res.status(502).json({ error: "upstream_error" });
   }
 
-  if (!apiData) {
-    return res.status(404).json({ error: "not_found" });
-  }
+  if (!apiData) return res.status(404).json({ error: "not_found" });
 
-  // TEMP DEBUG — remove after diagnosis
-  if (req.query?._dbg === "1") {
-    return res.status(200).json({ _debug: true, apiData, apiKey: apiKey ? apiKey.slice(0,4) + "…" : "MISSING" });
-  }
+  // Handle Datagma API-level errors
+  const datagmaErr = apiError(apiData);
+  if (datagmaErr === "no_credits") return res.status(402).json({ error: "no_credits" });
+  if (datagmaErr === "not_found")  return res.status(404).json({ error: "not_found" });
 
-  // Extract data
-  const phones  = extractPhones(apiData);
+  // Extract
+  const phones   = extractPhones(apiData);
   const rawEmail = extractEmail(apiData);
-  const contact = extractContact(apiData);
+  const contact  = extractContact(apiData);
 
   const hasPhone = phones.length > 0;
   const hasEmail = !!rawEmail;
 
-  // Apply credits and build response
   let phoneResult = null;
   let emailResult = null;
 
-  if (hasPhone) {
-    if (!phoneLimits.exceeded) {
-      consumeCredit(phoneRateMap, ip, 3);
-      phoneResult = {
-        masked:   maskPhone(phones[0].number),
-        whatsapp: phones[0].whatsapp,
-        count:    phones.length,
-      };
-    }
-    // If limit exceeded: phoneResult stays null → frontend shows upgrade CTA
+  if (hasPhone && !phoneLimits.exceeded) {
+    consumeCredit(phoneRateMap, ip, 3);
+    phoneResult = {
+      masked:   maskPhone(phones[0].number),
+      whatsapp: phones[0].whatsapp,
+      count:    phones.length,
+    };
   }
 
-  if (hasEmail) {
-    if (!emailLimits.exceeded) {
-      consumeCredit(emailRateMap, ip, 3);
-      emailResult = rawEmail;
-    }
+  if (hasEmail && !emailLimits.exceeded) {
+    consumeCredit(emailRateMap, ip, 3);
+    emailResult = rawEmail;
   }
 
   const phoneLimitsAfter = checkLimit(phoneRateMap, ip, 3);
@@ -343,8 +322,8 @@ export default async function handler(req, res) {
 
   return res.status(200).json({
     contact,
-    phone:            phoneResult,
-    email:            emailResult,
+    phone:             phoneResult,
+    email:             emailResult,
     phoneLimitReached: hasPhone && phoneLimits.exceeded,
     emailLimitReached: hasEmail && emailLimits.exceeded,
     credits: {
@@ -352,6 +331,6 @@ export default async function handler(req, res) {
       emailsRemaining: emailLimitsAfter.remaining,
       resetsAt:        phoneLimitsAfter.resetAt,
     },
-    found: hasPhone || hasEmail,
+    found: hasPhone || hasEmail || !!(contact.fullName),
   });
 }
