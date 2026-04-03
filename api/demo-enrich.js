@@ -207,20 +207,29 @@ function extractPhones(data) {
   const toPhone = (p, hasWaField) => {
     const number   = p.displayInternational ?? (p.countryCode ? `+${p.countryCode}${p.number}` : p.number) ?? "";
     const whatsapp = !!(p.linkedWhatsapp ?? (hasWaField ? p.whatsapp?.isIn : false) ?? false);
-    const digits   = number.replace(/[^\d]/g, ""); // strip + and spaces for wa.me
+    const digits   = number.replace(/[^\d]/g, "");
     return { number, whatsapp, digits };
   };
+  const valid = (p) => p.number && p.number.length > 4;
+
+  // /v1/search person.phones
   const searchPerson = data.person;
   if (searchPerson && Array.isArray(searchPerson.phones) && searchPerson.phones.length > 0) {
-    return searchPerson.phones
-      .map((p) => toPhone(p, true))
-      .filter((p) => p.number && p.number.length > 4);
+    return searchPerson.phones.map((p) => toPhone(p, true)).filter(valid);
   }
+  // /v2/full phoneFull.phones
   const pf = data.phoneFull;
   if (pf && typeof pf === "object" && Array.isArray(pf.phones)) {
-    return pf.phones
-      .map((p) => toPhone(p, false))
-      .filter((p) => p.number && p.number.length > 4);
+    return pf.phones.map((p) => toPhone(p, false)).filter(valid);
+  }
+  // advanced_search → person is null, phones are in possiblePersons (sorted by match desc)
+  if (Array.isArray(data.possiblePersons) && data.possiblePersons.length > 0) {
+    const sorted = [...data.possiblePersons].sort((a, b) => (b.match || 0) - (a.match || 0));
+    for (const pp of sorted) {
+      if (!Array.isArray(pp.phones) || pp.phones.length === 0) continue;
+      const phones = pp.phones.map((p) => toPhone(p, true)).filter(valid);
+      if (phones.length > 0) return phones;
+    }
   }
   return [];
 }
@@ -341,10 +350,11 @@ export default async function handler(req, res) {
   const companyName = clean(        req.query?.companyName ?? "");
   // Validate
   const valid =
-    (mode === "linkedin"   && linkedin) ||
-    (mode === "nameDomain" && fullName && domain) ||
-    (mode === "nameCompany"&& fullName && companyName) ||
-    (mode === "findEmail"  && fullName && domain);
+    (mode === "linkedin"    && linkedin) ||
+    (mode === "nameDomain"  && fullName && domain) ||
+    (mode === "nameCompany" && fullName && companyName) ||
+    (mode === "findEmail"   && fullName && domain) ||
+    (mode === "deepSearch"  && clean(req.query?.firstName ?? ""));
 
   if (!valid) return res.status(400).json({ error: "missing_inputs", mode });
 
@@ -470,6 +480,67 @@ export default async function handler(req, res) {
       email:       foundEmail,
       emailStatus: verifiedEmail ? "verified" : "probable",
       credits:     { emailsRemaining: emailLimitsAfter.remaining, resetsAt: emailLimitsAfter.resetAt },
+    });
+  }
+
+  // ── DEEP SEARCH MODE (/v1/search?source=advanced_search) ────────────────────
+  if (mode === "deepSearch") {
+
+    if (phoneExceeded) {
+      return res.status(429).json({
+        error: "rate_limited",
+        credits: { phonesRemaining: 0, resetsAt: phoneLimits.resetAt },
+      });
+    }
+
+    const firstName = clean(req.query?.firstName ?? "");
+    const lastName  = clean(req.query?.lastName  ?? "");
+    const country   = clean(req.query?.country   ?? "", 5).toUpperCase().slice(0, 2);
+
+    let apiData = null;
+    try {
+      const searchParams = { source: "advanced_search", whatsappCheck: true, firstName };
+      if (lastName) searchParams.lastName = lastName;
+      if (country)  searchParams.country  = country;
+
+      const r = await callAPI(DATAGMA_SEARCH, searchParams, apiKey);
+      if (r.status === 0) return res.status(503).json({ error: "api_unreachable" });
+      apiData = r.data;
+    } catch {
+      return res.status(502).json({ error: "upstream_error" });
+    }
+
+    if (!apiData) return res.status(404).json({ error: "not_found" });
+    const err = apiError(apiData);
+    if (err === "no_credits") return res.status(402).json({ error: "no_credits" });
+
+    const phones  = extractPhones(apiData);
+    const contact = extractContact(apiData);
+    // Fallback contact name from inputs when API returns no person object
+    if (!contact.fullName && firstName) {
+      contact.fullName = [firstName, lastName].filter(Boolean).join(" ");
+    }
+
+    const hasPhone = phones.length > 0;
+    let phoneResults = null;
+    if (hasPhone) {
+      consumeCredit(phoneRateMap, ip, PHONE_LIMIT);
+      if (fid) consumeCredit(fidPhoneRateMap, fid, PHONE_LIMIT);
+      phoneResults = phones.map((p) => ({
+        masked:   maskPhone(p.number),
+        whatsapp: p.whatsapp,
+      }));
+    }
+
+    const phoneLimitsAfter = checkLimit(phoneRateMap, ip, PHONE_LIMIT);
+
+    return res.status(200).json({
+      contact,
+      phones:     phoneResults,
+      phone:      phoneResults ? phoneResults[0] : null,
+      credits:    { phonesRemaining: phoneLimitsAfter.remaining, resetsAt: phoneLimitsAfter.resetAt },
+      found:      hasPhone || !!(contact.fullName),
+      deepSearch: true,
     });
   }
 

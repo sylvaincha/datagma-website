@@ -174,14 +174,19 @@ const TURNSTILE_SITE_KEY = (import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "1x0000
 
                 <!-- Case B : person found, but no direct mobile indexed -->
                 <div id="p-no-phone" class="hidden">
-                  <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl">
+                  <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl space-y-3">
                     <div class="flex items-start gap-2.5">
                       <i class="fas fa-mobile-alt text-amber-500 shrink-0 mt-0.5 text-sm"></i>
                       <div>
                         <div class="text-xs font-bold text-gray-800 mb-1">Contact found — no direct mobile indexed</div>
-                        <div class="text-[11px] text-gray-500 leading-relaxed">We found this person, but no direct mobile is indexed for them yet. The full account searches extended sources and may find it.</div>
+                        <div id="p-no-phone-msg" class="text-[11px] text-gray-500 leading-relaxed">No direct mobile in standard index. Run a deep search to scan extended sources.</div>
                       </div>
                     </div>
+                    <button id="p-deep-search-btn"
+                      class="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed text-white text-xs font-bold rounded-xl transition-colors shadow-sm shadow-blue-200">
+                      <i class="fas fa-search-plus text-[11px]"></i>
+                      <span id="p-deep-search-txt">Run deep search</span>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -691,6 +696,16 @@ const TURNSTILE_SITE_KEY = (import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "1x0000
       // Person found, but no direct mobile indexed — show contact header
       show("p-contact-header");
       show("p-no-phone");
+      // If this was already a deep search, hide the button and update message
+      var deepBtn = q("p-deep-search-btn");
+      var deepMsg = q("p-no-phone-msg");
+      if (data.deepSearch) {
+        if (deepBtn) deepBtn.classList.add("hidden");
+        if (deepMsg) deepMsg.textContent = "Deep search returned no direct mobile either. Try in your full account for the most complete coverage.";
+      } else {
+        if (deepBtn) deepBtn.classList.remove("hidden");
+        if (deepMsg) deepMsg.textContent = "No direct mobile in standard index. Run a deep search to scan extended sources.";
+      }
     } else {
       // Person not found at all — hide the empty contact header
       hide("p-contact-header");
@@ -777,6 +792,61 @@ const TURNSTILE_SITE_KEY = (import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "1x0000
 
     show("email-result");
   }
+
+  // ── Deep search button ───────────────────────────────────────────────────────
+  document.addEventListener("click", function (e) {
+    var btn = e.target.closest("#p-deep-search-btn");
+    if (!btn || btn.disabled) return;
+
+    var hint = phoneSearchHint || {};
+    var name = hint.name || hint.guessedName || "";
+    if (!name) return; // can't deep-search without a name
+
+    var parts     = name.trim().split(/\s+/);
+    var firstName = parts[0] || "";
+    var lastName  = parts.slice(1).join(" ") || "";
+    if (!firstName) return;
+
+    // Detect country from LinkedIn URL subdomain (fr.linkedin.com → FR)
+    var country = "";
+    if (hint.linkedin) {
+      var m = hint.linkedin.match(/^https?:\/\/([a-z]{2})\.linkedin\.com/i);
+      if (m && m[1].toLowerCase() !== "www") country = m[1].toUpperCase();
+    }
+
+    var btnTxt = document.getElementById("p-deep-search-txt");
+    btn.disabled = true;
+    if (btnTxt) btnTxt.textContent = "Searching…";
+
+    (async function () {
+      var token = await getToken();
+      if (!token) { btn.disabled = false; if (btnTxt) btnTxt.textContent = "Run deep search"; return; }
+
+      var cf = await getCfToken();
+      var params = new URLSearchParams({ t: token, mode: "deepSearch", firstName: firstName });
+      if (lastName) params.set("lastName", lastName);
+      if (country)  params.set("country",  country);
+      if (cf)       params.set("cf", cf);
+      if (visitorId) params.set("fid", visitorId);
+
+      try {
+        var resp = await fetch(ENRICH_URL + "?" + params.toString());
+        var json = await resp.json();
+
+        if (resp.status === 429 || resp.status === 402) {
+          showRateLimit("phone");
+          hide("phone-result");
+        } else if (resp.ok) {
+          renderPhoneResult(json);
+        }
+        // On error: leave existing result visible
+      } catch (_) {}
+
+      resetTurnstile();
+      btn.disabled = false;
+      if (btnTxt) btnTxt.textContent = "Run deep search";
+    })();
+  });
 
   // ── Rate limit — conversion-focused message ──────────────────────────────────
   function showRateLimit(type) {
