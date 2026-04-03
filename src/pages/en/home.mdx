@@ -555,13 +555,15 @@ import LocalizedLogoBar from '../../components/LocalizedLogoBar.astro';
       <div class="sm:col-span-2 lg:col-span-2 bento-card p-7 relative overflow-hidden flex flex-col">
         <div class="absolute top-0 right-0 w-72 h-72 bg-blue-50 rounded-full blur-3xl opacity-70 -translate-y-1/2 translate-x-1/2"></div>
         <div class="relative z-10">
-          <div class="flex items-start justify-between mb-5">
-            <div class="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-200">
-              <i class="fas fa-mobile-alt text-white text-xl"></i>
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center shrink-0 shadow-lg shadow-blue-200">
+                <i class="fas fa-mobile-alt text-white text-xl"></i>
+              </div>
+              <h3 class="font-display font-bold text-2xl text-gray-900">Phone Finder</h3>
             </div>
-            <span class="bg-blue-50 border border-blue-200 text-blue-700 text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider">Unique coverage</span>
+            <span class="shrink-0 ml-3 bg-blue-50 border border-blue-200 text-blue-700 text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider">Unique coverage</span>
           </div>
-          <h3 class="font-display font-bold text-2xl text-gray-900 mb-2">Phone Finder</h3>
           <p class="text-gray-500 text-base leading-relaxed mb-4 max-w-sm">
             Verified direct mobiles — not switchboards, not landlines. Search by name + country
             without a LinkedIn URL. WhatsApp detection included on all paid plans.
@@ -581,10 +583,12 @@ import LocalizedLogoBar from '../../components/LocalizedLogoBar.astro';
       <div class="bento-card p-6 relative overflow-hidden flex flex-col">
         <div class="absolute top-0 right-0 w-32 h-32 bg-violet-50 rounded-full blur-2xl opacity-80 -translate-y-1/2 translate-x-1/2"></div>
         <div class="relative z-10">
-          <div class="w-11 h-11 bg-violet-100 rounded-2xl flex items-center justify-center mb-4">
-            <i class="fas fa-envelope text-violet-600 text-lg"></i>
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-11 h-11 bg-violet-100 rounded-2xl flex items-center justify-center shrink-0">
+              <i class="fas fa-envelope text-violet-600 text-lg"></i>
+            </div>
+            <h3 class="font-display font-bold text-xl text-gray-900">Email Finder</h3>
           </div>
-          <h3 class="font-display font-bold text-xl text-gray-900 mb-2">Email Finder</h3>
           <p class="text-gray-500 text-sm leading-relaxed mb-4">
             Verified professional emails with advanced catchall detection. Cross-referenced vs LinkedIn, GitHub, Facebook. Lowest bounce rate.
           </p>
@@ -598,10 +602,12 @@ import LocalizedLogoBar from '../../components/LocalizedLogoBar.astro';
       <div class="bento-card p-6 relative overflow-hidden">
         <div class="absolute top-0 right-0 w-32 h-32 bg-sky-50 rounded-full blur-2xl opacity-80 -translate-y-1/2 translate-x-1/2"></div>
         <div class="relative z-10">
-          <div class="w-11 h-11 bg-sky-100 rounded-2xl flex items-center justify-center mb-4">
-            <i class="fab fa-chrome text-sky-600 text-lg"></i>
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-11 h-11 bg-sky-100 rounded-2xl flex items-center justify-center shrink-0">
+              <i class="fab fa-chrome text-sky-600 text-lg"></i>
+            </div>
+            <h3 class="font-display font-bold text-xl text-gray-900">Chrome Extension</h3>
           </div>
-          <h3 class="font-display font-bold text-xl text-gray-900 mb-2">Chrome Extension</h3>
           <p class="text-gray-500 text-sm leading-relaxed mb-4">
             Get a verified mobile directly from any LinkedIn profile without leaving your browser. Works on Sales Navigator.
           </p>
@@ -615,10 +621,12 @@ import LocalizedLogoBar from '../../components/LocalizedLogoBar.astro';
       <div class="bento-card p-6 relative overflow-hidden">
         <div class="absolute top-0 right-0 w-32 h-32 bg-violet-50 rounded-full blur-2xl opacity-80 -translate-y-1/2 translate-x-1/2"></div>
         <div class="relative z-10">
-          <div class="w-11 h-11 bg-violet-100 rounded-2xl flex items-center justify-center mb-4">
-            <i class="fas fa-plug text-violet-600 text-lg"></i>
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-11 h-11 bg-violet-100 rounded-2xl flex items-center justify-center shrink-0">
+              <i class="fas fa-plug text-violet-600 text-lg"></i>
+            </div>
+            <h3 class="font-display font-bold text-xl text-gray-900">Integrations</h3>
           </div>
-          <h3 class="font-display font-bold text-xl text-gray-900 mb-2">Integrations</h3>
           <p class="text-gray-500 text-sm leading-relaxed mb-4">
             Plug Datagma into your existing workflows via Zapier, Make or n8n — no code needed. Or go deeper with the REST API.
           </p>
@@ -634,10 +642,12 @@ import LocalizedLogoBar from '../../components/LocalizedLogoBar.astro';
       </div>
 
       <div class="bento-card p-6">
-        <div class="w-11 h-11 bg-green-100 rounded-2xl flex items-center justify-center mb-4">
-          <i class="fas fa-file-upload text-green-600 text-lg"></i>
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-11 h-11 bg-green-100 rounded-2xl flex items-center justify-center shrink-0">
+            <i class="fas fa-file-upload text-green-600 text-lg"></i>
+          </div>
+          <h3 class="font-display font-bold text-xl text-gray-900">File Upload</h3>
         </div>
-        <h3 class="font-display font-bold text-xl text-gray-900 mb-2">File Upload</h3>
         <p class="text-gray-500 text-sm leading-relaxed mb-4">
           Upload a CSV. Get back 75+ enriched data points — phone, email, company, funding, tech stack and more. Up to 50k rows.
         </p>
