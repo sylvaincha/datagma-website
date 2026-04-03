@@ -127,8 +127,8 @@ const TURNSTILE_SITE_KEY = (import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "1x0000
           <div id="phone-result" class="hidden mt-5">
             <div class="rounded-2xl border border-gray-200 bg-gray-50/50 overflow-hidden">
 
-              <!-- Contact header -->
-              <div class="flex items-center gap-4 p-5 bg-white border-b border-gray-100">
+              <!-- Contact header — hidden when person not found -->
+              <div id="p-contact-header" class="flex items-center gap-4 p-5 bg-white border-b border-gray-100">
                 <div id="p-avatar" class="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-500 to-sky-600 flex items-center justify-center text-white font-extrabold text-sm shrink-0">?</div>
                 <div class="min-w-0">
                   <div id="p-name" class="font-display font-bold text-gray-900 text-base leading-tight"></div>
@@ -160,24 +160,26 @@ const TURNSTILE_SITE_KEY = (import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "1x0000
 
                 <!-- Case A : person not found at all -->
                 <div id="p-person-not-found" class="hidden">
-                  <div class="p-4 bg-gray-50 border border-gray-200 rounded-xl">
-                    <div class="flex items-start gap-2.5 mb-3">
-                      <i class="fas fa-user-slash text-gray-400 shrink-0 mt-0.5 text-sm"></i>
+                  <div class="p-5 bg-gray-50 border border-gray-200 rounded-xl">
+                    <div class="flex items-center gap-3 mb-4">
+                      <div class="w-10 h-10 bg-gray-200 rounded-xl flex items-center justify-center shrink-0">
+                        <i class="fas fa-user-slash text-gray-500 text-base"></i>
+                      </div>
                       <div>
-                        <div class="text-xs font-bold text-gray-700 mb-1">Person not found</div>
-                        <div class="text-[11px] text-gray-500 leading-relaxed">Check the spelling of the name, or try a different search method.</div>
+                        <div class="text-sm font-bold text-gray-800">Person not found</div>
+                        <div class="text-xs text-gray-500 mt-0.5">Check the spelling of the name, or try a different search method.</div>
                       </div>
                     </div>
-                    <div class="text-[10px] font-extrabold text-gray-400 uppercase tracking-wider mb-1.5">Try another method:</div>
-                    <div class="flex flex-wrap gap-1.5">
-                      <button class="p-try-method text-[11px] font-bold px-2.5 py-1 rounded-lg bg-white border border-gray-200 hover:border-blue-400 hover:text-blue-600 transition-colors text-gray-600" data-mode="linkedin">
-                        <i class="fab fa-linkedin mr-1 text-[10px]"></i>LinkedIn URL
+                    <div class="text-[10px] font-extrabold text-gray-400 uppercase tracking-wider mb-2">Try another method:</div>
+                    <div class="flex flex-wrap gap-2">
+                      <button class="p-try-method text-xs font-bold px-3 py-2 rounded-lg bg-white border border-gray-200 hover:border-blue-400 hover:text-blue-600 transition-colors text-gray-600" data-mode="linkedin">
+                        <i class="fab fa-linkedin mr-1.5 text-[11px]"></i>LinkedIn URL
                       </button>
-                      <button class="p-try-method text-[11px] font-bold px-2.5 py-1 rounded-lg bg-white border border-gray-200 hover:border-blue-400 hover:text-blue-600 transition-colors text-gray-600" data-mode="nameCompany">
-                        <i class="fas fa-building mr-1 text-[10px]"></i>Name + Company
+                      <button class="p-try-method text-xs font-bold px-3 py-2 rounded-lg bg-white border border-gray-200 hover:border-blue-400 hover:text-blue-600 transition-colors text-gray-600" data-mode="nameCompany">
+                        <i class="fas fa-building mr-1.5 text-[11px]"></i>Name + Company
                       </button>
-                      <button class="p-try-method text-[11px] font-bold px-2.5 py-1 rounded-lg bg-white border border-gray-200 hover:border-blue-400 hover:text-blue-600 transition-colors text-gray-600" data-mode="nameDomain">
-                        <i class="fas fa-globe mr-1 text-[10px]"></i>Name + Domain
+                      <button class="p-try-method text-xs font-bold px-3 py-2 rounded-lg bg-white border border-gray-200 hover:border-blue-400 hover:text-blue-600 transition-colors text-gray-600" data-mode="nameDomain">
+                        <i class="fas fa-globe mr-1.5 text-[11px]"></i>Name + Domain
                       </button>
                     </div>
                   </div>
@@ -542,7 +544,7 @@ const TURNSTILE_SITE_KEY = (import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "1x0000
   if (phoneForm) {
     phoneForm.addEventListener("submit", async function (e) {
       e.preventDefault();
-      hide("phone-error"); hide("phone-result");
+      hide("phone-error"); hide("phone-result"); show("p-contact-header");
       setPhoneLoading(true);
 
       var token = await getToken();
@@ -616,15 +618,18 @@ const TURNSTILE_SITE_KEY = (import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "1x0000
     hide("p-phone-row"); hide("p-person-not-found"); hide("p-no-phone"); hide("p-found-badge"); hide("p-whatsapp");
 
     if (data.phone) {
-      // Phone found ✓
+      // Phone found ✓ — show contact header
+      show("p-contact-header");
       show("p-found-badge"); show("p-phone-row");
       setText("p-phone-value", data.phone.masked);
       if (data.phone.whatsapp) show("p-whatsapp");
     } else if (data.found) {
-      // Person found, but no direct mobile indexed
+      // Person found, but no direct mobile indexed — show contact header
+      show("p-contact-header");
       show("p-no-phone");
     } else {
-      // Person not found at all — suggest changing inputs
+      // Person not found at all — hide the empty contact header
+      hide("p-contact-header");
       show("p-person-not-found");
     }
 
