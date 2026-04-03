@@ -85,12 +85,11 @@ import PricingTeaser from '../../components/PricingTeaser.astro';
           Datagma finds it.
         </p>
 
-        {/* Feature tags */}
-        <div class="flex flex-wrap gap-2 mb-4">
+        {/* Feature chips */}
+        <div class="flex flex-wrap gap-2 mb-6">
           {[
-            { icon: "fas fa-user",       text: "Search by name + country" },
-            { icon: "fab fa-linkedin",   text: "No LinkedIn URL needed" },
-            { icon: "fas fa-mobile-alt", text: "Direct mobiles, no switchboard" },
+            { icon: "fas fa-user",       text: "Name + country, no LinkedIn" },
+            { icon: "fas fa-mobile-alt", text: "Direct mobiles only" },
             { icon: "fab fa-whatsapp",   text: "WhatsApp detection" },
           ].map((tag) => (
             <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-600 bg-white/90 border border-gray-200 px-3 py-1.5 rounded-full shadow-soft-sm">
@@ -100,27 +99,8 @@ import PricingTeaser from '../../components/PricingTeaser.astro';
           ))}
         </div>
 
-        {/* Pain scenarios */}
-        <div class="rounded-2xl border border-gray-100 bg-white/70 backdrop-blur-sm px-4 py-3.5 mb-4 shadow-sm">
-          <p class="text-[10px] uppercase tracking-widest font-extrabold text-gray-400 mb-2.5">Sound familiar?</p>
-          <div class="space-y-2">
-            {[
-              { who: "Sales rep",   color: "bg-blue-100 text-blue-700",     pain: "3 weeks trying. I only have the main switchboard." },
-              { who: "Recruiter",   color: "bg-violet-100 text-violet-700", pain: "Another agency placed my candidate. They called first." },
-              { who: "Real estate", color: "bg-amber-100 text-amber-700",   pain: "I can't reach the decision-maker — only a generic inbox." },
-              { who: "BizDev",      color: "bg-green-100 text-green-700",   pain: "The VP is interested. His EA filters every single call." },
-              { who: "SDR",         color: "bg-sky-100 text-sky-700",        pain: "3 waterfall providers. 28% of contacts still have no phone." },
-            ].map((s) => (
-              <div class="flex items-center gap-2.5 text-xs">
-                <span class={`shrink-0 ${s.color} font-extrabold text-[9px] px-2 py-0.5 rounded-full whitespace-nowrap`}>{s.who}</span>
-                <span class="text-gray-500 italic leading-snug">{s.pain}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
         {/* CTAs */}
-        <div class="flex flex-col sm:flex-row gap-3 mb-4">
+        <div class="flex flex-col sm:flex-row gap-3 mb-5">
           <a href="https://app.datagma.com/register" class="btn btn-cta hero-cta px-8 py-3.5 text-base font-bold rounded-2xl">
             Find your first mobile — free
           </a>
@@ -129,13 +109,9 @@ import PricingTeaser from '../../components/PricingTeaser.astro';
           </a>
         </div>
 
-        <div class="inline-flex items-center gap-2 bg-blue-50 border border-blue-100 rounded-xl px-4 py-2.5 mb-3">
-          <i class="fas fa-gift text-blue-500 text-xs"></i>
-          <span class="text-xs font-bold text-blue-700">Free plan includes <span class="text-blue-900">3 direct mobiles</span> + <span class="text-blue-900">90 verified emails</span> per month — no credit card</span>
-        </div>
-        <p class="text-[11px] text-gray-400 font-semibold flex flex-wrap items-center gap-x-5 gap-y-1">
+        <p class="text-[11px] text-gray-400 font-semibold flex flex-wrap items-center gap-x-5 gap-y-1.5">
+          <span><i class="fas fa-gift mr-1.5 text-blue-300"></i><strong class="text-gray-600">3 mobiles + 90 emails</strong> free/month</span>
           <span><i class="fas fa-bolt mr-1.5 text-blue-300"></i>Live in 2 minutes</span>
-          <span><i class="fas fa-coins mr-1.5 text-blue-300"></i>Pay per result only</span>
           <span><i class="fas fa-shield-alt mr-1.5 text-gray-300"></i>GDPR by design</span>
         </p>
       </div>
