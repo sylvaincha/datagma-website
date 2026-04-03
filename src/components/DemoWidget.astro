@@ -142,21 +142,8 @@ const TURNSTILE_SITE_KEY = (import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "1x0000
               <!-- Phone data -->
               <div class="p-5 space-y-3">
 
-                <!-- Phone found -->
-                <div id="p-phone-row" class="hidden flex items-center gap-3">
-                  <div class="w-9 h-9 bg-blue-50 rounded-xl flex items-center justify-center shrink-0">
-                    <i class="fas fa-mobile-alt text-blue-600 text-sm"></i>
-                  </div>
-                  <div class="min-w-0 flex-1">
-                    <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Direct mobile</div>
-                    <div id="p-phone-value" class="font-display font-extrabold text-xl text-gray-900 tracking-wide font-mono"></div>
-                  </div>
-                  <div id="p-whatsapp" class="hidden shrink-0">
-                    <span class="inline-flex items-center gap-1 text-[10px] font-bold text-green-700 bg-green-50 border border-green-200 px-2 py-1 rounded-full">
-                      <i class="fab fa-whatsapp text-[11px]"></i>WhatsApp
-                    </span>
-                  </div>
-                </div>
+                <!-- Phones (rendered dynamically) -->
+                <div id="p-phones-container" class="hidden space-y-2.5"></div>
 
                 <!-- Case A : person not found at all -->
                 <div id="p-person-not-found" class="hidden">
@@ -658,14 +645,55 @@ const TURNSTILE_SITE_KEY = (import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "1x0000
       setText("phones-remaining", data.credits.phonesRemaining);
     }
 
-    hide("p-phone-row"); hide("p-person-not-found"); hide("p-no-phone"); hide("p-found-badge"); hide("p-whatsapp");
+    hide("p-phones-container"); hide("p-person-not-found"); hide("p-no-phone"); hide("p-found-badge");
 
-    if (data.phone) {
-      // Phone found ✓ — show contact header
+    var allPhones = data.phones || (data.phone ? [data.phone] : []);
+
+    if (allPhones.length > 0) {
+      // Phone(s) found ✓ — render each number
       show("p-contact-header");
-      show("p-found-badge"); show("p-phone-row");
-      setText("p-phone-value", data.phone.masked);
-      if (data.phone.whatsapp) show("p-whatsapp");
+      show("p-found-badge");
+
+      var container = q("p-phones-container");
+      if (container) {
+        container.innerHTML = "";
+        allPhones.forEach(function(ph, idx) {
+          var label = idx === 0 ? "Direct mobile" : "Additional mobile";
+          var row   = document.createElement("div");
+          row.className = "flex items-center gap-3";
+
+          var iconHtml =
+            '<div class="w-9 h-9 bg-blue-50 rounded-xl flex items-center justify-center shrink-0">' +
+              '<i class="fas fa-mobile-alt text-blue-600 text-sm"></i>' +
+            '</div>';
+
+          var numHtml =
+            '<div class="min-w-0 flex-1">' +
+              '<div class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">' + label + '</div>' +
+              '<div class="font-display font-extrabold text-xl text-gray-900 tracking-wide font-mono">' + (ph.masked || "") + '</div>' +
+            '</div>';
+
+          var waHtml = "";
+          if (ph.whatsapp && ph.waUrl) {
+            waHtml =
+              '<a href="' + ph.waUrl + '" target="_blank" rel="noopener noreferrer" ' +
+                 'class="shrink-0 inline-flex items-center gap-1 text-[10px] font-bold text-green-700 bg-green-50 border border-green-200 px-2.5 py-1.5 rounded-full hover:bg-green-100 active:scale-95 transition-all cursor-pointer">' +
+                '<i class="fab fa-whatsapp text-sm"></i>' +
+                'WhatsApp' +
+              '</a>';
+          } else if (ph.whatsapp) {
+            waHtml =
+              '<span class="shrink-0 inline-flex items-center gap-1 text-[10px] font-bold text-green-700 bg-green-50 border border-green-200 px-2.5 py-1.5 rounded-full">' +
+                '<i class="fab fa-whatsapp text-sm"></i>' +
+                'WhatsApp' +
+              '</span>';
+          }
+
+          row.innerHTML = iconHtml + numHtml + waHtml;
+          container.appendChild(row);
+        });
+        show("p-phones-container");
+      }
     } else if (data.found) {
       // Person found, but no direct mobile indexed — show contact header
       show("p-contact-header");

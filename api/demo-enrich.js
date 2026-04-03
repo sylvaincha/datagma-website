@@ -204,19 +204,23 @@ function apiError(data) {
 // /v2/full    → data.phoneFull.phones[].{ displayInternational, linkedWhatsapp }
 function extractPhones(data) {
   if (!data) return [];
+  const toPhone = (p, hasWaField) => {
+    const number   = p.displayInternational ?? (p.countryCode ? `+${p.countryCode}${p.number}` : p.number) ?? "";
+    const whatsapp = !!(p.linkedWhatsapp ?? (hasWaField ? p.whatsapp?.isIn : false) ?? false);
+    const digits   = number.replace(/[^\d]/g, ""); // strip + and spaces for wa.me
+    return { number, whatsapp, digits };
+  };
   const searchPerson = data.person;
   if (searchPerson && Array.isArray(searchPerson.phones) && searchPerson.phones.length > 0) {
-    return searchPerson.phones.map((p) => ({
-      number:   p.displayInternational ?? (p.countryCode ? `+${p.countryCode}${p.number}` : p.number) ?? "",
-      whatsapp: !!(p.linkedWhatsapp ?? p.whatsapp?.isIn ?? false),
-    })).filter((p) => p.number && p.number.length > 4);
+    return searchPerson.phones
+      .map((p) => toPhone(p, true))
+      .filter((p) => p.number && p.number.length > 4);
   }
   const pf = data.phoneFull;
   if (pf && typeof pf === "object" && Array.isArray(pf.phones)) {
-    return pf.phones.map((p) => ({
-      number:   p.displayInternational ?? (p.countryCode ? `+${p.countryCode}${p.number}` : p.number) ?? "",
-      whatsapp: !!(p.linkedWhatsapp ?? false),
-    })).filter((p) => p.number && p.number.length > 4);
+    return pf.phones
+      .map((p) => toPhone(p, false))
+      .filter((p) => p.number && p.number.length > 4);
   }
   return [];
 }
@@ -388,22 +392,23 @@ export default async function handler(req, res) {
     const contact = extractContact(apiData);
     const hasPhone = phones.length > 0;
 
-    let phoneResult = null;
+    let phoneResults = null;
     if (hasPhone) {
       consumeCredit(phoneRateMap, ip, PHONE_LIMIT);
       if (fid) consumeCredit(fidPhoneRateMap, fid, PHONE_LIMIT);
-      phoneResult = {
-        masked:   maskPhone(phones[0].number),
-        whatsapp: phones[0].whatsapp,
-        count:    phones.length,
-      };
+      phoneResults = phones.map((p) => ({
+        masked:   maskPhone(p.number),
+        whatsapp: p.whatsapp,
+        waUrl:    p.whatsapp && p.digits ? `https://wa.me/${p.digits}` : null,
+      }));
     }
 
     const phoneLimitsAfter = checkLimit(phoneRateMap, ip, PHONE_LIMIT);
 
     return res.status(200).json({
       contact,
-      phone:   phoneResult,
+      phones:  phoneResults,                          // all phones (array)
+      phone:   phoneResults ? phoneResults[0] : null, // backward compat (first phone)
       credits: { phonesRemaining: phoneLimitsAfter.remaining, resetsAt: phoneLimitsAfter.resetAt },
       found:   hasPhone || !!(contact.fullName),
     });
