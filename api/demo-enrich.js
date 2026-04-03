@@ -399,7 +399,6 @@ export default async function handler(req, res) {
       phoneResults = phones.map((p) => ({
         masked:   maskPhone(p.number),
         whatsapp: p.whatsapp,
-        waUrl:    p.whatsapp && p.digits ? `https://wa.me/${p.digits}` : null,
       }));
     }
 
