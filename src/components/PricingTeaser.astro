@@ -14,8 +14,8 @@
         Pay only per result. No result = no charge. Unused credits roll over 12 months.
       </p>
 
-      <!-- Billing toggle -->
-      <div class="flex items-center justify-center gap-3 mb-4">
+      <!-- Toggles on one line -->
+      <div class="flex items-center justify-center gap-4 flex-wrap">
         <span id="pt-monthly-label" class="text-sm font-semibold text-gray-400 cursor-pointer select-none">Monthly</span>
         <button id="pt-billing-toggle" aria-label="Toggle billing period"
           class="relative w-12 h-6 rounded-full bg-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-1">
@@ -23,10 +23,7 @@
         </button>
         <span id="pt-annual-label" class="text-sm font-semibold text-blue-600 cursor-pointer select-none">Annual</span>
         <span class="bg-green-100 text-green-700 text-xs font-extrabold px-2.5 py-1 rounded-full">Save 20%</span>
-      </div>
-
-      <!-- Currency toggle -->
-      <div class="flex items-center justify-center gap-2">
+        <div class="w-px h-5 bg-gray-200"></div>
         <button id="pt-usd-btn" class="text-xs font-bold px-3 py-1.5 rounded-lg border border-blue-600 bg-blue-600 text-white transition-all">
           $ USD
         </button>
