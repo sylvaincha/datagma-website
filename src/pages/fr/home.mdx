@@ -9,7 +9,7 @@ activeNav: ''
 import LiveCounter from '../../components/LiveCounter.astro';
 import DemoWidget from '../../components/DemoWidget.astro';
 import LocalizedLogoBar from '../../components/LocalizedLogoBar.astro';
-import PricingTeaser from '../../components/PricingTeaser.astro';
+import PricingTeaser from '../../components/PricingTeaserFR.astro';
 
 <script type="application/ld+json" set:html={JSON.stringify([
   {
@@ -306,7 +306,7 @@ import PricingTeaser from '../../components/PricingTeaser.astro';
             </div>
           </div>
           <p class="text-gray-500 text-sm leading-relaxed mb-3">
-            Une discussion de partenariat ne se fait pas par email. Elle se fait lors d'un appel avec le bon VP. Vous savez qui ils sont — vous n'arrivez juste pas à passer leur assistant ou le standard.
+            Un partenariat ne se signe pas par email. Il se décide lors d'un appel direct avec le bon VP. Vous savez qui c'est — vous n'arrivez juste pas à passer l'assistant ou le standard.
           </p>
           <div class="text-xs text-gray-700 font-semibold bg-gray-50 border border-gray-200 rounded-xl px-3 py-2">
             <span class="text-green-600">✓</span> Ligne directe vers les décideurs de niveau VP, pas le standard.
@@ -326,7 +326,7 @@ import PricingTeaser from '../../components/PricingTeaser.astro';
             </div>
           </div>
           <p class="text-gray-500 text-sm leading-relaxed mb-3">
-            Vos séquences sont solides. Votre ciblage est bon. Votre taux de connexion est de 3 %. Le problème vient des données téléphoniques — un fournisseur de plus dans votre cascade change la donne.
+            Vos séquences sont solides. Votre ciblage est bon. Votre taux de décroché est de 3 %. Le problème vient des données téléphoniques — un fournisseur de plus dans votre cascade change la donne.
           </p>
           <div class="text-xs text-gray-700 font-semibold bg-gray-50 border border-gray-200 rounded-xl px-3 py-2">
             <span class="text-green-600">✓</span> Fournisseur natif Clay. BYOK sur Fullenrich, BetterContact, GetCargo.
@@ -384,8 +384,8 @@ import PricingTeaser from '../../components/PricingTeaser.astro';
             <span class="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500">vous a déjà coûté.</span>
           </h2>
           <p class="text-gray-500 text-lg max-w-2xl mx-auto">
-            Quel que soit votre secteur — une connexion manquée n'est jamais juste un appel manqué.
-            C'est une affaire, un placement, un bail, un partenariat qui est allé à quelqu'un d'autre.
+            Quel que soit votre secteur — un contact raté n'est jamais juste un appel manqué.
+            C'est une affaire, un placement, un bail, un partenariat qui est parti chez un concurrent.
           </p>
         </div>
 
@@ -460,11 +460,11 @@ import PricingTeaser from '../../components/PricingTeaser.astro';
         Simple à utiliser seul.<br/>
         <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-sky-500">Puissant dans n'importe quel stack.</span>
       </h2>
-      <p class="text-gray-500 text-lg max-w-2xl mx-auto">
-        Vous n'avez pas besoin de savoir ce qu'est Clay ou une cascade pour utiliser Datagma.<br/>
-        Tapez un nom, obtenez un numéro. C'est tout.<br/>
+      <p class="text-gray-500 text-lg max-w-2xl mx-auto leading-relaxed">
+        Pas besoin de connaître Clay ou les waterfalls pour utiliser Datagma.<br/>
+        Un nom, un pays — un mobile. C'est tout.<br/>
         <br/>
-        Mais si vous exécutez des automatisations, il s'intègre parfaitement.
+        Et si vous faites tourner des automations, Datagma s'y branche directement.
       </p>
     </div>
 
@@ -515,7 +515,7 @@ import PricingTeaser from '../../components/PricingTeaser.astro';
           <h3 class="font-display font-bold text-xl text-gray-900 mb-3">Vous utilisez un stack ou un outil de séquence ?</h3>
           <p class="text-gray-500 text-sm leading-relaxed mb-5">
             Votre fournisseur principal couvre ~50 % des contacts. Datagma intervient après dans la cascade,
-            remplissant les téléphones manquants. Payez uniquement par correspondance réussie — jamais pour des résultats vides.
+            en comblant les numéros manquants. Paiement au résultat — jamais pour un résultat vide.
           </p>
           <div class="flex flex-wrap gap-2 mb-6">
             {[
@@ -549,7 +549,7 @@ import PricingTeaser from '../../components/PricingTeaser.astro';
         Ce que Datagma ajoute à votre stack
       </h2>
       <p class="text-gray-500 text-lg max-w-xl mx-auto">
-        Pas un remplacement de vos outils actuels — une couche d'amélioration qui débloque les contacts qu'ils manquent.
+        Pas un remplacement de vos outils — une couche complémentaire qui débloque les contacts que les autres ratent.
       </p>
     </div>
 
@@ -597,10 +597,10 @@ import PricingTeaser from '../../components/PricingTeaser.astro';
             <span class="shrink-0 ml-2 bg-green-50 border border-green-200 text-green-700 text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider whitespace-nowrap">&lt;2% bounce</span>
           </div>
           <p class="text-gray-500 text-sm leading-relaxed mb-4">
-            Meilleure couverture en Europe &amp; US. Vérifié contre LinkedIn, GitHub et Facebook — avec un taux de rebond inférieur à 2 %. Plus de domaines brûlés.
+            Meilleure couverture en Europe &amp; US. Vérifié en temps réel contre LinkedIn, GitHub et Facebook — taux de rebond inférieur à 2 %. Fini les domaines grillés.
           </p>
           <div class="flex flex-wrap gap-1.5 mb-5">
-            {["Couverture top", "Détection catchall", "Sans LinkedIn", "90 emails/mo gratuits"].map((t) => (
+            {["Meilleure couverture", "Détection catchall", "Sans LinkedIn", "90 emails/mois gratuits"].map((t) => (
               <span class="text-[10px] font-bold bg-violet-50 border border-violet-200 text-violet-700 px-2 py-0.5 rounded-full">{t}</span>
             ))}
           </div>
@@ -661,7 +661,7 @@ import PricingTeaser from '../../components/PricingTeaser.astro';
           <h3 class="font-display font-bold text-xl text-gray-900">Téléchargement de fichiers</h3>
         </div>
         <p class="text-gray-500 text-sm leading-relaxed mb-4">
-          Téléchargez un CSV. Obtenez plus de 75 points de données enrichis — téléphone, email, entreprise, financement, stack technologique et plus. Jusqu'à 50k lignes.
+          Importez un CSV. Obtenez plus de 75 champs enrichis — téléphone, email, entreprise, financement, stack tech et plus. Jusqu'à 50 000 lignes.
         </p>
         <a href="/fr/file-upload" class="text-blue-600 text-sm font-bold hover:underline inline-flex items-center gap-1">
           En savoir plus <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>

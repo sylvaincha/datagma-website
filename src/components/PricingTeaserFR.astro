@@ -1,0 +1,277 @@
+---
+---
+<section class="py-24">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-10">
+      <div class="inline-flex items-center gap-2 bg-amber-50 border border-amber-200 text-amber-700 text-xs font-bold px-4 py-1.5 rounded-full mb-6">
+        <span class="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse"></span>
+        À partir de $0,28/mobile — un appel converti couvre des mois de service
+      </div>
+      <h2 class="font-display font-extrabold text-4xl sm:text-5xl text-gray-900 mb-4 tracking-tight">
+        Commencez pour moins cher que votre prochaine affaire ratée
+      </h2>
+      <p class="text-gray-500 text-lg mb-8">
+        Paiement au résultat uniquement. Aucun résultat = aucune facturation. Les crédits non utilisés sont reportés 12 mois.
+      </p>
+
+      <!-- Toggles sur une ligne -->
+      <div class="flex items-center justify-center gap-4 flex-wrap">
+        <span id="pt-monthly-label" class="text-sm font-semibold text-gray-400 cursor-pointer select-none">Mensuel</span>
+        <button id="pt-billing-toggle" aria-label="Changer la période de facturation"
+          class="relative w-12 h-6 rounded-full bg-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-1">
+          <span id="pt-toggle-knob" class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform translate-x-6"></span>
+        </button>
+        <span id="pt-annual-label" class="text-sm font-semibold text-blue-600 cursor-pointer select-none">Annuel</span>
+        <span class="bg-green-100 text-green-700 text-xs font-extrabold px-2.5 py-1 rounded-full">−20 %</span>
+        <div class="w-px h-5 bg-gray-200"></div>
+        <button id="pt-usd-btn" class="text-xs font-bold px-3 py-1.5 rounded-lg border border-blue-600 bg-blue-600 text-white transition-all">
+          $ USD
+        </button>
+        <button id="pt-eur-btn" class="text-xs font-bold px-3 py-1.5 rounded-lg border border-gray-200 bg-white text-gray-500 hover:border-blue-400 hover:text-blue-600 transition-all">
+          € EUR
+        </button>
+      </div>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8 pt-8" style="overflow:visible">
+
+      <!-- Free -->
+      <div class="bento-card p-5 relative flex flex-col">
+        <div class="mb-4">
+          <div class="font-display font-bold text-gray-400 text-xs uppercase tracking-widest mb-1">Gratuit</div>
+          <div class="flex items-baseline gap-1">
+            <span class="font-display font-extrabold text-4xl text-gray-900" id="pt-price-free">$0</span>
+            <span class="text-gray-400 text-sm">/mois</span>
+          </div>
+          <div class="mt-3 space-y-1">
+            <div class="flex items-center gap-1.5 text-xs text-gray-700 font-semibold"><i class="fas fa-mobile-alt text-green-500 text-[10px] w-3 text-center"></i><span id="pt-phones-free">3 tél./mois</span></div>
+            <div class="flex items-center gap-1.5 text-xs text-gray-700 font-semibold"><i class="fas fa-envelope text-blue-400 text-[10px] w-3 text-center"></i><span id="pt-emails-free">90 emails/mois</span></div>
+          </div>
+        </div>
+        <ul class="space-y-2 mb-6 flex-1">
+          <li class="flex items-center gap-2 text-sm text-gray-600"><svg class="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Export Sales Navigator</li>
+          <li class="flex items-center gap-2 text-sm text-gray-600"><svg class="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Emails catchall offerts</li>
+          <li class="flex items-center gap-2 text-sm text-gray-600"><svg class="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Mobiles uniquement — pas de standard</li>
+          <li class="flex items-center gap-2 text-sm text-gray-600"><svg class="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>API</li>
+          <li class="flex items-center gap-2 text-sm text-gray-600"><svg class="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Intégration WhatsApp</li>
+          <li class="flex items-center gap-2 text-sm text-gray-600"><svg class="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>10 utilisateurs inclus</li>
+        </ul>
+        <a href="https://app.datagma.com/register" class="block text-center py-3 rounded-xl text-sm font-bold border border-gray-200 text-gray-700 hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50 transition-all">
+          Commencer gratuitement
+        </a>
+      </div>
+
+      <!-- Regular -->
+      <div class="bento-card p-6 relative flex flex-col">
+        <div class="mb-5">
+          <div class="font-display font-bold text-gray-400 text-xs uppercase tracking-widest mb-1">Regular</div>
+          <div class="flex items-baseline gap-1">
+            <span class="font-display font-extrabold text-4xl text-gray-900" id="pt-price-regular">$39</span>
+            <span class="text-gray-400 text-sm" id="pt-period-regular">/mois · annuel</span>
+          </div>
+          <div class="mt-3 space-y-1">
+            <div class="flex items-center gap-1.5 text-xs text-gray-700 font-semibold"><i class="fas fa-mobile-alt text-green-500 text-[10px] w-3 text-center"></i><span id="pt-phones-regular">1 200 tél./an</span></div>
+            <div class="flex items-center gap-1.5 text-xs text-gray-700 font-semibold"><i class="fas fa-envelope text-blue-400 text-[10px] w-3 text-center"></i><span id="pt-emails-regular">36 000 emails/an</span></div>
+          </div>
+          <div class="mt-2 text-xs text-gray-400 font-semibold" id="pt-cost-regular">≈ $0,39/tél.</div>
+        </div>
+        <ul class="space-y-2 mb-6 flex-1">
+          <li class="flex items-center gap-2 text-sm text-gray-600"><svg class="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Export Sales Navigator</li>
+          <li class="flex items-center gap-2 text-sm text-gray-600"><svg class="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Emails catchall offerts</li>
+          <li class="flex items-center gap-2 text-sm text-gray-600"><svg class="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Report des crédits</li>
+          <li class="flex items-center gap-2 text-sm text-gray-600"><svg class="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Mobiles uniquement — pas de standard</li>
+          <li class="flex items-center gap-2 text-sm text-gray-600"><svg class="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>API</li>
+          <li class="flex items-center gap-2 text-sm text-gray-600"><svg class="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Intégration WhatsApp</li>
+          <li class="flex items-center gap-2 text-sm text-gray-600"><svg class="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>10 utilisateurs inclus</li>
+        </ul>
+        <a href="https://app.datagma.com/register" class="block text-center py-3 rounded-xl text-sm font-bold border border-gray-200 text-gray-700 hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50 transition-all">
+          Commencer
+        </a>
+      </div>
+
+      <!-- Popular -->
+      <div class="bento-card p-6 relative flex flex-col ring-2 ring-blue-600 shadow-blue-100 shadow-xl" style="overflow:visible">
+        <div class="absolute -top-4 left-1/2 -translate-x-1/2 z-10">
+          <span class="bg-blue-600 text-white text-xs font-extrabold px-4 py-1.5 rounded-full shadow-md shadow-blue-200 whitespace-nowrap">Le plus populaire</span>
+        </div>
+        <div class="mb-5 mt-2">
+          <div class="font-display font-bold text-gray-400 text-xs uppercase tracking-widest mb-1">Popular</div>
+          <div class="flex items-baseline gap-1">
+            <span class="font-display font-extrabold text-4xl text-gray-900" id="pt-price-popular">$79</span>
+            <span class="text-gray-400 text-sm" id="pt-period-popular">/mois · annuel</span>
+          </div>
+          <div class="mt-3 space-y-1">
+            <div class="flex items-center gap-1.5 text-xs text-gray-700 font-semibold"><i class="fas fa-mobile-alt text-green-500 text-[10px] w-3 text-center"></i><span id="pt-phones-popular">3 000 tél./an</span></div>
+            <div class="flex items-center gap-1.5 text-xs text-gray-700 font-semibold"><i class="fas fa-envelope text-blue-400 text-[10px] w-3 text-center"></i><span id="pt-emails-popular">90 000 emails/an</span></div>
+          </div>
+          <div class="mt-2 text-xs text-gray-400 font-semibold" id="pt-cost-popular">≈ $0,32/tél.</div>
+        </div>
+        <ul class="space-y-2 mb-6 flex-1">
+          <li class="flex items-center gap-2 text-sm text-gray-600"><svg class="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Export Sales Navigator</li>
+          <li class="flex items-center gap-2 text-sm text-gray-600"><svg class="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Emails catchall offerts</li>
+          <li class="flex items-center gap-2 text-sm text-gray-600"><svg class="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Report des crédits</li>
+          <li class="flex items-center gap-2 text-sm text-gray-600"><svg class="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Mobiles uniquement — pas de standard</li>
+          <li class="flex items-center gap-2 text-sm text-gray-600"><svg class="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>API</li>
+          <li class="flex items-center gap-2 text-sm text-gray-600"><svg class="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Intégration WhatsApp</li>
+          <li class="flex items-center gap-2 text-sm text-gray-600"><svg class="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>10 utilisateurs inclus</li>
+          <li class="flex items-center gap-2 text-sm text-gray-600"><svg class="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Enrichissement par CSV</li>
+        </ul>
+        <a href="https://app.datagma.com/register" class="block text-center py-3 rounded-xl text-sm font-bold bg-blue-600 text-white hover:bg-blue-700 shadow-md shadow-blue-200 transition-all">
+          Commencer
+        </a>
+      </div>
+
+      <!-- Expert -->
+      <div class="bento-card p-6 relative flex flex-col">
+        <div class="mb-5">
+          <div class="font-display font-bold text-gray-400 text-xs uppercase tracking-widest mb-1">Expert</div>
+          <div class="flex items-baseline gap-1">
+            <span class="font-display font-extrabold text-4xl text-gray-900" id="pt-price-expert">$209</span>
+            <span class="text-gray-400 text-sm" id="pt-period-expert">/mois · annuel</span>
+          </div>
+          <div class="mt-3 space-y-1">
+            <div class="flex items-center gap-1.5 text-xs text-gray-700 font-semibold"><i class="fas fa-mobile-alt text-green-500 text-[10px] w-3 text-center"></i><span id="pt-phones-expert">9 000 tél./an</span></div>
+            <div class="flex items-center gap-1.5 text-xs text-gray-700 font-semibold"><i class="fas fa-envelope text-blue-400 text-[10px] w-3 text-center"></i><span id="pt-emails-expert">270 000 emails/an</span></div>
+          </div>
+          <div class="mt-2 text-xs text-gray-400 font-semibold" id="pt-cost-expert">≈ $0,28/tél.</div>
+        </div>
+        <ul class="space-y-2 mb-6 flex-1">
+          <li class="flex items-center gap-2 text-sm text-gray-600"><svg class="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Export Sales Navigator</li>
+          <li class="flex items-center gap-2 text-sm text-gray-600"><svg class="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Emails catchall offerts</li>
+          <li class="flex items-center gap-2 text-sm text-gray-600"><svg class="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Report des crédits</li>
+          <li class="flex items-center gap-2 text-sm text-gray-600"><svg class="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Mobiles uniquement — pas de standard</li>
+          <li class="flex items-center gap-2 text-sm text-gray-600"><svg class="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>API</li>
+          <li class="flex items-center gap-2 text-sm text-gray-600"><svg class="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Intégration WhatsApp</li>
+          <li class="flex items-center gap-2 text-sm text-gray-600"><svg class="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>10 utilisateurs inclus</li>
+          <li class="flex items-center gap-2 text-sm text-gray-600"><svg class="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Enrichissement par CSV</li>
+        </ul>
+        <a href="https://app.datagma.com/register" class="block text-center py-3 rounded-xl text-sm font-bold border border-gray-200 text-gray-700 hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50 transition-all">
+          Commencer
+        </a>
+      </div>
+
+    </div>
+
+    <!-- Bandeau Entreprise -->
+    <div class="bento-card px-6 py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+      <div>
+        <div class="font-display font-bold text-gray-900 text-lg mb-1">Entreprise</div>
+        <p class="text-gray-500 text-sm mb-3">Volume important ? Parlons de vos besoins.</p>
+        <div class="flex flex-wrap gap-2">
+          <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-green-700"><svg class="w-3.5 h-3.5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Grand volume</span>
+          <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-green-700"><svg class="w-3.5 h-3.5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Paiement à l'usage</span>
+          <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-green-700"><svg class="w-3.5 h-3.5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Account Manager dédié</span>
+          <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-green-700"><svg class="w-3.5 h-3.5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Intégrations sur mesure</span>
+          <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-green-700"><svg class="w-3.5 h-3.5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>SLA</span>
+        </div>
+      </div>
+      <a href="mailto:support@datagma.com" class="shrink-0 inline-flex items-center justify-center px-5 py-2.5 rounded-xl border border-gray-200 text-sm font-bold text-gray-700 hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50 transition-all">
+        Nous contacter
+      </a>
+    </div>
+
+    <div class="text-center">
+      <p class="text-gray-500 text-sm">
+        Plan gratuit disponible — sans carte de crédit.
+        <a href="/fr/pricing" class="text-blue-600 font-bold hover:underline ml-1">Voir tous les tarifs →</a>
+      </p>
+    </div>
+  </div>
+</section>
+
+<script>
+  const pricingData = {
+    free: {
+      phonesMonthly: '3 tél./mois',
+      phonesAnnual:  '36 tél./an',
+      emailsMonthly: '90 emails/mois',
+      emailsAnnual:  '1 080 emails/an',
+    },
+    regular: {
+      usd: { monthly: '$49', annual: '$39' },
+      eur: { monthly: '€49', annual: '€39' },
+      phonesMonthly: '100 tél./mois',
+      phonesAnnual:  '1 200 tél./an',
+      emailsMonthly: '3 000 emails/mois',
+      emailsAnnual:  '36 000 emails/an',
+      costUsd: { monthly: '≈ $0,49/tél.', annual: '≈ $0,39/tél.' },
+      costEur: { monthly: '≈ €0,49/tél.', annual: '≈ €0,39/tél.' },
+    },
+    popular: {
+      usd: { monthly: '$99', annual: '$79' },
+      eur: { monthly: '€99', annual: '€79' },
+      phonesMonthly: '250 tél./mois',
+      phonesAnnual:  '3 000 tél./an',
+      emailsMonthly: '7 500 emails/mois',
+      emailsAnnual:  '90 000 emails/an',
+      costUsd: { monthly: '≈ $0,40/tél.', annual: '≈ $0,32/tél.' },
+      costEur: { monthly: '≈ €0,40/tél.', annual: '≈ €0,32/tél.' },
+    },
+    expert: {
+      usd: { monthly: '$249', annual: '$209' },
+      eur: { monthly: '€249', annual: '€209' },
+      phonesMonthly: '750 tél./mois',
+      phonesAnnual:  '9 000 tél./an',
+      emailsMonthly: '22 500 emails/mois',
+      emailsAnnual:  '270 000 emails/an',
+      costUsd: { monthly: '≈ $0,33/tél.', annual: '≈ $0,28/tél.' },
+      costEur: { monthly: '≈ €0,33/tél.', annual: '≈ €0,28/tél.' },
+    },
+  };
+
+  let billing: 'annual' | 'monthly' = 'annual';
+  let currency: 'usd' | 'eur' = 'usd';
+
+  function render() {
+    const fd = pricingData.free;
+    const isAnnualFree = billing === 'annual';
+    (document.getElementById('pt-phones-free') as HTMLElement).textContent = isAnnualFree ? fd.phonesAnnual : fd.phonesMonthly;
+    (document.getElementById('pt-emails-free') as HTMLElement).textContent = isAnnualFree ? fd.emailsAnnual : fd.emailsMonthly;
+
+    (['regular', 'popular', 'expert'] as const).forEach((plan) => {
+      const d = pricingData[plan];
+      const isAnnual = billing === 'annual';
+
+      (document.getElementById(`pt-price-${plan}`) as HTMLElement).textContent = d[currency][billing];
+      (document.getElementById(`pt-period-${plan}`) as HTMLElement).textContent = isAnnual ? '/mois · annuel' : '/mois · mensuel';
+      (document.getElementById(`pt-phones-${plan}`) as HTMLElement).textContent = isAnnual ? d.phonesAnnual : d.phonesMonthly;
+      (document.getElementById(`pt-emails-${plan}`) as HTMLElement).textContent = isAnnual ? d.emailsAnnual : d.emailsMonthly;
+      (document.getElementById(`pt-cost-${plan}`) as HTMLElement).textContent = (currency === 'usd' ? d.costUsd : d.costEur)[billing];
+    });
+
+    const knob = document.getElementById('pt-toggle-knob') as HTMLElement;
+    const monthLabel = document.getElementById('pt-monthly-label') as HTMLElement;
+    const annualLabel = document.getElementById('pt-annual-label') as HTMLElement;
+    const activeLabel = 'text-sm font-semibold text-blue-600 cursor-pointer select-none';
+    const inactiveLabel = 'text-sm font-semibold text-gray-400 cursor-pointer select-none';
+
+    if (billing === 'annual') {
+      knob.style.transform = 'translateX(24px)';
+      monthLabel.className = inactiveLabel;
+      annualLabel.className = activeLabel;
+    } else {
+      knob.style.transform = 'translateX(0px)';
+      monthLabel.className = activeLabel;
+      annualLabel.className = inactiveLabel;
+    }
+
+    const activeBtn = 'text-xs font-bold px-3 py-1.5 rounded-lg border border-blue-600 bg-blue-600 text-white transition-all';
+    const inactiveBtn = 'text-xs font-bold px-3 py-1.5 rounded-lg border border-gray-200 bg-white text-gray-500 hover:border-blue-400 hover:text-blue-600 transition-all';
+    const usdBtn = document.getElementById('pt-usd-btn') as HTMLElement;
+    const eurBtn = document.getElementById('pt-eur-btn') as HTMLElement;
+    usdBtn.className = currency === 'usd' ? activeBtn : inactiveBtn;
+    eurBtn.className = currency === 'eur' ? activeBtn : inactiveBtn;
+  }
+
+  document.getElementById('pt-billing-toggle')?.addEventListener('click', () => {
+    billing = billing === 'annual' ? 'monthly' : 'annual';
+    render();
+  });
+
+  document.getElementById('pt-monthly-label')?.addEventListener('click', () => { billing = 'monthly'; render(); });
+  document.getElementById('pt-annual-label')?.addEventListener('click', () => { billing = 'annual'; render(); });
+  document.getElementById('pt-usd-btn')?.addEventListener('click', () => { currency = 'usd'; render(); });
+  document.getElementById('pt-eur-btn')?.addEventListener('click', () => { currency = 'eur'; render(); });
+
+  render();
+</script>
