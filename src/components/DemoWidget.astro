@@ -159,9 +159,28 @@ const TURNSTILE_SITE_KEY = (import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "1x0000
                 </div>
 
                 <!-- No phone -->
-                <div id="p-phone-none" class="hidden flex items-center gap-3 p-3 bg-gray-50 border border-gray-200 rounded-xl">
-                  <i class="fas fa-phone-slash text-gray-400 shrink-0"></i>
-                  <div class="text-xs text-gray-500">No direct mobile found. <a href="https://app.datagma.com/register" class="text-blue-600 font-bold hover:underline">Try in your account →</a></div>
+                <div id="p-phone-none" class="hidden">
+                  <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl mb-3">
+                    <div class="flex items-start gap-2.5 mb-3">
+                      <i class="fas fa-info-circle text-amber-500 shrink-0 mt-0.5 text-sm"></i>
+                      <div>
+                        <div class="text-xs font-bold text-gray-800 mb-1">Not found in demo — try the full account</div>
+                        <div class="text-[11px] text-gray-500 leading-relaxed">The demo runs on a subset of our index. The full account covers many more contacts, especially in <strong>US, UK, India and APAC</strong> markets.</div>
+                      </div>
+                    </div>
+                    <div class="text-[10px] font-extrabold text-gray-400 uppercase tracking-wider mb-1.5">Or try a different search method:</div>
+                    <div class="flex flex-wrap gap-1.5">
+                      <button class="p-try-method text-[11px] font-bold px-2.5 py-1 rounded-lg bg-white border border-gray-200 hover:border-blue-400 hover:text-blue-600 transition-colors text-gray-600" data-mode="linkedin">
+                        <i class="fab fa-linkedin mr-1 text-[10px]"></i>LinkedIn URL
+                      </button>
+                      <button class="p-try-method text-[11px] font-bold px-2.5 py-1 rounded-lg bg-white border border-gray-200 hover:border-blue-400 hover:text-blue-600 transition-colors text-gray-600" data-mode="nameCompany">
+                        <i class="fas fa-building mr-1 text-[10px]"></i>Name + Company
+                      </button>
+                      <button class="p-try-method text-[11px] font-bold px-2.5 py-1 rounded-lg bg-white border border-gray-200 hover:border-blue-400 hover:text-blue-600 transition-colors text-gray-600" data-mode="nameDomain">
+                        <i class="fas fa-globe mr-1 text-[10px]"></i>Name + Domain
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -256,9 +275,19 @@ const TURNSTILE_SITE_KEY = (import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "1x0000
                 </div>
 
                 <!-- Not found -->
-                <div id="e-email-none" class="hidden flex items-center gap-3 p-3 bg-gray-50 border border-gray-200 rounded-xl">
-                  <i class="fas fa-envelope-open text-gray-300 shrink-0"></i>
-                  <div class="text-xs text-gray-500">No verified email found for this contact. <a href="https://app.datagma.com/register" class="text-blue-600 font-bold hover:underline">Try in your account →</a></div>
+                <div id="e-email-none" class="hidden">
+                  <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl">
+                    <div class="flex items-start gap-2.5">
+                      <i class="fas fa-info-circle text-amber-500 shrink-0 mt-0.5 text-sm"></i>
+                      <div>
+                        <div class="text-xs font-bold text-gray-800 mb-1">No verified email found in demo</div>
+                        <div class="text-[11px] text-gray-500 leading-relaxed">
+                          Double-check the domain (e.g. <em>stripe.com</em> not <em>stripe.co</em>).
+                          The full account searches additional sources and may return a <strong>probable email</strong> even for catchall domains.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
               </div>
@@ -538,16 +567,16 @@ const TURNSTILE_SITE_KEY = (import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "1x0000
         if (resp.status === 403 && json && json.error === "bot_detected") {
           show("phone-error"); setText("phone-error-msg", "Security check failed. Please wait a moment and try again.");
         } else if (resp.status === 429 || resp.status === 402) {
-          show("phone-error"); setText("phone-error-msg", "Daily search limit reached. Create a free account to continue.");
+          showRateLimit("phone");
         } else if (resp.status === 401) {
-          cachedToken = null; show("phone-error"); setText("phone-error-msg", "Session expired. Please try again.");
+          cachedToken = null; show("phone-error"); setText("phone-error-msg", "Session expired — please refresh the page and try again.");
         } else if (!resp.ok) {
-          show("phone-error"); setText("phone-error-msg", "Search failed. Please try again.");
+          show("phone-error"); setText("phone-error-msg", "Search failed. Please try again in a few seconds.");
         } else {
           renderPhoneResult(json);
         }
       } catch (_) {
-        show("phone-error"); setText("phone-error-msg", "Network error. Please check your connection.");
+        show("phone-error"); setText("phone-error-msg", "Network error — please check your connection and try again.");
       }
       resetTurnstile();
       setPhoneLoading(false);
@@ -615,16 +644,16 @@ const TURNSTILE_SITE_KEY = (import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "1x0000
         if (resp.status === 403 && json && json.error === "bot_detected") {
           show("email-error"); setText("email-error-msg", "Security check failed. Please wait a moment and try again.");
         } else if (resp.status === 429 || resp.status === 402) {
-          show("email-error"); setText("email-error-msg", "Daily search limit reached. Create a free account to continue.");
+          showRateLimit("email");
         } else if (resp.status === 401) {
-          cachedToken = null; show("email-error"); setText("email-error-msg", "Session expired. Please try again.");
+          cachedToken = null; show("email-error"); setText("email-error-msg", "Session expired — please refresh the page and try again.");
         } else if (!resp.ok) {
-          show("email-error"); setText("email-error-msg", "Search failed. Please try again.");
+          show("email-error"); setText("email-error-msg", "Search failed. Please try again in a few seconds.");
         } else {
           renderEmailResult(json);
         }
       } catch (_) {
-        show("email-error"); setText("email-error-msg", "Network error. Please check your connection.");
+        show("email-error"); setText("email-error-msg", "Network error — please check your connection and try again.");
       }
       resetTurnstile();
       setEmailLoading(false);
@@ -658,6 +687,39 @@ const TURNSTILE_SITE_KEY = (import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "1x0000
 
     show("email-result");
   }
+
+  // ── Rate limit — conversion-focused message ──────────────────────────────────
+  function showRateLimit(type) {
+    var errId  = type === "phone" ? "phone-error" : "email-error";
+    var msgId  = type === "phone" ? "phone-error-msg" : "email-error-msg";
+    var count  = type === "phone" ? "3 phones" : "90 emails";
+    var errEl  = q(errId);
+    var msgEl  = q(msgId);
+    if (!errEl || !msgEl) return;
+    errEl.classList.remove("hidden");
+    // Swap icon color to amber (limit, not a real error)
+    errEl.className = errEl.className.replace("bg-red-50 border-red-200 text-red-700", "bg-amber-50 border-amber-200 text-amber-800");
+    var icon = errEl.querySelector("i");
+    if (icon) { icon.className = "fas fa-rocket text-amber-400 shrink-0"; }
+    msgEl.innerHTML =
+      "<span class='font-bold'>Demo limit reached for today.</span> " +
+      "Create a free account — " + count + " per month, no credit card needed. " +
+      "<a href='https://app.datagma.com/register' class='underline font-bold text-blue-700 hover:text-blue-900'>Start free →</a>";
+  }
+
+  // ── "Try another method" buttons inside p-phone-none ────────────────────────
+  document.addEventListener("click", function (e) {
+    var btn = e.target.closest(".p-try-method");
+    if (!btn) return;
+    var mode = btn.dataset.mode;
+    if (mode) {
+      setPhoneSubtab(mode);
+      hide("phone-result");
+      // Scroll the form into view smoothly
+      var form = q("phone-form");
+      if (form) form.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+  });
 
   // Prefetch token
   getToken();
