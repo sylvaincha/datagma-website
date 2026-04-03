@@ -147,17 +147,23 @@ const TURNSTILE_SITE_KEY = (import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "1x0000
 
                 <!-- Case A : person not found at all -->
                 <div id="p-person-not-found" class="hidden">
-                  <div class="p-5 bg-gray-50 border border-gray-200 rounded-xl">
-                    <div class="flex items-center gap-3 mb-4">
+                  <div class="p-5 bg-gray-50 border border-gray-200 rounded-xl space-y-3">
+                    <div class="flex items-center gap-3">
                       <div class="w-10 h-10 bg-gray-200 rounded-xl flex items-center justify-center shrink-0">
                         <i class="fas fa-user-slash text-gray-500 text-base"></i>
                       </div>
                       <div>
                         <div class="text-sm font-bold text-gray-800">Person not found</div>
-                        <div class="text-xs text-gray-500 mt-0.5">Check the spelling of the name, or try a different search method.</div>
+                        <div class="text-xs text-gray-500 mt-0.5">No match for this name + company combination.</div>
                       </div>
                     </div>
-                    <div class="text-[10px] font-extrabold text-gray-400 uppercase tracking-wider mb-2">Try another method:</div>
+                    <!-- Deep search from not-found -->
+                    <button id="p-deep-search-btn-nf"
+                      class="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed text-white text-xs font-bold rounded-xl transition-colors shadow-sm shadow-blue-200">
+                      <i class="fas fa-search-plus text-[11px]"></i>
+                      <span id="p-deep-search-txt-nf">Search by name only (deep search)</span>
+                    </button>
+                    <div class="text-[10px] font-extrabold text-gray-400 uppercase tracking-wider">Or try a different method:</div>
                     <div class="flex flex-wrap gap-2">
                       <button class="p-try-method text-xs font-bold px-3 py-2 rounded-lg bg-white border border-gray-200 hover:border-blue-400 hover:text-blue-600 transition-colors text-gray-600" data-mode="linkedin">
                         <i class="fab fa-linkedin mr-1.5 text-[11px]"></i>LinkedIn URL
@@ -793,28 +799,25 @@ const TURNSTILE_SITE_KEY = (import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "1x0000
     show("email-result");
   }
 
-  // ── Deep search button ───────────────────────────────────────────────────────
-  document.addEventListener("click", function (e) {
-    var btn = e.target.closest("#p-deep-search-btn");
+  // ── Deep search — shared logic ───────────────────────────────────────────────
+  function runDeepSearch(btn, txtId) {
     if (!btn || btn.disabled) return;
-
     var hint = phoneSearchHint || {};
     var name = hint.name || hint.guessedName || "";
-    if (!name) return; // can't deep-search without a name
+    if (!name) return;
 
     var parts     = name.trim().split(/\s+/);
     var firstName = parts[0] || "";
     var lastName  = parts.slice(1).join(" ") || "";
     if (!firstName) return;
 
-    // Detect country from LinkedIn URL subdomain (fr.linkedin.com → FR)
     var country = "";
     if (hint.linkedin) {
       var m = hint.linkedin.match(/^https?:\/\/([a-z]{2})\.linkedin\.com/i);
       if (m && m[1].toLowerCase() !== "www") country = m[1].toUpperCase();
     }
 
-    var btnTxt = document.getElementById("p-deep-search-txt");
+    var btnTxt = document.getElementById(txtId);
     btn.disabled = true;
     if (btnTxt) btnTxt.textContent = "Searching…";
 
@@ -824,9 +827,9 @@ const TURNSTILE_SITE_KEY = (import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "1x0000
 
       var cf = await getCfToken();
       var params = new URLSearchParams({ t: token, mode: "deepSearch", firstName: firstName });
-      if (lastName) params.set("lastName", lastName);
-      if (country)  params.set("country",  country);
-      if (cf)       params.set("cf", cf);
+      if (lastName)  params.set("lastName", lastName);
+      if (country)   params.set("country",  country);
+      if (cf)        params.set("cf", cf);
       if (visitorId) params.set("fid", visitorId);
 
       try {
@@ -834,18 +837,29 @@ const TURNSTILE_SITE_KEY = (import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "1x0000
         var json = await resp.json();
 
         if (resp.status === 429 || resp.status === 402) {
-          showRateLimit("phone");
-          hide("phone-result");
+          showRateLimit("phone"); hide("phone-result");
         } else if (resp.ok) {
           renderPhoneResult(json);
         }
-        // On error: leave existing result visible
       } catch (_) {}
 
       resetTurnstile();
       btn.disabled = false;
       if (btnTxt) btnTxt.textContent = "Run deep search";
     })();
+  }
+
+  // ── Deep search button ───────────────────────────────────────────────────────
+  document.addEventListener("click", function (e) {
+    // Button inside p-no-phone (person found, no phone)
+    var btn = e.target.closest("#p-deep-search-btn");
+    if (btn) { runDeepSearch(btn, "p-deep-search-txt"); return; }
+
+    // Button inside p-person-not-found (company wrong / not found at all)
+    btn = e.target.closest("#p-deep-search-btn-nf");
+    if (!btn || btn.disabled) return;
+
+    runDeepSearch(btn, "p-deep-search-txt-nf");
   });
 
   // ── Rate limit — conversion-focused message ──────────────────────────────────
