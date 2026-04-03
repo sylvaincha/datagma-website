@@ -158,17 +158,17 @@ const TURNSTILE_SITE_KEY = (import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "1x0000
                   </div>
                 </div>
 
-                <!-- No phone -->
-                <div id="p-phone-none" class="hidden">
-                  <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl mb-3">
+                <!-- Case A : person not found at all -->
+                <div id="p-person-not-found" class="hidden">
+                  <div class="p-4 bg-gray-50 border border-gray-200 rounded-xl">
                     <div class="flex items-start gap-2.5 mb-3">
-                      <i class="fas fa-info-circle text-amber-500 shrink-0 mt-0.5 text-sm"></i>
+                      <i class="fas fa-user-slash text-gray-400 shrink-0 mt-0.5 text-sm"></i>
                       <div>
-                        <div class="text-xs font-bold text-gray-800 mb-1">Not found in demo — try the full account</div>
-                        <div class="text-[11px] text-gray-500 leading-relaxed">The demo runs on a subset of our index. The full account covers many more contacts, especially in <strong>US, UK, India and APAC</strong> markets.</div>
+                        <div class="text-xs font-bold text-gray-700 mb-1">Person not found</div>
+                        <div class="text-[11px] text-gray-500 leading-relaxed">Check the spelling of the name, or try a different search method.</div>
                       </div>
                     </div>
-                    <div class="text-[10px] font-extrabold text-gray-400 uppercase tracking-wider mb-1.5">Or try a different search method:</div>
+                    <div class="text-[10px] font-extrabold text-gray-400 uppercase tracking-wider mb-1.5">Try another method:</div>
                     <div class="flex flex-wrap gap-1.5">
                       <button class="p-try-method text-[11px] font-bold px-2.5 py-1 rounded-lg bg-white border border-gray-200 hover:border-blue-400 hover:text-blue-600 transition-colors text-gray-600" data-mode="linkedin">
                         <i class="fab fa-linkedin mr-1 text-[10px]"></i>LinkedIn URL
@@ -179,6 +179,19 @@ const TURNSTILE_SITE_KEY = (import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "1x0000
                       <button class="p-try-method text-[11px] font-bold px-2.5 py-1 rounded-lg bg-white border border-gray-200 hover:border-blue-400 hover:text-blue-600 transition-colors text-gray-600" data-mode="nameDomain">
                         <i class="fas fa-globe mr-1 text-[10px]"></i>Name + Domain
                       </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Case B : person found, but no direct mobile indexed -->
+                <div id="p-no-phone" class="hidden">
+                  <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl">
+                    <div class="flex items-start gap-2.5">
+                      <i class="fas fa-mobile-alt text-amber-500 shrink-0 mt-0.5 text-sm"></i>
+                      <div>
+                        <div class="text-xs font-bold text-gray-800 mb-1">Contact found — no direct mobile indexed</div>
+                        <div class="text-[11px] text-gray-500 leading-relaxed">We found this person, but no direct mobile is indexed for them yet. The full account searches extended sources and may find it.</div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -570,6 +583,9 @@ const TURNSTILE_SITE_KEY = (import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "1x0000
           showRateLimit("phone");
         } else if (resp.status === 401) {
           cachedToken = null; show("phone-error"); setText("phone-error-msg", "Session expired — please refresh the page and try again.");
+        } else if (resp.status === 404) {
+          // Person completely not found in Datagma's DB
+          renderPhoneResult({ phone: null, found: false, contact: {} });
         } else if (!resp.ok) {
           show("phone-error"); setText("phone-error-msg", "Search failed. Please try again in a few seconds.");
         } else {
@@ -597,14 +613,19 @@ const TURNSTILE_SITE_KEY = (import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "1x0000
       setText("phones-remaining", data.credits.phonesRemaining);
     }
 
-    hide("p-phone-row"); hide("p-phone-none"); hide("p-found-badge"); hide("p-whatsapp");
+    hide("p-phone-row"); hide("p-person-not-found"); hide("p-no-phone"); hide("p-found-badge"); hide("p-whatsapp");
 
     if (data.phone) {
+      // Phone found ✓
       show("p-found-badge"); show("p-phone-row");
       setText("p-phone-value", data.phone.masked);
       if (data.phone.whatsapp) show("p-whatsapp");
+    } else if (data.found) {
+      // Person found, but no direct mobile indexed
+      show("p-no-phone");
     } else {
-      show("p-phone-none");
+      // Person not found at all — suggest changing inputs
+      show("p-person-not-found");
     }
 
     show("phone-result");
