@@ -540,6 +540,7 @@ const TURNSTILE_SITE_KEY = (import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "1x0000
   }
 
   // ── Phone form ───────────────────────────────────────────────────────────────
+  var phoneSearchHint = null; // stores form inputs as fallback for display
   var phoneForm = q("phone-form");
   if (phoneForm) {
     phoneForm.addEventListener("submit", async function (e) {
@@ -560,16 +561,25 @@ const TURNSTILE_SITE_KEY = (import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "1x0000
         var li = ((phoneForm.querySelector("[name=linkedin]") || {}).value || "").trim();
         if (!li) { show("phone-error"); setText("phone-error-msg", "Please enter a LinkedIn URL."); setPhoneLoading(false); return; }
         params.set("linkedin", li);
+        // Try to extract name from LinkedIn handle (e.g. "adrienne-charmet" → "Adrienne Charmet")
+        var handle = li.replace(/.*\/in\//i, "").replace(/[/?#].*/,"").replace(/\/$/, "");
+        var parts = handle.split("-");
+        var guessedName = parts.length > 1
+          ? parts.map(function(p){ return p.charAt(0).toUpperCase() + p.slice(1); }).join(" ")
+          : null;
+        phoneSearchHint = { mode: "linkedin", linkedin: li, name: guessedName, handle: handle };
       } else if (phoneMode === "nameCompany") {
         var fn = ((phoneForm.querySelector("[name=fullNameC]") || {}).value || "").trim();
         var cn = ((phoneForm.querySelector("[name=companyName]") || {}).value || "").trim();
         if (!fn || !cn) { show("phone-error"); setText("phone-error-msg", "Please enter both full name and company."); setPhoneLoading(false); return; }
         params.set("fullName", fn); params.set("companyName", cn);
+        phoneSearchHint = { mode: "nameCompany", name: fn, company: cn };
       } else if (phoneMode === "nameDomain") {
         var fn2 = ((phoneForm.querySelector("[name=fullNameD]") || {}).value || "").trim();
         var dom = ((phoneForm.querySelector("[name=domain]") || {}).value || "").trim();
         if (!fn2 || !dom) { show("phone-error"); setText("phone-error-msg", "Please enter both full name and domain."); setPhoneLoading(false); return; }
         params.set("fullName", fn2); params.set("domain", dom);
+        phoneSearchHint = { mode: "nameDomain", name: fn2, domain: dom };
       }
 
       if (cf) params.set("cf", cf);
@@ -603,12 +613,45 @@ const TURNSTILE_SITE_KEY = (import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "1x0000
 
   function renderPhoneResult(data) {
     var contact = data.contact || {};
-    var name = contact.fullName || "—";
-    var initials = name.split(" ").map(function(p){return(p[0]||"");}).join("").slice(0,2).toUpperCase() || "?";
-    var role = [contact.jobTitle, contact.company].filter(Boolean).join(" · ");
+    var hint = phoneSearchHint || {};
 
-    setText("p-avatar", initials);
-    setText("p-name", name);
+    // Name: API → hint.name (from form input or guessed from LinkedIn handle)
+    var name = contact.fullName
+      || hint.name
+      || null;
+
+    // Company/role: API → hint company/domain as fallback
+    var company  = contact.company  || hint.company || hint.domain || null;
+    var jobTitle = contact.jobTitle || null;
+    var role = [jobTitle, company].filter(Boolean).join(" · ");
+
+    // Avatar: initials if name known, otherwise user icon
+    var av = q("p-avatar");
+    if (av) {
+      if (name) {
+        var words    = name.trim().split(/\s+/);
+        var initials = words.map(function(p){return p[0]||"";}).join("").slice(0,2).toUpperCase();
+        av.innerHTML = "";
+        av.textContent = initials || "?";
+      } else {
+        av.innerHTML = '<i class="fas fa-user text-white text-sm"></i>';
+      }
+    }
+
+    // Name display: real name → LinkedIn handle (mono) → generic
+    var nameEl = q("p-name");
+    if (nameEl) {
+      if (name) {
+        nameEl.textContent = name;
+        nameEl.className = "font-display font-bold text-gray-900 text-base leading-tight";
+      } else if (hint.handle) {
+        nameEl.textContent = hint.handle;
+        nameEl.className = "font-mono text-sm text-gray-500 leading-tight";
+      } else {
+        nameEl.textContent = "";
+      }
+    }
+
     setText("p-role", role);
 
     if (data.credits && data.credits.phonesRemaining !== undefined) {
