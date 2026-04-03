@@ -129,8 +129,11 @@ import PricingTeaser from '../../components/PricingTeaser.astro';
           </a>
         </div>
 
+        <div class="inline-flex items-center gap-2 bg-blue-50 border border-blue-100 rounded-xl px-4 py-2.5 mb-3">
+          <i class="fas fa-gift text-blue-500 text-xs"></i>
+          <span class="text-xs font-bold text-blue-700">Free plan includes <span class="text-blue-900">3 direct mobiles</span> + <span class="text-blue-900">90 verified emails</span> per month — no credit card</span>
+        </div>
         <p class="text-[11px] text-gray-400 font-semibold flex flex-wrap items-center gap-x-5 gap-y-1">
-          <span><i class="fas fa-lock mr-1.5 text-gray-300"></i>No credit card</span>
           <span><i class="fas fa-bolt mr-1.5 text-blue-300"></i>Live in 2 minutes</span>
           <span><i class="fas fa-coins mr-1.5 text-blue-300"></i>Pay per result only</span>
           <span><i class="fas fa-shield-alt mr-1.5 text-gray-300"></i>GDPR by design</span>
@@ -583,17 +586,25 @@ import PricingTeaser from '../../components/PricingTeaser.astro';
       {/* Email Finder */}
       <div class="bento-card p-6 relative overflow-hidden flex flex-col">
         <div class="absolute top-0 right-0 w-32 h-32 bg-violet-50 rounded-full blur-2xl opacity-80 -translate-y-1/2 translate-x-1/2"></div>
-        <div class="relative z-10">
-          <div class="flex items-center gap-3 mb-4">
-            <div class="w-11 h-11 bg-violet-100 rounded-2xl flex items-center justify-center shrink-0">
-              <i class="fas fa-envelope text-violet-600 text-lg"></i>
+        <div class="relative z-10 flex flex-col h-full">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-3">
+              <div class="w-11 h-11 bg-violet-100 rounded-2xl flex items-center justify-center shrink-0">
+                <i class="fas fa-envelope text-violet-600 text-lg"></i>
+              </div>
+              <h3 class="font-display font-bold text-xl text-gray-900">Email Finder</h3>
             </div>
-            <h3 class="font-display font-bold text-xl text-gray-900">Email Finder</h3>
+            <span class="shrink-0 ml-2 bg-green-50 border border-green-200 text-green-700 text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider whitespace-nowrap">&lt;2% bounce</span>
           </div>
           <p class="text-gray-500 text-sm leading-relaxed mb-4">
-            Verified professional emails with advanced catchall detection. Cross-referenced vs LinkedIn, GitHub, Facebook. Lowest bounce rate.
+            Best coverage in Europe &amp; US. Verified against LinkedIn, GitHub, and Facebook — with under 2% bounce rate. No more burned domains.
           </p>
-          <a href="/en/email-finder" class="text-blue-600 text-sm font-bold hover:underline inline-flex items-center gap-1">
+          <div class="flex flex-wrap gap-1.5 mb-5">
+            {["Top coverage", "Catchall detection", "No LinkedIn needed", "90 emails/mo free"].map((t) => (
+              <span class="text-[10px] font-bold bg-violet-50 border border-violet-200 text-violet-700 px-2 py-0.5 rounded-full">{t}</span>
+            ))}
+          </div>
+          <a href="/en/email-finder" class="mt-auto text-blue-600 text-sm font-bold hover:underline inline-flex items-center gap-1">
             Learn more <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
           </a>
         </div>
@@ -791,12 +802,17 @@ import PricingTeaser from '../../components/PricingTeaser.astro';
           <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-sky-500">decision-makers unreached</span>
         </h2>
 
-        <p class="text-gray-500 text-lg mb-3 max-w-md mx-auto">
-          Add Datagma to your stack in 2 minutes. Free plan available — no credit card required.
+        <p class="text-gray-500 text-lg mb-6 max-w-md mx-auto">
+          Add Datagma to your stack in 2 minutes. No credit card required.
         </p>
-        <p class="text-sm text-gray-400 mb-12">
-          3 direct mobiles included. That's 3 conversations your current stack is missing.
-        </p>
+
+        <div class="inline-flex items-center gap-4 bg-gray-50 border border-gray-200 rounded-2xl px-5 py-3 mb-12 text-sm font-semibold text-gray-600">
+          <span class="flex items-center gap-1.5"><i class="fas fa-mobile-alt text-green-500 text-xs"></i> <strong class="text-gray-900">3 mobiles</strong>/month</span>
+          <span class="text-gray-300">+</span>
+          <span class="flex items-center gap-1.5"><i class="fas fa-envelope text-violet-400 text-xs"></i> <strong class="text-gray-900">90 emails</strong>/month</span>
+          <span class="text-gray-300">·</span>
+          <span class="text-green-600 font-bold">Free forever</span>
+        </div>
 
         <div class="flex flex-col sm:flex-row gap-3 justify-center">
           <a href="https://app.datagma.com/register" class="btn btn-cta hero-cta px-8 py-4 text-base font-bold rounded-2xl">
