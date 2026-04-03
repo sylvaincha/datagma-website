@@ -85,12 +85,11 @@ import PricingTeaser from '../../components/PricingTeaserFR.astro';
           Datagma le trouve.
         </p>
 
-        {/* Feature tags */}
-        <div class="flex flex-wrap gap-2 mb-4">
+        {/* Feature chips */}
+        <div class="flex flex-wrap gap-2 mb-6">
           {[
-            { icon: "fas fa-user",       text: "Recherche par nom + pays" },
-            { icon: "fab fa-linkedin",   text: "Sans URL LinkedIn" },
-            { icon: "fas fa-mobile-alt", text: "Mobiles directs, pas de standard" },
+            { icon: "fas fa-user",       text: "Nom + pays, sans LinkedIn" },
+            { icon: "fas fa-mobile-alt", text: "Mobiles directs uniquement" },
             { icon: "fab fa-whatsapp",   text: "Détection WhatsApp" },
           ].map((tag) => (
             <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-600 bg-white/90 border border-gray-200 px-3 py-1.5 rounded-full shadow-soft-sm">
@@ -100,27 +99,8 @@ import PricingTeaser from '../../components/PricingTeaserFR.astro';
           ))}
         </div>
 
-        {/* Pain scenarios */}
-        <div class="rounded-2xl border border-gray-100 bg-white/70 backdrop-blur-sm px-4 py-3.5 mb-4 shadow-sm">
-          <p class="text-[10px] uppercase tracking-widest font-extrabold text-gray-400 mb-2.5">Ça vous parle ?</p>
-          <div class="space-y-2">
-            {[
-              { who: "Commercial",   color: "bg-blue-100 text-blue-700",     pain: "3 semaines d'essais. Je n'ai que le standard." },
-              { who: "Recruteur",   color: "bg-violet-100 text-violet-700", pain: "Une autre agence a placé mon candidat. Ils ont appelé en premier." },
-              { who: "Immobilier", color: "bg-amber-100 text-amber-700",   pain: "Je n'arrive pas à joindre le décideur : juste une boîte générique." },
-              { who: "BizDev",      color: "bg-green-100 text-green-700",   pain: "Le VP est intéressé. Son assistant filtre tous les appels." },
-              { who: "SDR",         color: "bg-sky-100 text-sky-700",        pain: "3 fournisseurs en cascade. 28 % des contacts sans téléphone." },
-            ].map((s) => (
-              <div class="flex items-center gap-2.5 text-xs">
-                <span class={`shrink-0 ${s.color} font-extrabold text-[9px] px-2 py-0.5 rounded-full whitespace-nowrap`}>{s.who}</span>
-                <span class="text-gray-500 italic leading-snug">{s.pain}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
         {/* CTAs */}
-        <div class="flex flex-col sm:flex-row gap-3 mb-4">
+        <div class="flex flex-col sm:flex-row gap-3 mb-5">
           <a href="https://app.datagma.com/register" class="btn btn-cta hero-cta px-8 py-3.5 text-base font-bold rounded-2xl">
             Trouver votre premier mobile, gratuitement
           </a>
@@ -129,13 +109,9 @@ import PricingTeaser from '../../components/PricingTeaserFR.astro';
           </a>
         </div>
 
-        <div class="inline-flex items-center gap-2 bg-blue-50 border border-blue-100 rounded-xl px-4 py-2.5 mb-3">
-          <i class="fas fa-gift text-blue-500 text-xs"></i>
-          <span class="text-xs font-bold text-blue-700">Le plan gratuit inclut <span class="text-blue-900">3 mobiles directs</span> + <span class="text-blue-900">90 emails vérifiés</span> par mois, sans carte de crédit</span>
-        </div>
-        <p class="text-[11px] text-gray-400 font-semibold flex flex-wrap items-center gap-x-5 gap-y-1">
+        <p class="text-[11px] text-gray-400 font-semibold flex flex-wrap items-center gap-x-5 gap-y-1.5">
+          <span><i class="fas fa-gift mr-1.5 text-blue-300"></i><strong class="text-gray-600">3 mobiles + 90 emails</strong> gratuits/mois</span>
           <span><i class="fas fa-bolt mr-1.5 text-blue-300"></i>Opérationnel en 2 min</span>
-          <span><i class="fas fa-coins mr-1.5 text-blue-300"></i>Paiement au résultat uniquement</span>
           <span><i class="fas fa-shield-alt mr-1.5 text-gray-300"></i>Conforme RGPD</span>
         </p>
       </div>
