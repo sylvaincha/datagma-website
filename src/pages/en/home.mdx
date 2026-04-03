@@ -9,6 +9,7 @@ activeNav: ''
 import LiveCounter from '../../components/LiveCounter.astro';
 import DemoWidget from '../../components/DemoWidget.astro';
 import LocalizedLogoBar from '../../components/LocalizedLogoBar.astro';
+import PricingTeaser from '../../components/PricingTeaser.astro';
 
 <script type="application/ld+json" set:html={JSON.stringify([
   {
@@ -736,100 +737,7 @@ import LocalizedLogoBar from '../../components/LocalizedLogoBar.astro';
 </section>
 
 {/* ─── PRICING TEASER ───────────────────────────────────── */}
-<section class="py-24">
-  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="text-center mb-12">
-      <div class="inline-flex items-center gap-2 bg-amber-50 border border-amber-200 text-amber-700 text-xs font-bold px-4 py-1.5 rounded-full mb-6">
-        <span class="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse"></span>
-        At $0.33/phone — one conversation that leads anywhere covers months
-      </div>
-      <h2 class="font-display font-extrabold text-4xl sm:text-5xl text-gray-900 mb-4 tracking-tight">
-        Start for less than your next missed deal
-      </h2>
-      <p class="text-gray-500 text-lg">
-        Pay only per result. No result = no charge. Unused credits roll over 12 months.
-      </p>
-    </div>
-
-    <div class="grid sm:grid-cols-3 gap-5 mb-8 pt-5">
-      {[
-        {
-          name: "Regular",
-          price: "$39",
-          period: "/mo · annual",
-          phones: "1,200",
-          emails: "36,000",
-          costPerPhone: "$0.49/phone",
-          features: ["Sales Navigator Export", "Credit rollover 12 months", "API access", "WhatsApp detection", "10 seats included"],
-          featured: false,
-        },
-        {
-          name: "Popular",
-          price: "$79",
-          period: "/mo · annual",
-          phones: "3,000",
-          emails: "90,000",
-          costPerPhone: "$0.33/phone",
-          features: ["Everything in Regular", "File Upload enrichment", "Priority support", "WhatsApp detection", "10 seats included"],
-          featured: true,
-        },
-        {
-          name: "Expert",
-          price: "$209",
-          period: "/mo · annual",
-          phones: "9,000",
-          emails: "270,000",
-          costPerPhone: "$0.28/phone",
-          features: ["Everything in Popular", "Dedicated account manager", "Custom integrations", "SLA available", "10 seats included"],
-          featured: false,
-        },
-      ].map((plan) => (
-        <div class={`bento-card p-6 relative flex flex-col ${plan.featured ? 'ring-2 ring-blue-600 shadow-soft-xl overflow-visible' : ''}`}>
-          {plan.featured && (
-            <div class="absolute -top-3.5 left-1/2 -translate-x-1/2">
-              <span class="bg-blue-600 text-white text-xs font-extrabold px-4 py-1.5 rounded-full shadow-md shadow-blue-200">Most popular</span>
-            </div>
-          )}
-          <div class="mb-5">
-            <div class="font-display font-bold text-gray-400 text-xs uppercase tracking-widest mb-1">{plan.name}</div>
-            <div class="flex items-baseline gap-1">
-              <span class="font-display font-extrabold text-4xl text-gray-900">{plan.price}</span>
-              <span class="text-gray-400 text-sm">{plan.period}</span>
-            </div>
-            <div class="mt-3 flex flex-wrap gap-2 text-xs">
-              <span class="bg-green-50 border border-green-200 text-green-700 font-semibold px-2.5 py-1 rounded-full">{plan.phones} phones/yr</span>
-              <span class="bg-blue-50 border border-blue-200 text-blue-700 font-semibold px-2.5 py-1 rounded-full">{plan.emails} emails/yr</span>
-            </div>
-            <div class="mt-2 text-xs text-gray-400 font-semibold">≈ {plan.costPerPhone}</div>
-          </div>
-          <ul class="space-y-2 mb-6">
-            {plan.features.map((f) => (
-              <li class="flex items-center gap-2 text-sm text-gray-600">
-                <svg class="w-4 h-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-                {f}
-              </li>
-            ))}
-          </ul>
-          <a
-            href="https://app.datagma.com/register"
-            class={`block text-center py-3 rounded-xl text-sm font-bold transition-all ${plan.featured ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-md shadow-blue-200' : 'border border-gray-200 text-gray-700 hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50'}`}
-          >
-            Get started
-          </a>
-        </div>
-      ))}
-    </div>
-
-    <div class="text-center">
-      <p class="text-gray-500 text-sm mb-2">
-        Free plan available — 90 emails &amp; 3 phones per year, no credit card required.
-      </p>
-      <a href="/en/pricing" class="text-blue-600 font-bold text-sm hover:underline inline-flex items-center gap-1">
-        View full pricing including Enterprise →
-      </a>
-    </div>
-  </div>
-</section>
+<PricingTeaser />
 
 {/* ─── FAQ ──────────────────────────────────────────────── */}
 <section class="py-20 bg-gray-50/60">
